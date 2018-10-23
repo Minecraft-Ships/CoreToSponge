@@ -5,13 +5,14 @@ import org.core.world.WorldExtent;
 import org.core.world.position.BlockPosition;
 import org.core.world.position.ExactPosition;
 import org.ships.implementation.sponge.world.position.SBlockPosition;
+import org.ships.implementation.sponge.world.position.SExactPosition;
 
 import java.util.Set;
 import java.util.UUID;
 
 public class SWorldExtent implements WorldExtent {
 
-    org.spongepowered.api.world.World world;
+    protected org.spongepowered.api.world.World world;
 
     public SWorldExtent(org.spongepowered.api.world.World world){
         this.world = world;
@@ -34,7 +35,7 @@ public class SWorldExtent implements WorldExtent {
 
     @Override
     public ExactPosition getPosition(double x, double y, double z) {
-        return null;
+        return new SExactPosition(this.world.getLocation(x, y, z));
     }
 
     @Override
