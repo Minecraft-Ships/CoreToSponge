@@ -13,6 +13,8 @@ import org.spongepowered.api.data.key.Keys;
 
 public class SWallSignDetails extends AbstractBlockDetails implements WallSign {
 
+    SignTileEntitySnapshot stes;
+
     public SWallSignDetails(BlockState state) {
         super(state);
     }
@@ -34,7 +36,12 @@ public class SWallSignDetails extends AbstractBlockDetails implements WallSign {
 
     @Override
     public SignTileEntitySnapshot getTileEntity() {
-        return null;
+        return this.stes;
+    }
+
+    @Override
+    public void setTileEntity(SignTileEntitySnapshot tile) {
+        this.stes = tile;
     }
 
     @Override
