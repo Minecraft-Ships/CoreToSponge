@@ -6,7 +6,7 @@ import org.core.exceptions.DirectionNotSupported;
 import org.core.vector.types.Vector3Int;
 import org.core.world.direction.Direction;
 import org.core.world.position.block.details.BlockDetails;
-import org.core.world.position.block.details.blocks.WallSign;
+import org.core.world.position.block.details.blocks.sign.WallSign;
 import org.core.world.position.block.entity.sign.SignTileEntitySnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.key.Keys;
