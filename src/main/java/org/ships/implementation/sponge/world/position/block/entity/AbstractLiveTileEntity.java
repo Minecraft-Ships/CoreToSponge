@@ -12,6 +12,10 @@ public abstract class AbstractLiveTileEntity <T extends org.spongepowered.api.bl
         this.tileEntity = tileEntity;
     }
 
+    public T getSpongeTileEntity(){
+        return this.tileEntity;
+    }
+
     @Override
     public BlockPosition getPosition() {
         return new SBlockPosition(this.tileEntity.getLocation());

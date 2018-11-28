@@ -14,6 +14,7 @@ import org.core.text.TextColour;
 import org.core.text.TextColours;
 import org.core.utils.Guaranteed;
 import org.core.utils.Identifable;
+import org.core.world.position.ExactPosition;
 import org.core.world.position.block.BlockType;
 import org.core.world.position.block.BlockTypes;
 import org.core.world.position.block.details.BlockDetails;
@@ -23,7 +24,46 @@ import java.util.*;
 
 public class SpongePlatform implements Platform {
 
+    protected Set<? extends EntityType<? extends Entity, ? extends EntitySnapshot<? extends Entity>>> entityTypes = new HashSet<>();
+    protected Map<Class<? extends org.spongepowered.api.entity.Entity>, Class<? extends Entity>> entityToEntityMap = new HashMap<>();
     protected Map<String, Class<? extends BlockDetails>> BLOCK_STATE_ID_TO_BLOCK_DETAILS = new HashMap<>();
+
+    public <E extends Entity, S extends EntitySnapshot<E>> Optional<S> createSnapshot(EntityType<E, S> type, ExactPosition pos){
+        try {
+            S snapshot = type.getSnapshotClass().getConstructor(ExactPosition.class).newInstance(pos);
+            return Optional.of(snapshot);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    public Entity createEntityInstance(org.spongepowered.api.entity.Entity entity){
+        Optional<Map.Entry<Class<? extends org.spongepowered.api.entity.Entity>, Class<? extends Entity>>> opEntry = this.entityToEntityMap.entrySet().stream().filter(e -> e.getKey().isInstance(entity)).findAny();
+        if(!opEntry.isPresent()){
+            System.err.println("entity convection not found: " + entity.getClass().getName());
+            return null;
+        }
+        Class<? extends Entity> bdclass = opEntry.get().getValue();
+        try{
+            return bdclass.getConstructor(org.spongepowered.api.entity.Entity.class).newInstance(entity);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public Optional<BlockDetails> createBlockDetailsInstance(org.spongepowered.api.block.BlockState state){
         Optional<Map.Entry<String, Class<? extends BlockDetails>>> opEntry = this.BLOCK_STATE_ID_TO_BLOCK_DETAILS.entrySet().stream().filter(e -> state.getId().startsWith(e.getKey())).findFirst();

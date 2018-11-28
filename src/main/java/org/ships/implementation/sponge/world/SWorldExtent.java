@@ -18,6 +18,10 @@ public class SWorldExtent implements WorldExtent {
         this.world = world;
     }
 
+    public org.spongepowered.api.world.World getSpongeWorld(){
+        return this.world;
+    }
+
     @Override
     public String getName() {
         return this.world.getName();
