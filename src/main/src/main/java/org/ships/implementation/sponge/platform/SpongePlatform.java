@@ -1,0 +1,259 @@
+package org.ships.implementation.sponge.platform;
+
+import org.core.CorePlugin;
+import org.core.configuration.type.ConfigurationLoaderType;
+import org.core.configuration.type.ConfigurationLoaderTypes;
+import org.core.entity.Entity;
+import org.core.entity.EntitySnapshot;
+import org.core.entity.EntityType;
+import org.core.entity.EntityTypes;
+import org.core.inventory.item.ItemType;
+import org.core.inventory.item.data.dye.DyeType;
+import org.core.inventory.item.data.dye.DyeTypes;
+import org.core.inventory.item.type.ItemTypeCommon;
+import org.core.platform.Platform;
+import org.core.platform.Plugin;
+import org.core.source.command.CommandSource;
+import org.core.text.TextColour;
+import org.core.text.TextColours;
+import org.core.world.position.ExactPosition;
+import org.core.world.position.block.BlockType;
+import org.core.world.position.block.details.BlockDetails;
+import org.core.world.position.block.entity.LiveTileEntity;
+import org.core.world.position.block.entity.TileEntity;
+import org.core.world.position.block.entity.TileEntitySnapshot;
+import org.core.world.position.block.entity.banner.pattern.PatternLayerType;
+import org.core.world.position.block.entity.banner.pattern.PatternLayerTypes;
+import org.core.world.position.block.grouptype.BlockGroup;
+import org.ships.implementation.sponge.configuration.JsonConfigurationLoaderType;
+import org.ships.implementation.sponge.configuration.YamlConfigurationLoaderType;
+import org.ships.implementation.sponge.entity.forge.live.SForgeEntity;
+import org.ships.implementation.sponge.entity.living.human.player.live.SLivePlayer;
+import org.ships.implementation.sponge.text.STextColour;
+import org.ships.implementation.sponge.world.position.block.SBlockType;
+import org.ships.implementation.sponge.world.position.block.entity.furnace.SLiveFurnaceEntity;
+import org.ships.implementation.sponge.world.position.block.entity.sign.SLiveSignEntity;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
+
+public class SpongePlatform implements Platform {
+
+    protected Set<? extends EntityType<? extends Entity, ? extends EntitySnapshot<? extends Entity>>> entityTypes = new HashSet<>();
+    protected Map<Class<? extends org.spongepowered.api.entity.Entity>, Class<? extends Entity>> entityToEntityMap = new HashMap<>();
+    protected Map<String, Class<? extends BlockDetails>> blockStateToData = new HashMap<>();
+    protected Map<Class<? extends org.spongepowered.api.block.tileentity.TileEntity>, Class<? extends LiveTileEntity>> blockStateToTileEntity = new HashMap<>();
+
+    public SpongePlatform(){
+        this.entityToEntityMap.put(org.spongepowered.api.entity.living.player.Player.class, SLivePlayer.class);
+
+        this.blockStateToTileEntity.put(org.spongepowered.api.block.tileentity.Sign.class, SLiveSignEntity.class);
+        this.blockStateToTileEntity.put(org.spongepowered.api.block.tileentity.carrier.Furnace.class, SLiveFurnaceEntity.class);
+    }
+
+    public CommandSource get(org.spongepowered.api.command.CommandSource source){
+        if (source instanceof org.spongepowered.api.entity.living.player.Player) {
+            return new SLivePlayer((org.spongepowered.api.entity.living.player.Player)source);
+        }
+        if(source instanceof org.spongepowered.api.command.source.CommandBlockSource){
+            //no command block yet
+            return null;
+        }
+        if(source instanceof org.spongepowered.api.command.source.ConsoleSource){
+            return CorePlugin.getConsole();
+        }
+        return null;
+    }
+
+    public <E extends Entity, S extends EntitySnapshot<E>> Optional<S> createSnapshot(EntityType<E, S> type, ExactPosition pos){
+        try {
+            S snapshot = type.getSnapshotClass().getConstructor(ExactPosition.class).newInstance(pos);
+            return Optional.of(snapshot);
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    public Entity createEntityInstance(org.spongepowered.api.entity.Entity entity){
+        Optional<Map.Entry<Class<? extends org.spongepowered.api.entity.Entity>, Class<? extends Entity>>> opEntry = this.entityToEntityMap.entrySet().stream().filter(e -> e.getKey().isInstance(entity)).findAny();
+        if(!opEntry.isPresent()){
+            System.out.println("\tFailed to find entity (" + entity.getType().getId() + ") in map. Using forge Entity");
+            return new SForgeEntity(entity);
+        }
+        Class<? extends Entity> bdclass = opEntry.get().getValue();try{
+            Constructor<? extends Entity> constructor = bdclass.getConstructor(org.spongepowered.api.entity.Entity.class);
+            return constructor.newInstance(entity);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Optional<LiveTileEntity> createTileEntityInstance(org.spongepowered.api.block.tileentity.TileEntity tileEntity){
+        Optional<Map.Entry<Class<? extends org.spongepowered.api.block.tileentity.TileEntity>, Class<? extends LiveTileEntity>>> opEntry = blockStateToTileEntity.entrySet().stream().filter(e -> e.getKey().isInstance(tileEntity)).findAny();
+        if(!opEntry.isPresent()){
+            return Optional.empty();
+        }
+        Class<? extends LiveTileEntity> bdclass = opEntry.get().getValue();
+        try {
+            return Optional.of(bdclass.getConstructor(org.spongepowered.api.block.tileentity.TileEntity.class).newInstance(tileEntity));
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public int[] getMinecraftVersion() {
+        return new int[]{1, 12, 2};
+    }
+
+    @Override
+    public Set<Plugin> getPlugins() {
+        return null;
+    }
+
+    @Override
+    public <E extends Entity, S extends EntitySnapshot<E>> EntityType<E, S> get(EntityTypes<E, S> entityId) {
+        return null;
+    }
+
+    @Override
+    public Optional<EntityType<? extends Entity, ? extends EntitySnapshot<? extends Entity>>> getEntityType(String id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<BlockType> getBlockType(String id) {
+        Optional<org.spongepowered.api.block.BlockType> opBlock = org.spongepowered.api.Sponge.getRegistry().getType(org.spongepowered.api.block.BlockType.class, id);
+        if(opBlock.isPresent()){
+            return Optional.of(new SBlockType(opBlock.get()));
+        }
+        return null;
+    }
+
+    @Override
+    public Optional<ItemType> getItemType(String id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<TextColour> getTextColour(String id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<DyeType> getDyeType(String id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<PatternLayerType> getPatternLayerType(String id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ConfigurationLoaderType> getConfigurationLoaderType(String id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Collection<EntityType<? extends Entity, ? extends EntitySnapshot<? extends Entity>>> getEntityTypes() {
+        return null;
+    }
+
+    @Override
+    public Collection<BlockType> getBlockTypes() {
+        return null;
+    }
+
+    @Override
+    public Collection<ItemType> getItemTypes() {
+        return null;
+    }
+
+    @Override
+    public Collection<TextColour> getTextColours() {
+        return null;
+    }
+
+    @Override
+    public Collection<DyeType> getDyeTypes() {
+        return null;
+    }
+
+    @Override
+    public Collection<PatternLayerType> getPatternLayerTypes() {
+        return null;
+    }
+
+    @Override
+    public Collection<ConfigurationLoaderType> getConfigurationLoaderTypes() {
+        return null;
+    }
+
+    @Override
+    public Collection<BlockGroup> getBlockGroups() {
+        return null;
+    }
+
+    @Override
+    public Collection<TileEntitySnapshot<? extends TileEntity>> getDefaultTileEntities() {
+        return null;
+    }
+
+    @Override
+    public ItemType get(ItemTypeCommon itemId) {
+        return null;
+    }
+
+    @Override
+    public TextColour get(TextColours id) {
+        Optional<org.spongepowered.api.text.format.TextColor> opText = org.spongepowered.api.Sponge.getRegistry().getAllOf(org.spongepowered.api.text.format.TextColor.class).stream().filter(t -> t.getId().equalsIgnoreCase(id.getName())).findAny();
+        if(opText.isPresent()){
+            return STextColour.getInstance(opText.get());
+        }
+        return null;
+    }
+
+    @Override
+    public DyeType get(DyeTypes id) {
+        return null;
+    }
+
+    @Override
+    public PatternLayerType get(PatternLayerTypes id) {
+        return null;
+    }
+
+    @Override
+    public ConfigurationLoaderType get(ConfigurationLoaderTypes id) {
+        if(id.getName().equals("YetAnotherMarkupLang")){
+            return new YamlConfigurationLoaderType();
+        }else if(id.getName().equals("Json") || id.getName().equals("Default")){
+            return new JsonConfigurationLoaderType();
+        }
+        return null;
+    }
+
+}
