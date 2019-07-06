@@ -3,10 +3,7 @@ package org.ships.implementation.sponge.platform;
 import org.core.CorePlugin;
 import org.core.configuration.type.ConfigurationLoaderType;
 import org.core.configuration.type.ConfigurationLoaderTypes;
-import org.core.entity.Entity;
-import org.core.entity.EntitySnapshot;
-import org.core.entity.EntityType;
-import org.core.entity.EntityTypes;
+import org.core.entity.*;
 import org.core.inventory.item.ItemType;
 import org.core.inventory.item.data.dye.DyeType;
 import org.core.inventory.item.data.dye.DyeTypes;
@@ -41,7 +38,7 @@ import java.util.*;
 public class SpongePlatform implements Platform {
 
     protected Set<? extends EntityType<? extends Entity, ? extends EntitySnapshot<? extends Entity>>> entityTypes = new HashSet<>();
-    protected Map<Class<? extends org.spongepowered.api.entity.Entity>, Class<? extends Entity>> entityToEntityMap = new HashMap<>();
+    protected Map<Class<? extends org.spongepowered.api.entity.Entity>, Class<? extends LiveEntity>> entityToEntityMap = new HashMap<>();
     protected Map<String, Class<? extends BlockDetails>> blockStateToData = new HashMap<>();
     protected Map<Class<? extends org.spongepowered.api.block.tileentity.TileEntity>, Class<? extends LiveTileEntity>> blockStateToTileEntity = new HashMap<>();
 
@@ -82,14 +79,15 @@ public class SpongePlatform implements Platform {
         return Optional.empty();
     }
 
-    public Entity createEntityInstance(org.spongepowered.api.entity.Entity entity){
-        Optional<Map.Entry<Class<? extends org.spongepowered.api.entity.Entity>, Class<? extends Entity>>> opEntry = this.entityToEntityMap.entrySet().stream().filter(e -> e.getKey().isInstance(entity)).findAny();
+    public LiveEntity createEntityInstance(org.spongepowered.api.entity.Entity entity){
+        Optional<Map.Entry<Class<? extends org.spongepowered.api.entity.Entity>, Class<? extends LiveEntity>>> opEntry = this.entityToEntityMap.entrySet().stream().filter(e -> e.getKey().isInstance(entity)).findAny();
         if(!opEntry.isPresent()){
-            System.out.println("\tFailed to find entity (" + entity.getType().getId() + ") in map. Using forge Entity");
+            System.err.println("\tFailed to find entity (" + entity.getType().getId() + ") in map. Using forge Entity");
             return new SForgeEntity(entity);
         }
-        Class<? extends Entity> bdclass = opEntry.get().getValue();try{
-            Constructor<? extends Entity> constructor = bdclass.getConstructor(org.spongepowered.api.entity.Entity.class);
+        Class<? extends LiveEntity> bdclass = opEntry.get().getValue();
+        try{
+            Constructor<? extends LiveEntity> constructor = bdclass.getConstructor(org.spongepowered.api.entity.Entity.class);
             return constructor.newInstance(entity);
         } catch (IllegalAccessException e) {
             e.printStackTrace();

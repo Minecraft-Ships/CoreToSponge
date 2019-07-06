@@ -1,7 +1,7 @@
 package org.ships.implementation.sponge.command;
 
 import org.core.CorePlugin;
-import org.core.command.BaseCommandLauncher;
+import org.core.command.CommandLauncher;
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.text.SText;
 import org.spongepowered.api.command.CommandCallable;
@@ -19,9 +19,9 @@ import java.util.Optional;
 
 public class SCommand implements CommandCallable {
 
-    private BaseCommandLauncher commandLauncher;
+    private CommandLauncher commandLauncher;
 
-    public SCommand(BaseCommandLauncher commandLauncher){
+    public SCommand(CommandLauncher commandLauncher){
         this.commandLauncher = commandLauncher;
     }
 
@@ -39,7 +39,10 @@ public class SCommand implements CommandCallable {
 
     @Override
     public boolean testPermission(CommandSource source) {
-        return source.hasPermission(this.commandLauncher.getPermission());
+        if(this.commandLauncher.getPermission().isPresent()) {
+            return source.hasPermission(this.commandLauncher.getPermission().get());
+        }
+        return true;
     }
 
     @Override

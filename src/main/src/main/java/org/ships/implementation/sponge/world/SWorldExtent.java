@@ -1,7 +1,7 @@
 package org.ships.implementation.sponge.world;
 
 import org.core.CorePlugin;
-import org.core.entity.Entity;
+import org.core.entity.LiveEntity;
 import org.core.world.WorldExtent;
 import org.core.world.position.BlockPosition;
 import org.core.world.position.ExactPosition;
@@ -56,11 +56,11 @@ public class SWorldExtent implements WorldExtent {
     }
 
     @Override
-    public Set<Entity> getEntities() {
-        Set<Entity> set = new HashSet<>();
+    public Set<LiveEntity> getEntities() {
+        Set<LiveEntity> set = new HashSet<>();
         SpongePlatform platform = ((SpongePlatform)CorePlugin.getPlatform());
-        this.world.getEntities().stream().forEach(e -> {
-            Entity entity = platform.createEntityInstance(e);
+        this.world.getEntities().forEach(e -> {
+            LiveEntity entity = platform.createEntityInstance(e);
             set.add(entity);
         });
         return set;

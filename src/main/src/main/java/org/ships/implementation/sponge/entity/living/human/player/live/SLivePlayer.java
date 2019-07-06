@@ -10,9 +10,13 @@ import org.core.inventory.inventories.general.entity.PlayerInventory;
 import org.core.source.viewer.CommandViewer;
 import org.ships.implementation.sponge.entity.SLiveEntity;
 import org.ships.implementation.sponge.text.SText;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
+
+import java.util.UUID;
 
 public class SLivePlayer extends SLiveEntity implements LivePlayer {
 
@@ -53,6 +57,16 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     @Override
     public double getSaturationLevel() {
         return getSpongeEntity().get(Keys.SATURATION).get();
+    }
+
+    @Override
+    public String getName() {
+        return getSpongeEntity().getName();
+    }
+
+    @Override
+    public UUID getUniqueId() {
+        return getSpongeEntity().getUniqueId();
     }
 
     @Override
@@ -109,5 +123,11 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     public CommandViewer sendMessagePlain(String message) {
         getSpongeEntity().sendMessage(Text.of(TextSerializers.FORMATTING_CODE.stripCodes(message)));
         return this;
+    }
+
+    @Override
+    public boolean sudo(String wholeCommand) {
+        CommandResult result = Sponge.getCommandManager().process(getSpongeEntity(), wholeCommand);
+        return result.getSuccessCount().isPresent();
     }
 }
