@@ -24,10 +24,14 @@ public class SEventLaunch {
         try {
             this.method.invoke(listener, event);
         } catch (IllegalAccessException e) {
-            System.err.println("Failed to know what to do: HEvent found on method, but method is not public on " + this.listener.getClass().getName() + "." + this.method.getName() + "("+ CorePlugin.toString(", ", p -> p.getType().getSimpleName() + " " + p.getName(), this.method.getParameters()) + ")");
+            System.err.println("Failed to know what to do: HEvent found on method, but method is not public on " + this.listener.getClass().getName() + "." + this.method.getName() + "(" + CorePlugin.toString(", ", p -> p.getType().getSimpleName() + " " + p.getName(), this.method.getParameters()) + ")");
             e.printStackTrace();
+        } catch (ExceptionInInitializerError e) {
+            System.err.println("Failed to know what to do: EventListener caused exception from " + this.listener.getClass().getName() + "." + this.method.getName() + "(" + CorePlugin.toString(", ", p -> p.getType().getSimpleName() + " " + p.getName(), this.method.getParameters()) + ")");
+            e.getException().printStackTrace();
         } catch (InvocationTargetException e) {
-            e.getCause().printStackTrace();
+            System.err.println("Failed to know what to do: EventListener caused exception from " + this.listener.getClass().getName() + "." + this.method.getName() + "(" + CorePlugin.toString(", ", p -> p.getType().getSimpleName() + " " + p.getName(), this.method.getParameters()) + ")");
+            e.getTargetException().printStackTrace();
         } catch (Throwable e){
             System.err.println("Failed to know what to do: HEvent found on method, but exception found when running " + this.listener.getClass().getName() + "." + this.method.getName() + "("+ CorePlugin.toString(", ", p -> p.getType().getSimpleName() + " " + p.getName(), this.method.getParameters()) + ") found in plugin: " + this.plugin.getPluginName());
             e.printStackTrace();

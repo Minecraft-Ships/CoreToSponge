@@ -3,7 +3,6 @@ package org.ships.implementation.sponge.world.position.block.entity.sign;
 import org.core.exceptions.BlockNotSupported;
 import org.core.world.position.BlockPosition;
 import org.core.world.position.block.BlockType;
-import org.core.world.position.block.BlockTypes;
 import org.core.world.position.block.entity.LiveTileEntity;
 import org.core.world.position.block.entity.sign.LiveSignTileEntity;
 import org.core.world.position.block.entity.sign.SignTileEntity;
@@ -13,7 +12,7 @@ import org.spongepowered.api.data.value.immutable.ImmutableListValue;
 import org.spongepowered.api.data.value.mutable.ListValue;
 import org.spongepowered.api.text.Text;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -62,7 +61,8 @@ public class SSignTileEntitySnapshot implements SignTileEntitySnapshot {
 
     @Override
     public Collection<BlockType> getSupportedBlocks() {
-        return Arrays.asList(BlockTypes.OAK_SIGN.get(), BlockTypes.OAK_WALL_SIGN.get());
+        //return Arrays.asList(BlockTypes.OAK_SIGN.get(), BlockTypes.OAK_WALL_SIGN.get());
+        return new ArrayList<>();
     }
 
     @Override

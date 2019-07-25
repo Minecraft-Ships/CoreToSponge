@@ -52,14 +52,24 @@ public class AbstractConfigurationFile implements ConfigurationFile {
     }
 
     @Override
+    public ConfigurationFile reload() {
+        try {
+            this.root = loader.load();
+        } catch (IOException e) {
+            this.root = loader.createEmptyNode();
+        }
+        return this;
+    }
+
+    @Override
     public Map<ConfigurationNode, Object> getKeyValues() {
         Map<ConfigurationNode, Object> map = new HashMap<>();
-        root.getChildrenMap().entrySet().stream().forEach(e -> map.put(new ConfigurationNode((String[]) e.getValue().getPath()), e.getKey()));
+        root.getChildrenMap().forEach((key, value) -> map.put(new ConfigurationNode((String[]) value.getPath()), key));
         return map;
     }
 
     @Override
-    public <T> Optional<T> parse(ConfigurationNode node, Parser<? extends Object, T> parser) {
+    public <T> Optional<T> parse(ConfigurationNode node, Parser<?, T> parser) {
         if (parser instanceof StringParser) {
             StringParser<T> parser1 = (StringParser<T>) parser;
             Object value = this.root.getNode((Object[]) node.getPath()).getValue();
@@ -71,7 +81,7 @@ public class AbstractConfigurationFile implements ConfigurationFile {
             StringMapParser<T> parser1 = (StringMapParser) parser;
             Map<String, String> map = new HashMap<>();
             ninja.leaping.configurate.ConfigurationNode node2 = this.root.getNode((Object[])node.getPath());
-            parser1.getKeys().stream().forEach(k -> {
+            parser1.getKeys().forEach(k -> {
                 String value2 = node2.getNode(k).getString();
                 map.put(k, value2);
             });
@@ -93,17 +103,17 @@ public class AbstractConfigurationFile implements ConfigurationFile {
 
     @Override
     public Optional<Integer> parseInt(ConfigurationNode node) {
-        return Optional.ofNullable(this.root.getNode((Object[]) node.getPath()).getInt());
+        return Optional.of(this.root.getNode((Object[]) node.getPath()).getInt());
     }
 
     @Override
     public Optional<Double> parseDouble(ConfigurationNode node) {
-        return Optional.ofNullable(this.root.getNode((Object[]) node.getPath()).getDouble());
+        return Optional.of(this.root.getNode((Object[]) node.getPath()).getDouble());
     }
 
     @Override
     public Optional<Boolean> parseBoolean(ConfigurationNode node) {
-        return Optional.ofNullable(this.root.getNode((Object[]) node.getPath()).getBoolean());
+        return Optional.of(this.root.getNode((Object[]) node.getPath()).getBoolean());
     }
 
     @Override

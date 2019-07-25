@@ -5,14 +5,13 @@ import org.core.inventory.inventories.general.block.FurnaceInventory;
 import org.core.inventory.inventories.snapshots.block.FurnaceInventorySnapshot;
 import org.core.world.position.BlockPosition;
 import org.core.world.position.block.BlockType;
-import org.core.world.position.block.BlockTypes;
 import org.core.world.position.block.entity.LiveTileEntity;
 import org.core.world.position.block.entity.container.furnace.FurnaceTileEntity;
 import org.core.world.position.block.entity.container.furnace.FurnaceTileEntitySnapshot;
 import org.core.world.position.block.entity.container.furnace.LiveFurnaceTileEntity;
 import org.ships.implementation.sponge.inventory.inventories.snapshot.SSnapshotFurnaceInventory;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -45,7 +44,8 @@ public class SFurnaceEntitySnapshot implements FurnaceTileEntitySnapshot {
 
     @Override
     public Collection<BlockType> getSupportedBlocks() {
-        return Arrays.asList(BlockTypes.FURNACE.get());
+        //return Arrays.asList(BlockTypes.FURNACE.get());
+        return new ArrayList<>();
     }
 
     @Override

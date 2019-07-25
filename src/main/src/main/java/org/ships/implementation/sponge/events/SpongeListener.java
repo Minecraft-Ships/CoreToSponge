@@ -82,28 +82,28 @@ public class SpongeListener {
 
     private static Set<SEventLaunch> getMethods(Class<? extends Event> classEvent){
         Set<SEventLaunch> methods = new HashSet<>();
-        CorePlugin.getEventManager().getEventListeners().entrySet().stream().forEach(e -> e.getValue().stream().forEach(el -> {
+        CorePlugin.getEventManager().getEventListeners().forEach((key, value) -> value.forEach(el -> {
             for (Method method : el.getClass().getDeclaredMethods()){
-                if(method.getDeclaredAnnotationsByType(HEvent.class) == null){
+                if (method.getDeclaredAnnotationsByType(HEvent.class) == null){
                     continue;
                 }
-                if(methods.stream().anyMatch(m -> method.getName().contains("$"))){
+                if (methods.stream().anyMatch(m -> method.getName().contains("$"))){
                     continue;
                 }
                 Parameter[] parameters = method.getParameters();
-                if(parameters.length == 0){
+                if (parameters.length == 0){
                     System.err.println("Failed to know what to do: HEvent found on method, but no event on " + el.getClass().getName() + "." + method.getName() + "()");
                     continue;
                 }
-                if(!Modifier.isPublic(method.getModifiers())){
+                if (!Modifier.isPublic(method.getModifiers())){
                     continue;
                 }
-                Class<? extends Object> class1 = parameters[0].getType();
-                if(!Event.class.isAssignableFrom(classEvent)){
+                Class<?> class1 = parameters[0].getType();
+                if (!Event.class.isAssignableFrom(classEvent)){
                     System.err.println("Failed to know what to do: HEvent found on method, but no known event on " + el.getClass().getName() + "." + method.getName() + "(" + CorePlugin.toString(", ", p -> p.getType().getSimpleName() + " " + p.getName(), parameters) + ")");
                 }
-                if(class1.isAssignableFrom(classEvent)){
-                    methods.add(new SEventLaunch(e.getKey(), el, method));
+                if (class1.isAssignableFrom(classEvent)){
+                    methods.add(new SEventLaunch(key, el, method));
                 }
             }
         }));
