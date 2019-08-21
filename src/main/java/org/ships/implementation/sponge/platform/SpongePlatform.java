@@ -30,6 +30,7 @@ import org.ships.implementation.sponge.text.STextColour;
 import org.ships.implementation.sponge.world.position.block.SBlockType;
 import org.ships.implementation.sponge.world.position.block.entity.furnace.SLiveFurnaceEntity;
 import org.ships.implementation.sponge.world.position.block.entity.sign.SLiveSignEntity;
+import org.spongepowered.api.Sponge;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -182,7 +183,9 @@ public class SpongePlatform implements Platform {
 
     @Override
     public Collection<BlockType> getBlockTypes() {
-        return null;
+        Set<BlockType> blockTypes = new HashSet<>();
+        Sponge.getRegistry().getAllOf(org.spongepowered.api.block.BlockType.class).stream().forEach(b -> blockTypes.add(new SBlockType(b)));
+        return blockTypes;
     }
 
     @Override
@@ -192,7 +195,9 @@ public class SpongePlatform implements Platform {
 
     @Override
     public Collection<TextColour> getTextColours() {
-        return null;
+        Set<TextColour> set = new HashSet<>();
+        Sponge.getRegistry().getAllOf(org.spongepowered.api.text.format.TextColor.class).stream().forEach(t -> set.add(STextColour.getInstance(t)));
+        return set;
     }
 
     @Override

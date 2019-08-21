@@ -13,4 +13,9 @@ public class JsonConfigurationLoaderType implements ConfigurationLoaderType {
     public String getName() {
         return "Json";
     }
+
+    @Override
+    public String[] acceptedFileExtensions() {
+        return new String[]{"conf", "json", "gson"};
+    }
 }

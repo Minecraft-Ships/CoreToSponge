@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class AbstractConfigurationFile implements ConfigurationFile {
 
@@ -118,13 +119,14 @@ public class AbstractConfigurationFile implements ConfigurationFile {
 
     @Override
     public <T> Optional<List<T>> parseList(ConfigurationNode node, StringParser<T> parser) {
-        return Optional.of(this.root.getNode((Object[]) node.getPath()).getList(n -> {
-            Optional<T> opValue = parser.parse(n.toString());
+        return Optional.of(this.root.getNode((Object[]) node.getPath()).getChildrenList().stream().map(c -> {
+            String value = c.getString();
+            Optional<T> opValue = parser.parse(value);
             if(opValue.isPresent()){
                 return opValue.get();
             }
             return null;
-        }));
+        }).collect(Collectors.toList()));
     }
 
     @Override

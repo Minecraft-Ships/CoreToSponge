@@ -16,11 +16,13 @@ import org.ships.implementation.sponge.events.SEventManager;
 import org.ships.implementation.sponge.platform.PlatformConsole;
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.platform.SpongePlatformServer;
+import org.ships.implementation.sponge.scheduler.SSchedulerBuilder;
 import org.ships.implementation.sponge.text.SText;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.stream.Stream;
 
 public class CoreToSponge extends CorePlugin.CoreImplementation {
 
@@ -51,7 +53,7 @@ public class CoreToSponge extends CorePlugin.CoreImplementation {
 
     @Override
     public SchedulerBuilder createRawSchedulerBuilder() {
-        return null;
+        return new SSchedulerBuilder();
     }
 
     @Override
@@ -65,17 +67,17 @@ public class CoreToSponge extends CorePlugin.CoreImplementation {
             return null;
         }
         File file2 = file;
-        if(file.getName().endsWith(".temp")) {
+        if(file.getName().endsWith("temp")) {
             String name = file.getName().substring(0, file.getName().length() - 4);
             if (type.equals(ConfigurationLoaderTypes.YAML)) {
                 file2 = new File(file.getParentFile(), name + "yaml");
-            }else if(type.equals(ConfigurationLoaderTypes.DEFAULT) || type instanceof JsonConfigurationLoaderType){
+            } else if (type.equals(ConfigurationLoaderTypes.DEFAULT) || type instanceof JsonConfigurationLoaderType) {
                 file2 = new File(file.getParentFile(), name + "conf");
-            }else{
+            } else {
                 System.err.println("Failed to read file extension. " + file.getName());
             }
-        }else{
-            System.err.println("File does not end with temp.");
+        }else if(!Stream.of(type.acceptedFileExtensions()).anyMatch(e -> file.getName().endsWith(e))){
+            System.err.println("File " + file.getPath() + " does not end with temp.");
         }
         return new AbstractConfigurationFile(file2, type);
     }

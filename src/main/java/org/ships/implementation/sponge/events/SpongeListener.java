@@ -14,6 +14,7 @@ import org.ships.implementation.sponge.events.events.block.tileentity.SSignChang
 import org.ships.implementation.sponge.events.events.entity.interact.SEntityInteractEvent;
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.text.SText;
+import org.ships.implementation.sponge.utils.DirectionUtils;
 import org.ships.implementation.sponge.world.position.SBlockPosition;
 import org.ships.implementation.sponge.world.position.block.entity.sign.SSignTileEntitySnapshot;
 import org.spongepowered.api.data.manipulator.mutable.tileentity.SignData;
@@ -65,7 +66,8 @@ public class SpongeListener {
         }else if(event instanceof org.spongepowered.api.event.block.InteractBlockEvent.Secondary){
             action = EntityInteractEvent.SECONDARY_CLICK_ACTION;
         }
-        SEntityInteractEvent.SPlayerInteractWithBlockEvent event1 = new SEntityInteractEvent.SPlayerInteractWithBlockEvent(bp, action, Direction.getDirection(spongeVector.getX(), spongeVector.getY(), spongeVector.getZ()).get(), player1);
+        Direction direction = DirectionUtils.getCoreDirection(event.getTargetSide());
+        SEntityInteractEvent.SPlayerInteractWithBlockEvent event1 = new SEntityInteractEvent.SPlayerInteractWithBlockEvent(bp, action, direction, player1);
         call(event1);
         if(event1.isCancelled()){
             event.setCancelled(true);

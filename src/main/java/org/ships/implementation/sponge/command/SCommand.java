@@ -12,7 +12,6 @@ import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +31,7 @@ public class SCommand implements CommandCallable {
     }
 
     @Override
-    public List<String> getSuggestions(CommandSource source, String arguments, @Nullable Location<World> targetPosition) throws CommandException {
+    public List<String> getSuggestions(CommandSource source, String arguments, Location<World> targetPosition) throws CommandException {
         org.core.source.command.CommandSource source2 = ((SpongePlatform)CorePlugin.getPlatform()).get(source);
         return this.commandLauncher.tab(source2, convertArgs(arguments));
     }

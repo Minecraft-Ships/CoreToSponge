@@ -15,7 +15,7 @@ public interface DirectionUtils {
     }
 
     static Direction getCoreDirection(org.spongepowered.api.util.Direction direction){
-        return Stream.of(SixteenFacingDirection.getSixteenFacingDirections()).filter(d -> compare(d.getAsVector(), direction.asBlockOffset())).findFirst().get();
+        return Stream.of(Direction.withYDirections(SixteenFacingDirection.getSixteenFacingDirections())).filter(d -> compare(d.getAsVector(), direction.asBlockOffset())).findFirst().get();
     }
 
     static boolean compare(Vector3Int vector, Vector3i vector2){
