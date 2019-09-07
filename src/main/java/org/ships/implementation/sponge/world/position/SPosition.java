@@ -2,17 +2,17 @@ package org.ships.implementation.sponge.world.position;
 
 import com.flowpowered.math.vector.Vector3i;
 import org.core.CorePlugin;
-import org.core.entity.Entity;
 import org.core.entity.EntitySnapshot;
 import org.core.entity.EntityType;
+import org.core.entity.LiveEntity;
 import org.core.vector.types.Vector3Int;
 import org.core.world.WorldExtent;
 import org.core.world.position.Position;
-import org.core.world.position.block.details.BlockDetails;
+import org.core.world.position.block.details.BlockSnapshot;
 import org.core.world.position.block.entity.LiveTileEntity;
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.world.SWorldExtent;
-import org.ships.implementation.sponge.world.position.block.details.blocks.SExactBlockDetails;
+import org.ships.implementation.sponge.world.position.block.details.blocks.SBlockSnapshot;
 import org.spongepowered.api.block.tileentity.TileEntity;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -27,6 +27,10 @@ public abstract class SPosition <N extends Number> implements Position<N> {
         this.location = location;
     }
 
+    public Location<World> getSpongeLocation(){
+        return this.location;
+    }
+
     @Override
     public Vector3Int getChunkPosition() {
         Vector3i vector = this.location.getChunkPosition();
@@ -39,8 +43,8 @@ public abstract class SPosition <N extends Number> implements Position<N> {
     }
 
     @Override
-    public BlockDetails getBlockDetails() {
-        return new SExactBlockDetails(this.location.createSnapshot());
+    public BlockSnapshot getBlockDetails() {
+        return new SBlockSnapshot(this.location.createSnapshot());
     }
 
     @Override
@@ -54,7 +58,7 @@ public abstract class SPosition <N extends Number> implements Position<N> {
     }
 
     @Override
-    public <E extends Entity, S extends EntitySnapshot<E>> Optional<S> createEntity(EntityType<E, S> type) {
+    public <E extends LiveEntity, S extends EntitySnapshot<E>> Optional<S> createEntity(EntityType<E, S> type) {
         return Optional.empty();
     }
 

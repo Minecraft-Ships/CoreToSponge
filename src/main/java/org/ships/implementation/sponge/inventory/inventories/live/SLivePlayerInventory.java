@@ -6,6 +6,7 @@ import org.core.inventory.inventories.snapshots.entity.PlayerInventorySnapshot;
 import org.core.inventory.parts.*;
 import org.ships.implementation.sponge.entity.living.human.player.live.SLivePlayer;
 
+import java.util.Optional;
 import java.util.Set;
 
 public class SLivePlayerInventory implements LivePlayerInventory {
@@ -47,8 +48,8 @@ public class SLivePlayerInventory implements LivePlayerInventory {
     }
 
     @Override
-    public LivePlayer getAttachedEntity() {
-        return this.player;
+    public Optional<LivePlayer> getAttachedEntity() {
+        return Optional.of(this.player);
     }
 
     @Override

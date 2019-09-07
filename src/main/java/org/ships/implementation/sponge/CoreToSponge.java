@@ -10,6 +10,7 @@ import org.core.platform.PlatformServer;
 import org.core.schedule.SchedulerBuilder;
 import org.core.source.command.ConsoleSource;
 import org.core.text.Text;
+import org.core.world.boss.ServerBossBar;
 import org.ships.implementation.sponge.configuration.AbstractConfigurationFile;
 import org.ships.implementation.sponge.configuration.JsonConfigurationLoaderType;
 import org.ships.implementation.sponge.events.SEventManager;
@@ -18,6 +19,7 @@ import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.platform.SpongePlatformServer;
 import org.ships.implementation.sponge.scheduler.SSchedulerBuilder;
 import org.ships.implementation.sponge.text.SText;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
 import java.io.File;
@@ -34,6 +36,7 @@ public class CoreToSponge extends CorePlugin.CoreImplementation {
     public CoreToSponge(Object plugin){
         CoreImplementation.IMPLEMENTATION = this;
         org.spongepowered.api.Sponge.getEventManager().registerListeners(plugin, eventManager.getRawListener());
+        Sponge.getScheduler().createTaskBuilder().delayTicks(1).intervalTicks(1).name("tps").execute(getRawServer().getTPSExecutor()).submit(plugin);
     }
 
     @Override
@@ -90,5 +93,10 @@ public class CoreToSponge extends CorePlugin.CoreImplementation {
     @Override
     public Text textBuilder(String chars) {
         return new SText(TextSerializers.FORMATTING_CODE.deserialize(chars));
+    }
+
+    @Override
+    public ServerBossBar bossBuilder() {
+        return null;
     }
 }

@@ -1,8 +1,8 @@
 package org.ships.implementation.sponge.entity.forge.live;
 
-import org.core.entity.Entity;
 import org.core.entity.EntitySnapshot;
 import org.core.entity.EntityType;
+import org.core.entity.LiveEntity;
 import org.ships.implementation.sponge.entity.SEntityType;
 import org.ships.implementation.sponge.entity.SLiveEntity;
 
@@ -13,7 +13,7 @@ public class SForgeEntity extends SLiveEntity {
     }
 
     @Override
-    public <E extends Entity> EntityType<E, ? extends EntitySnapshot<E>> getType() {
+    public <E extends LiveEntity> EntityType<E, ? extends EntitySnapshot<E>> getType() {
         return new SEntityType.SForgedEntityType(this.entity.getType());
     }
 

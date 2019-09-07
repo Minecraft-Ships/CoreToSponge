@@ -4,7 +4,6 @@ import org.core.entity.EntityType;
 import org.core.entity.EntityTypes;
 import org.core.entity.living.human.AbstractHuman;
 import org.core.entity.living.human.player.LivePlayer;
-import org.core.entity.living.human.player.Player;
 import org.core.entity.living.human.player.PlayerSnapshot;
 import org.core.inventory.inventories.general.entity.PlayerInventory;
 import org.core.source.viewer.CommandViewer;
@@ -99,7 +98,7 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     }
 
     @Override
-    public EntityType<Player, PlayerSnapshot> getType() {
+    public EntityType<LivePlayer, PlayerSnapshot> getType() {
         return EntityTypes.PLAYER;
     }
 

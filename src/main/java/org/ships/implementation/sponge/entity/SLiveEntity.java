@@ -2,8 +2,8 @@ package org.ships.implementation.sponge.entity;
 
 import com.flowpowered.math.vector.Vector3d;
 import org.core.CorePlugin;
-import org.core.entity.Entity;
 import org.core.entity.LiveEntity;
+import org.core.vector.types.Vector3Double;
 import org.core.world.position.BlockPosition;
 import org.core.world.position.ExactPosition;
 import org.core.world.position.Position;
@@ -34,32 +34,32 @@ public abstract class SLiveEntity implements LiveEntity {
     }
 
     @Override
-    public Entity setPitch(double value) {
+    public LiveEntity setPitch(double value) {
         this.entity.setRotation(new Vector3d(value, this.entity.getRotation().getY(), this.entity.getRotation().getZ()));
         return this;
     }
 
     @Override
-    public Entity setYaw(double value) {
+    public LiveEntity setYaw(double value) {
         this.entity.setRotation(new Vector3d(this.entity.getRotation().getX(), value, this.entity.getRotation().getZ()));
         return this;
     }
 
     @Override
-    public Entity setRoll(double value) {
+    public LiveEntity setRoll(double value) {
         this.entity.setRotation(new Vector3d(this.entity.getRotation().getX(), this.entity.getRotation().getY(), value));
         return this;
     }
 
     @Override
-    public Entity setPosition(Position<? extends Number> position) {
+    public LiveEntity setPosition(Position<? extends Number> position) {
         ExactPosition position1 = position instanceof ExactPosition ? (ExactPosition)position : ((BlockPosition)position).toExactPosition();
         this.entity.setLocation(new org.spongepowered.api.world.Location<>(((SWorldExtent)position1.getWorld()).getSpongeWorld(), position1.getX(), position1.getY(), position1.getZ()));
         return this;
     }
 
     @Override
-    public Entity setGravity(boolean check) {
+    public LiveEntity setGravity(boolean check) {
         this.entity.offer(Keys.HAS_GRAVITY, check);
         return this;
     }
@@ -85,19 +85,54 @@ public abstract class SLiveEntity implements LiveEntity {
     }
 
     @Override
-    public Collection<Entity> getPassengers() {
-        Collection<Entity> entities = new HashSet<>();
+    public Collection<LiveEntity> getPassengers() {
+        Collection<LiveEntity> entities = new HashSet<>();
         this.entity.get(Keys.PASSENGERS).get().stream().forEach(uuid -> Sponge.getServer().getWorlds().stream().forEach(w -> w.getEntity(uuid).ifPresent(e -> entities.add(((SpongePlatform)CorePlugin.getPlatform()).createEntityInstance(e)))));
         return entities;
     }
 
     @Override
-    public Entity addPassengers(Collection<Entity> entities) {
+    public LiveEntity addPassengers(Collection<LiveEntity> entities) {
         return null;
     }
 
     @Override
-    public Entity removePassengers(Collection<Entity> entities) {
+    public LiveEntity removePassengers(Collection<LiveEntity> entities) {
         return null;
+    }
+
+    @Override
+    public LiveEntity setVelocity(Vector3Double velocity) {
+        return null;
+    }
+
+    @Override
+    public LiveEntity setCustomName(org.core.text.Text text) {
+        return null;
+    }
+
+    @Override
+    public LiveEntity setCustomNameVisible(boolean visible) {
+        return null;
+    }
+
+    @Override
+    public Vector3Double getVelocity() {
+        return null;
+    }
+
+    @Override
+    public org.core.text.Text getCustomName() {
+        return null;
+    }
+
+    @Override
+    public boolean isCustomNameVisible() {
+        return false;
+    }
+
+    @Override
+    public void remove() {
+        this.entity.remove();
     }
 }

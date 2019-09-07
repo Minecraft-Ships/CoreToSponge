@@ -9,11 +9,16 @@ import org.core.world.position.block.details.BlockDetails;
 import org.core.world.position.block.details.data.keyed.KeyedData;
 import org.core.world.position.block.entity.TileEntity;
 import org.core.world.position.block.entity.TileEntitySnapshot;
+import org.core.world.position.flags.PositionFlag;
+import org.core.world.position.flags.physics.ApplyPhysicsFlag;
+import org.core.world.position.flags.physics.ApplyPhysicsFlags;
 import org.ships.implementation.sponge.entity.living.human.player.live.SLivePlayer;
 import org.ships.implementation.sponge.world.position.block.details.blocks.SBlockDetail;
-import org.spongepowered.api.world.BlockChangeFlags;
+import org.ships.implementation.sponge.world.position.flags.SApplyPhysicsFlag;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+
+import java.util.stream.Stream;
 
 public class SBlockPosition extends SPosition<Integer> implements BlockPosition {
 
@@ -27,9 +32,10 @@ public class SBlockPosition extends SPosition<Integer> implements BlockPosition 
     }
 
     @Override
-    public SBlockPosition setBlock(BlockDetails details) {
+    public SBlockPosition setBlock(BlockDetails details, PositionFlag.SetFlag... flags) {
         org.spongepowered.api.block.BlockState state = ((SBlockDetail)details).getState();
-        this.location.setBlock(state, BlockChangeFlags.NONE);
+        SApplyPhysicsFlag physicsFlag = (SApplyPhysicsFlag) Stream.of(flags).filter(f -> f instanceof ApplyPhysicsFlag).findAny().orElse(ApplyPhysicsFlags.NONE);
+        this.location.setBlock(state, physicsFlag.getFlag());
         if (details.get(KeyedData.TILED_ENTITY).isPresent()){
             TileEntitySnapshot<? extends TileEntity> snapshot = details.get(KeyedData.TILED_ENTITY).get();
             try {

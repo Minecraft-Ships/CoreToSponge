@@ -62,7 +62,7 @@ public class SScheduler implements Scheduler {
                 builder = builder.interval(this.iteration, this.iterationTimeUnit);
             }
         }
-        this.task = builder.submit(this.plugin.getSpongeLauncher());
+        this.task = builder.submit(this.plugin.getLauncher());
 
     }
 

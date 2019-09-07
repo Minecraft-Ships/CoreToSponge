@@ -1,13 +1,17 @@
 package org.ships.implementation.sponge.world.position.block.details.blocks;
 
+import org.core.world.position.BlockPosition;
 import org.core.world.position.block.BlockType;
 import org.core.world.position.block.details.BlockDetails;
+import org.core.world.position.block.details.BlockSnapshot;
 import org.core.world.position.block.details.data.DirectionalData;
 import org.core.world.position.block.details.data.keyed.KeyedData;
+import org.ships.implementation.sponge.world.position.SBlockPosition;
 import org.ships.implementation.sponge.world.position.block.SBlockType;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.world.World;
 
 import java.util.Optional;
 
@@ -22,6 +26,12 @@ public class SBlockDetails implements BlockDetails, SBlockDetail {
     @Override
     public BlockType getType() {
         return new SBlockType(this.blockstate.getType());
+    }
+
+    @Override
+    public BlockSnapshot createSnapshot(BlockPosition position) {
+        org.spongepowered.api.world.Location<World> loc = ((SBlockPosition)position).getSpongeLocation();
+        return new SBlockSnapshot(org.spongepowered.api.block.BlockSnapshot.builder().blockState(this.blockstate).world(loc.getExtent().getProperties()).position(loc.getBlockPosition()).build());
     }
 
     @Override

@@ -2,10 +2,10 @@ package org.ships.implementation.sponge.command;
 
 import org.core.CorePlugin;
 import org.core.command.CommandLauncher;
+import org.core.exceptions.NotEnoughArguments;
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.text.SText;
 import org.spongepowered.api.command.CommandCallable;
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
@@ -25,23 +25,28 @@ public class SCommand implements CommandCallable {
     }
 
     @Override
-    public CommandResult process(CommandSource source, String arguments) throws CommandException {
+    public CommandResult process(CommandSource source, String arguments) {
         org.core.source.command.CommandSource source2 = ((SpongePlatform)CorePlugin.getPlatform()).get(source);
-        return this.commandLauncher.run(source2, convertArgs(arguments)) ? CommandResult.success() : CommandResult.empty();
+        try {
+            return this.commandLauncher.run(source2, convertArgs(arguments)) ? CommandResult.success() : CommandResult.empty();
+        } catch (NotEnoughArguments notEnoughArguments) {
+            return CommandResult.empty();
+        } catch (Throwable e){
+            e.printStackTrace();
+        }
+        return CommandResult.empty();
     }
 
     @Override
-    public List<String> getSuggestions(CommandSource source, String arguments, Location<World> targetPosition) throws CommandException {
+    public List<String> getSuggestions(CommandSource source, String arguments, Location<World> targetPosition) {
         org.core.source.command.CommandSource source2 = ((SpongePlatform)CorePlugin.getPlatform()).get(source);
         return this.commandLauncher.tab(source2, convertArgs(arguments));
     }
 
     @Override
     public boolean testPermission(CommandSource source) {
-        if(this.commandLauncher.getPermission().isPresent()) {
-            return source.hasPermission(this.commandLauncher.getPermission().get());
-        }
-        return true;
+        SpongePlatform platform = (SpongePlatform)CorePlugin.getPlatform();
+        return this.commandLauncher.hasPermission(platform.get(source));
     }
 
     @Override

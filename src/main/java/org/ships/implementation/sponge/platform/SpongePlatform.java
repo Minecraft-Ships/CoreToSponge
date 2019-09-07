@@ -4,6 +4,9 @@ import org.core.CorePlugin;
 import org.core.configuration.type.ConfigurationLoaderType;
 import org.core.configuration.type.ConfigurationLoaderTypes;
 import org.core.entity.*;
+import org.core.entity.living.animal.parrot.ParrotType;
+import org.core.entity.living.animal.parrot.ParrotTypes;
+import org.core.event.CustomEvent;
 import org.core.inventory.item.ItemType;
 import org.core.inventory.item.data.dye.DyeType;
 import org.core.inventory.item.data.dye.DyeTypes;
@@ -13,6 +16,8 @@ import org.core.platform.Plugin;
 import org.core.source.command.CommandSource;
 import org.core.text.TextColour;
 import org.core.text.TextColours;
+import org.core.world.boss.colour.BossColour;
+import org.core.world.boss.colour.BossColours;
 import org.core.world.position.ExactPosition;
 import org.core.world.position.block.BlockType;
 import org.core.world.position.block.details.BlockDetails;
@@ -22,6 +27,8 @@ import org.core.world.position.block.entity.TileEntitySnapshot;
 import org.core.world.position.block.entity.banner.pattern.PatternLayerType;
 import org.core.world.position.block.entity.banner.pattern.PatternLayerTypes;
 import org.core.world.position.block.grouptype.BlockGroup;
+import org.core.world.position.flags.physics.ApplyPhysicsFlag;
+import org.core.world.position.flags.physics.ApplyPhysicsFlags;
 import org.ships.implementation.sponge.configuration.JsonConfigurationLoaderType;
 import org.ships.implementation.sponge.configuration.YamlConfigurationLoaderType;
 import org.ships.implementation.sponge.entity.forge.live.SForgeEntity;
@@ -64,7 +71,7 @@ public class SpongePlatform implements Platform {
         return null;
     }
 
-    public <E extends Entity, S extends EntitySnapshot<E>> Optional<S> createSnapshot(EntityType<E, S> type, ExactPosition pos){
+    public <E extends LiveEntity, S extends EntitySnapshot<E>> Optional<S> createSnapshot(EntityType<E, S> type, ExactPosition pos){
         try {
             S snapshot = type.getSnapshotClass().getConstructor(ExactPosition.class).newInstance(pos);
             return Optional.of(snapshot);
@@ -133,7 +140,7 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
-    public <E extends Entity, S extends EntitySnapshot<E>> EntityType<E, S> get(EntityTypes<E, S> entityId) {
+    public <E extends CustomEvent> E callEvent(E event) {
         return null;
     }
 
@@ -173,6 +180,21 @@ public class SpongePlatform implements Platform {
 
     @Override
     public Optional<ConfigurationLoaderType> getConfigurationLoaderType(String id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<BossColour> getBossColour(String id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ParrotType> getParrotType(String id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ApplyPhysicsFlag> getApplyPhysics(String id) {
         return Optional.empty();
     }
 
@@ -221,12 +243,42 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
+    public Collection<BossColour> getBossColours() {
+        return null;
+    }
+
+    @Override
+    public Collection<ParrotType> getParrotType() {
+        return null;
+    }
+
+    @Override
+    public Collection<ApplyPhysicsFlag> getApplyPhysics() {
+        return null;
+    }
+
+    @Override
     public Collection<TileEntitySnapshot<? extends TileEntity>> getDefaultTileEntities() {
         return null;
     }
 
     @Override
+    public BossColour get(BossColours colours) {
+        return null;
+    }
+
+    @Override
+    public ApplyPhysicsFlag get(ApplyPhysicsFlags flags) {
+        return null;
+    }
+
+    @Override
     public ItemType get(ItemTypeCommon itemId) {
+        return null;
+    }
+
+    @Override
+    public ParrotType get(ParrotTypes parrotID) {
         return null;
     }
 
@@ -256,6 +308,11 @@ public class SpongePlatform implements Platform {
         }else if(id.getName().equals("Json") || id.getName().equals("Default")){
             return new JsonConfigurationLoaderType();
         }
+        return null;
+    }
+
+    @Override
+    public <E extends LiveEntity, S extends EntitySnapshot<E>> EntityType<E, S> get(EntityTypes<E, S> entityId) {
         return null;
     }
 
