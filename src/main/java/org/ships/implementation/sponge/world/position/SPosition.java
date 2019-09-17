@@ -44,7 +44,7 @@ public abstract class SPosition <N extends Number> implements Position<N> {
 
     @Override
     public BlockSnapshot getBlockDetails() {
-        return new SBlockSnapshot(this.location.createSnapshot());
+        return new SBlockSnapshot(this.location);
     }
 
     @Override
@@ -64,11 +64,14 @@ public abstract class SPosition <N extends Number> implements Position<N> {
 
     @Override
     public boolean equals(Object obj){
-        if(!(obj instanceof SPosition)){
+        if(!(obj instanceof Position)){
             return false;
         }
-        SPosition pos = (SPosition) obj;
-        return this.location.equals(pos.location);
+        Position pos = (Position) obj;
+        if(!pos.getWorld().equals(this.getWorld())){
+            return false;
+        }
+        return pos.getPosition().equals(this.getPosition());
     }
 
     @Override

@@ -104,17 +104,32 @@ public class AbstractConfigurationFile implements ConfigurationFile {
 
     @Override
     public Optional<Integer> parseInt(ConfigurationNode node) {
-        return Optional.of(this.root.getNode((Object[]) node.getPath()).getInt());
+        Object[] path = node.getPath();
+        ninja.leaping.configurate.ConfigurationNode cNode = this.root.getNode(path);
+        if(!cNode.isVirtual()){
+            return Optional.empty();
+        }
+        return Optional.of(cNode.getInt());
     }
 
     @Override
     public Optional<Double> parseDouble(ConfigurationNode node) {
-        return Optional.of(this.root.getNode((Object[]) node.getPath()).getDouble());
+        Object[] path = node.getPath();
+        ninja.leaping.configurate.ConfigurationNode cNode = this.root.getNode(path);
+        if(!cNode.isVirtual()){
+            return Optional.empty();
+        }
+        return Optional.of(cNode.getDouble());
     }
 
     @Override
     public Optional<Boolean> parseBoolean(ConfigurationNode node) {
-        return Optional.of(this.root.getNode((Object[]) node.getPath()).getBoolean());
+        Object[] path = node.getPath();
+        ninja.leaping.configurate.ConfigurationNode cNode = this.root.getNode(path);
+        if(!cNode.isVirtual()){
+            return Optional.empty();
+        }
+        return Optional.of(cNode.getBoolean());
     }
 
     @Override
@@ -158,7 +173,8 @@ public class AbstractConfigurationFile implements ConfigurationFile {
 
     @Override
     public void set(ConfigurationNode node, Object value) {
-        this.root.getNode((Object[])node.getPath()).setValue(value);
+        Object[] path = node.getPath();
+        this.root.getNode(path).setValue(value);
     }
 
     @Override

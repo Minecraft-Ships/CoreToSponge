@@ -65,4 +65,13 @@ public class SWorldExtent implements WorldExtent {
         });
         return set;
     }
+
+    @Override
+    public boolean equals(Object object){
+        if(!(object instanceof WorldExtent)){
+            return false;
+        }
+        WorldExtent extent = (WorldExtent) object;
+        return extent.getUniquieId().equals(this.getUniquieId());
+    }
 }

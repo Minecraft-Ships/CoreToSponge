@@ -1,13 +1,14 @@
 package org.ships.implementation.sponge.entity.living.human.player.live;
 
 import org.core.entity.EntityType;
-import org.core.entity.EntityTypes;
 import org.core.entity.living.human.AbstractHuman;
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.entity.living.human.player.PlayerSnapshot;
 import org.core.inventory.inventories.general.entity.PlayerInventory;
 import org.core.source.viewer.CommandViewer;
+import org.ships.implementation.sponge.entity.SEntityType;
 import org.ships.implementation.sponge.entity.SLiveEntity;
+import org.ships.implementation.sponge.entity.living.human.player.snapshot.SPlayerSnapshot;
 import org.ships.implementation.sponge.text.SText;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -99,7 +100,7 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
 
     @Override
     public EntityType<LivePlayer, PlayerSnapshot> getType() {
-        return EntityTypes.PLAYER;
+        return new SEntityType.SPlayerType();
     }
 
     @Override
@@ -109,7 +110,7 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
 
     @Override
     public PlayerSnapshot createSnapshot() {
-        return null;
+        return new SPlayerSnapshot(this);
     }
 
     @Override

@@ -11,9 +11,9 @@ import java.util.Set;
 
 public class DirectionWrapper implements DirectionalData {
 
-    SBlockDetail details;
+    SBlockDetails details;
 
-    public DirectionWrapper(SBlockDetail details){
+    public DirectionWrapper(SBlockDetails details){
         this.details = details;
     }
 

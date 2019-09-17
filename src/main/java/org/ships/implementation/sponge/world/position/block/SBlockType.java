@@ -28,7 +28,17 @@ public class SBlockType implements BlockType {
     //THIS IS FOR 1.13
     @Override
     public Set<BlockGroup> getGroups() {
-        return CorePlugin.getPlatform().getBlockGroups().stream().filter(c -> Stream.of(c.getGrouped()).anyMatch(bt -> bt.equals(this))).collect(Collectors.toSet());
+        return CorePlugin
+                .getPlatform()
+                .getBlockGroups()
+                .stream()
+                .filter(c -> {
+                    return Stream
+                            .of(c
+                                    .getGrouped())
+                            .anyMatch(bt -> bt
+                                    .equals(this));
+                }).collect(Collectors.toSet());
     }
 
     @Override

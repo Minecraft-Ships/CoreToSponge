@@ -8,13 +8,16 @@ import org.core.world.position.BlockPosition;
 import org.core.world.position.ExactPosition;
 import org.core.world.position.Position;
 import org.ships.implementation.sponge.platform.SpongePlatform;
+import org.ships.implementation.sponge.text.SText;
 import org.ships.implementation.sponge.world.SWorldExtent;
 import org.ships.implementation.sponge.world.position.SExactPosition;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.text.Text;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 
 public abstract class SLiveEntity implements LiveEntity {
 
@@ -87,47 +90,60 @@ public abstract class SLiveEntity implements LiveEntity {
     @Override
     public Collection<LiveEntity> getPassengers() {
         Collection<LiveEntity> entities = new HashSet<>();
-        this.entity.get(Keys.PASSENGERS).get().stream().forEach(uuid -> Sponge.getServer().getWorlds().stream().forEach(w -> w.getEntity(uuid).ifPresent(e -> entities.add(((SpongePlatform)CorePlugin.getPlatform()).createEntityInstance(e)))));
+        this.entity.get(Keys.PASSENGERS).ifPresent(list -> list.forEach(uuid -> Sponge.getServer().getWorlds().forEach(w -> w.getEntity(uuid).ifPresent(e -> entities.add(((SpongePlatform)CorePlugin.getPlatform()).createEntityInstance(e))))));
         return entities;
     }
 
     @Override
     public LiveEntity addPassengers(Collection<LiveEntity> entities) {
-        return null;
+        entities.forEach(e -> this.entity.addPassenger(((SLiveEntity)e).getSpongeEntity()));
+        return this;
     }
 
     @Override
     public LiveEntity removePassengers(Collection<LiveEntity> entities) {
-        return null;
+        entities.forEach(e -> this.entity.removePassenger(((SLiveEntity)e).getSpongeEntity()));
+        return this;
     }
 
     @Override
     public LiveEntity setVelocity(Vector3Double velocity) {
-        return null;
+        Vector3d vector = new Vector3d(velocity.getX(), velocity.getY(), velocity.getZ());
+        this.entity.setVelocity(vector);
+        return this;
     }
 
     @Override
     public LiveEntity setCustomName(org.core.text.Text text) {
-        return null;
+        SText sText = (SText)text;
+        this.entity.offer(Keys.DISPLAY_NAME, sText.toSponge());
+        return this;
     }
 
     @Override
     public LiveEntity setCustomNameVisible(boolean visible) {
-        return null;
+        this.entity.offer(Keys.CUSTOM_NAME_VISIBLE, visible);
+        return this;
     }
 
     @Override
     public Vector3Double getVelocity() {
-        return null;
+        Vector3d vector3d = entity.getVelocity();
+        return new Vector3Double(vector3d.getX(), vector3d.getY(), vector3d.getZ());
     }
 
     @Override
-    public org.core.text.Text getCustomName() {
-        return null;
+    public Optional<org.core.text.Text> getCustomName() {
+        Optional<Text> opValue = this.entity.get(Keys.DISPLAY_NAME);
+        return opValue.map(SText::new);
     }
 
     @Override
     public boolean isCustomNameVisible() {
+        Optional<Boolean> opBoolean = this.entity.get(Keys.CUSTOM_NAME_VISIBLE);
+        if(opBoolean.isPresent()){
+            return opBoolean.get();
+        }
         return false;
     }
 

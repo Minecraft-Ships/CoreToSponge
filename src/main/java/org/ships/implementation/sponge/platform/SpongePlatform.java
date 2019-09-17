@@ -20,23 +20,28 @@ import org.core.world.boss.colour.BossColour;
 import org.core.world.boss.colour.BossColours;
 import org.core.world.position.ExactPosition;
 import org.core.world.position.block.BlockType;
-import org.core.world.position.block.details.BlockDetails;
 import org.core.world.position.block.entity.LiveTileEntity;
 import org.core.world.position.block.entity.TileEntity;
 import org.core.world.position.block.entity.TileEntitySnapshot;
 import org.core.world.position.block.entity.banner.pattern.PatternLayerType;
 import org.core.world.position.block.entity.banner.pattern.PatternLayerTypes;
 import org.core.world.position.block.grouptype.BlockGroup;
+import org.core.world.position.block.grouptype.BlockGroups;
 import org.core.world.position.flags.physics.ApplyPhysicsFlag;
 import org.core.world.position.flags.physics.ApplyPhysicsFlags;
 import org.ships.implementation.sponge.configuration.JsonConfigurationLoaderType;
 import org.ships.implementation.sponge.configuration.YamlConfigurationLoaderType;
+import org.ships.implementation.sponge.entity.SEntityType;
 import org.ships.implementation.sponge.entity.forge.live.SForgeEntity;
 import org.ships.implementation.sponge.entity.living.human.player.live.SLivePlayer;
+import org.ships.implementation.sponge.events.SpongeListener;
+import org.ships.implementation.sponge.inventory.SItemType;
 import org.ships.implementation.sponge.text.STextColour;
 import org.ships.implementation.sponge.world.position.block.SBlockType;
 import org.ships.implementation.sponge.world.position.block.entity.furnace.SLiveFurnaceEntity;
 import org.ships.implementation.sponge.world.position.block.entity.sign.SLiveSignEntity;
+import org.ships.implementation.sponge.world.position.block.entity.sign.SSignTileEntitySnapshot;
+import org.ships.implementation.sponge.world.position.flags.SApplyPhysicsFlag;
 import org.spongepowered.api.Sponge;
 
 import java.lang.reflect.Constructor;
@@ -47,14 +52,16 @@ public class SpongePlatform implements Platform {
 
     protected Set<? extends EntityType<? extends Entity, ? extends EntitySnapshot<? extends Entity>>> entityTypes = new HashSet<>();
     protected Map<Class<? extends org.spongepowered.api.entity.Entity>, Class<? extends LiveEntity>> entityToEntityMap = new HashMap<>();
-    protected Map<String, Class<? extends BlockDetails>> blockStateToData = new HashMap<>();
     protected Map<Class<? extends org.spongepowered.api.block.tileentity.TileEntity>, Class<? extends LiveTileEntity>> blockStateToTileEntity = new HashMap<>();
+    protected Collection<TileEntitySnapshot<? extends TileEntity>> defaultTileEntities = new HashSet<>();
 
     public SpongePlatform(){
         this.entityToEntityMap.put(org.spongepowered.api.entity.living.player.Player.class, SLivePlayer.class);
 
         this.blockStateToTileEntity.put(org.spongepowered.api.block.tileentity.Sign.class, SLiveSignEntity.class);
         this.blockStateToTileEntity.put(org.spongepowered.api.block.tileentity.carrier.Furnace.class, SLiveFurnaceEntity.class);
+
+        this.defaultTileEntities.add(new SSignTileEntitySnapshot());
     }
 
     public CommandSource get(org.spongepowered.api.command.CommandSource source){
@@ -141,12 +148,19 @@ public class SpongePlatform implements Platform {
 
     @Override
     public <E extends CustomEvent> E callEvent(E event) {
-        return null;
+        return SpongeListener.call(event);
     }
 
     @Override
     public Optional<EntityType<? extends Entity, ? extends EntitySnapshot<? extends Entity>>> getEntityType(String id) {
-        return Optional.empty();
+        if(id.equals("minecraft:player")){
+            return Optional.of(new SEntityType.SPlayerType());
+        }
+        Optional<org.spongepowered.api.entity.EntityType> opEntity = org.spongepowered.api.Sponge.getRegistry().getAllOf(org.spongepowered.api.entity.EntityType.class).stream().filter(et -> et.getId().equals(id)).findAny();
+        if(!opEntity.isPresent()){
+            return Optional.empty();
+        }
+        return Optional.of(new SEntityType.SForgedEntityType(opEntity.get()));
     }
 
     @Override
@@ -155,6 +169,8 @@ public class SpongePlatform implements Platform {
         if(opBlock.isPresent()){
             return Optional.of(new SBlockType(opBlock.get()));
         }
+        System.err.println("Failed to find: " + id);
+        org.spongepowered.api.Sponge.getRegistry().getAllOf(org.spongepowered.api.block.BlockType.class).stream().forEach(bt -> System.out.println("\t- " + bt.getId()));
         return null;
     }
 
@@ -200,7 +216,11 @@ public class SpongePlatform implements Platform {
 
     @Override
     public Collection<EntityType<? extends Entity, ? extends EntitySnapshot<? extends Entity>>> getEntityTypes() {
-        return null;
+        Set<EntityType<? extends Entity, ? extends EntitySnapshot<? extends Entity>>> set = new HashSet<>();
+        org.spongepowered.api.Sponge.getRegistry().getAllOf(org.spongepowered.api.entity.EntityType.class).stream().forEach(e -> {
+            getEntityType(e.getId()).ifPresent(i -> set.add(i));
+        });
+        return set;
     }
 
     @Override
@@ -239,7 +259,7 @@ public class SpongePlatform implements Platform {
 
     @Override
     public Collection<BlockGroup> getBlockGroups() {
-        return null;
+        return BlockGroups.values();
     }
 
     @Override
@@ -259,7 +279,7 @@ public class SpongePlatform implements Platform {
 
     @Override
     public Collection<TileEntitySnapshot<? extends TileEntity>> getDefaultTileEntities() {
-        return null;
+        return this.defaultTileEntities;
     }
 
     @Override
@@ -269,12 +289,19 @@ public class SpongePlatform implements Platform {
 
     @Override
     public ApplyPhysicsFlag get(ApplyPhysicsFlags flags) {
+        switch (flags.getId()){
+            case "none": return SApplyPhysicsFlag.NONE;
+            case "default": return SApplyPhysicsFlag.DEFAULT;
+            default: System.err.println("Unknown Applied Physics Flag of: " + flags.getId());
+        }
+
         return null;
     }
 
     @Override
     public ItemType get(ItemTypeCommon itemId) {
-        return null;
+        org.spongepowered.api.item.ItemType item = org.spongepowered.api.Sponge.getRegistry().getType(org.spongepowered.api.item.ItemType.class, itemId.getId()).get();
+        return new SItemType(item);
     }
 
     @Override

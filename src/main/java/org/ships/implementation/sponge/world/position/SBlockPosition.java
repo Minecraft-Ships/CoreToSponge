@@ -13,7 +13,7 @@ import org.core.world.position.flags.PositionFlag;
 import org.core.world.position.flags.physics.ApplyPhysicsFlag;
 import org.core.world.position.flags.physics.ApplyPhysicsFlags;
 import org.ships.implementation.sponge.entity.living.human.player.live.SLivePlayer;
-import org.ships.implementation.sponge.world.position.block.details.blocks.SBlockDetail;
+import org.ships.implementation.sponge.world.position.block.details.blocks.SBlockDetails;
 import org.ships.implementation.sponge.world.position.flags.SApplyPhysicsFlag;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -33,7 +33,7 @@ public class SBlockPosition extends SPosition<Integer> implements BlockPosition 
 
     @Override
     public SBlockPosition setBlock(BlockDetails details, PositionFlag.SetFlag... flags) {
-        org.spongepowered.api.block.BlockState state = ((SBlockDetail)details).getState();
+        org.spongepowered.api.block.BlockState state = ((SBlockDetails)details).getState();
         SApplyPhysicsFlag physicsFlag = (SApplyPhysicsFlag) Stream.of(flags).filter(f -> f instanceof ApplyPhysicsFlag).findAny().orElse(ApplyPhysicsFlags.NONE);
         this.location.setBlock(state, physicsFlag.getFlag());
         if (details.get(KeyedData.TILED_ENTITY).isPresent()){
@@ -51,7 +51,7 @@ public class SBlockPosition extends SPosition<Integer> implements BlockPosition 
     public Position<Integer> setBlock(BlockDetails details, LivePlayer... players) {
         for(LivePlayer player : players){
             if(player.getPosition().getWorld().equals(this.getWorld())) {
-                ((SLivePlayer) player).getSpongeEntity().sendBlockChange(this.location.getBlockPosition(), ((SBlockDetail)details).getState());
+                ((SLivePlayer) player).getSpongeEntity().sendBlockChange(this.location.getBlockPosition(), ((SBlockDetails)details).getState());
             }
         }
         return this;

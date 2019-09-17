@@ -1,5 +1,6 @@
 package org.ships.implementation.sponge.events;
 
+import com.flowpowered.math.vector.Vector3d;
 import com.flowpowered.math.vector.Vector3i;
 import org.core.CorePlugin;
 import org.core.entity.living.human.player.LivePlayer;
@@ -22,10 +23,7 @@ import org.spongepowered.api.data.manipulator.mutable.tileentity.SignData;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class SpongeListener {
 
@@ -57,7 +55,11 @@ public class SpongeListener {
     @org.spongepowered.api.event.Listener
     public void OnPlayerInteractWithBlock(org.spongepowered.api.event.block.InteractBlockEvent event, @org.spongepowered.api.event.filter.cause.Root org.spongepowered.api.entity.living.player.Player player){
         LivePlayer player1 = new SLivePlayer(player);
-        com.flowpowered.math.vector.Vector3d vector = event.getInteractionPoint().get();
+        Optional<Vector3d> opVector = event.getInteractionPoint();
+        if(!opVector.isPresent()){
+            return;
+        }
+        Vector3d vector = opVector.get();
         BlockPosition bp = player1.getPosition().getWorld().getPosition(vector.getX(), vector.getY(), vector.getZ()).toBlockPosition();
         Vector3i spongeVector = event.getTargetSide().asBlockOffset();
         int action = -1;
