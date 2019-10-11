@@ -97,7 +97,7 @@ public class SpongePlatform implements Platform {
     public LiveEntity createEntityInstance(org.spongepowered.api.entity.Entity entity){
         Optional<Map.Entry<Class<? extends org.spongepowered.api.entity.Entity>, Class<? extends LiveEntity>>> opEntry = this.entityToEntityMap.entrySet().stream().filter(e -> e.getKey().isInstance(entity)).findAny();
         if(!opEntry.isPresent()){
-            System.err.println("\tFailed to find entity (" + entity.getType().getId() + ") in map. Using forge Entity");
+            //System.err.println("\tFailed to find entity (" + entity.getType().getId() + ") in map. Using forge Entity");
             return new SForgeEntity(entity);
         }
         Class<? extends LiveEntity> bdclass = opEntry.get().getValue();

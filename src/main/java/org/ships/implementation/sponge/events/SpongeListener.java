@@ -48,7 +48,6 @@ public class SpongeListener {
         org.core.text.Text[] setToLines = sEvent.getTo().getLines();
         for(int A = 0; A < setToLines.length; A++){
             data.addElement(A, ((SText)setToLines[A]).toSponge());
-            CorePlugin.getConsole().sendMessage(setToLines[A]);
         }
     }
 

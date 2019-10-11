@@ -15,6 +15,7 @@ public class SSchedulerBuilder implements SchedulerBuilder {
     protected Integer iteration;
     protected TimeUnit iterationUnit;
     protected Runnable executor;
+    protected String displayName;
     protected Scheduler runAfter;
 
     @Override
@@ -81,6 +82,17 @@ public class SSchedulerBuilder implements SchedulerBuilder {
     @Override
     public Optional<Scheduler> getToRunAfter() {
         return Optional.ofNullable(this.runAfter);
+    }
+
+    @Override
+    public Optional<String> getDisplayName() {
+        return Optional.ofNullable(this.displayName);
+    }
+
+    @Override
+    public SchedulerBuilder setDisplayName(String displayName) {
+        this.displayName = displayName;
+        return this;
     }
 
     @Override
