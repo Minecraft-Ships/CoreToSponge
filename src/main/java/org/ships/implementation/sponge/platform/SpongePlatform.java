@@ -1,6 +1,8 @@
 package org.ships.implementation.sponge.platform;
 
 import org.core.CorePlugin;
+import org.core.configuration.parser.unspecific.UnspecificParser;
+import org.core.configuration.parser.unspecific.UnspecificParsers;
 import org.core.configuration.type.ConfigurationLoaderType;
 import org.core.configuration.type.ConfigurationLoaderTypes;
 import org.core.entity.*;
@@ -12,6 +14,7 @@ import org.core.inventory.item.data.dye.DyeType;
 import org.core.inventory.item.data.dye.DyeTypes;
 import org.core.inventory.item.type.ItemTypeCommon;
 import org.core.platform.Platform;
+import org.core.platform.PlatformDetails;
 import org.core.platform.Plugin;
 import org.core.source.command.CommandSource;
 import org.core.text.TextColour;
@@ -54,6 +57,7 @@ public class SpongePlatform implements Platform {
     protected Map<Class<? extends org.spongepowered.api.entity.Entity>, Class<? extends LiveEntity>> entityToEntityMap = new HashMap<>();
     protected Map<Class<? extends org.spongepowered.api.block.tileentity.TileEntity>, Class<? extends LiveTileEntity>> blockStateToTileEntity = new HashMap<>();
     protected Collection<TileEntitySnapshot<? extends TileEntity>> defaultTileEntities = new HashSet<>();
+    protected Collection<UnspecificParser<? extends Object>> unspecificParsers = new HashSet<>();
 
     public SpongePlatform(){
         this.entityToEntityMap.put(org.spongepowered.api.entity.living.player.Player.class, SLivePlayer.class);
@@ -142,6 +146,11 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
+    public PlatformDetails getDetails() {
+        return null;
+    }
+
+    @Override
     public Set<Plugin> getPlugins() {
         return null;
     }
@@ -215,6 +224,11 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
+    public Optional<UnspecificParser<? extends Object>> getUnspecifiedParser(String id) {
+        return this.unspecificParsers.stream().filter(f -> f.getId().equals(id)).findFirst();
+    }
+
+    @Override
     public Collection<EntityType<? extends Entity, ? extends EntitySnapshot<? extends Entity>>> getEntityTypes() {
         Set<EntityType<? extends Entity, ? extends EntitySnapshot<? extends Entity>>> set = new HashSet<>();
         org.spongepowered.api.Sponge.getRegistry().getAllOf(org.spongepowered.api.entity.EntityType.class).stream().forEach(e -> {
@@ -278,6 +292,11 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
+    public Collection<UnspecificParser<? extends Object>> getUnspecifiedParsers() {
+        return null;
+    }
+
+    @Override
     public Collection<TileEntitySnapshot<? extends TileEntity>> getDefaultTileEntities() {
         return this.defaultTileEntities;
     }
@@ -285,6 +304,11 @@ public class SpongePlatform implements Platform {
     @Override
     public BossColour get(BossColours colours) {
         return null;
+    }
+
+    @Override
+    public <T> UnspecificParser<T> get(UnspecificParsers<T> parsers) {
+        return (UnspecificParser<T>) this.getUnspecifiedParser(parsers.getId()).get();
     }
 
     @Override

@@ -35,7 +35,11 @@ public class DirectionWrapper implements DirectionalData {
 
     @Override
     public DirectionalData setDirection(Direction direction) throws DirectionNotSupported {
-        if (!this.details.setKey(Keys.DIRECTION, DirectionUtils.getSpongeDirection(direction))){
+        org.spongepowered.api.util.Direction direction1 = DirectionUtils.getSpongeDirection(direction);
+        //this.details.getKey()
+        boolean check = this.details.setKey(Keys.DIRECTION, direction1);
+        if (!check){
+            System.out.println("Direction not supported");
             throw new DirectionNotSupported(direction, this.details.getState().getType().getId());
         }
         return this;

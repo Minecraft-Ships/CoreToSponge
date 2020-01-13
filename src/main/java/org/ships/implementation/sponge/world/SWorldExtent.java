@@ -5,6 +5,7 @@ import org.core.entity.LiveEntity;
 import org.core.world.WorldExtent;
 import org.core.world.position.BlockPosition;
 import org.core.world.position.ExactPosition;
+import org.core.world.position.block.entity.LiveTileEntity;
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.world.position.SBlockPosition;
 import org.ships.implementation.sponge.world.position.SExactPosition;
@@ -62,6 +63,15 @@ public class SWorldExtent implements WorldExtent {
         this.world.getEntities().forEach(e -> {
             LiveEntity entity = platform.createEntityInstance(e);
             set.add(entity);
+        });
+        return set;
+    }
+
+    @Override
+    public Set<LiveTileEntity> getTileEntities() {
+        Set<LiveTileEntity> set = new HashSet<>();
+        this.world.getTileEntities().stream().forEach(te -> {
+            ((SpongePlatform)CorePlugin.getPlatform()).createTileEntityInstance(te).ifPresent(set::add);
         });
         return set;
     }

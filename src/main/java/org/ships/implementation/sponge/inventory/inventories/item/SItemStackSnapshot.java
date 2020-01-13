@@ -1,12 +1,19 @@
 package org.ships.implementation.sponge.inventory.inventories.item;
 
 import org.core.CorePlugin;
-import org.core.inventory.item.ItemStack;
+import org.core.inventory.item.stack.ItemStack;
 import org.core.inventory.item.ItemType;
+import org.core.text.Text;
 import org.ships.implementation.sponge.platform.SpongePlatform;
+import org.ships.implementation.sponge.text.SText;
+import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
-public class SItemStackSnapshot implements ItemStack {
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+public class SItemStackSnapshot implements org.core.inventory.item.stack.ItemStackSnapshot {
 
     protected ItemStackSnapshot item;
 
@@ -18,8 +25,8 @@ public class SItemStackSnapshot implements ItemStack {
         return this.item;
     }
 
-    public SItemStack toSpongeItem(){
-        return new SItemStack(this.item.createStack());
+    public SLiveItemStack toSpongeItem(){
+        return new SLiveItemStack(this.item.createStack());
     }
 
     @Override
@@ -34,6 +41,21 @@ public class SItemStackSnapshot implements ItemStack {
     }
 
     @Override
+    public List<Text> getLore() {
+        List<Text> list = new ArrayList<>();
+        this.item.get(Keys.ITEM_LORE).get().stream().forEach(t -> list.add(new SText(t)));
+        return list;
+    }
+
+    @Override
+    public ItemStack setLore(Collection<Text> lore) {
+        List<org.spongepowered.api.text.Text> list = new ArrayList<>();
+        lore.stream().forEach(t -> list.add(((SText)t).toSponge()));
+        this.item = this.item.with(Keys.ITEM_LORE, list).get();
+        return this;
+    }
+
+    @Override
     public ItemStack copy() {
         return new SItemStackSnapshot(this.item.copy());
     }
@@ -41,5 +63,10 @@ public class SItemStackSnapshot implements ItemStack {
     @Override
     public ItemStack copyWithQuantity(int quantity) {
         return new SItemStackSnapshot(org.spongepowered.api.item.inventory.ItemStack.builder().fromSnapshot(this.item).quantity(quantity).build().createSnapshot());
+    }
+
+    @Override
+    public org.core.inventory.item.stack.ItemStackSnapshot createSnapshot() {
+        return new SItemStackSnapshot(this.item.copy());
     }
 }

@@ -2,10 +2,10 @@ package org.ships.implementation.sponge.inventory.inventories.live;
 
 import org.core.inventory.inventories.general.block.FurnaceInventory;
 import org.core.inventory.inventories.snapshots.block.FurnaceInventorySnapshot;
-import org.core.inventory.item.ItemStack;
+import org.core.inventory.item.stack.ItemStack;
 import org.core.inventory.parts.Slot;
 import org.core.world.position.BlockPosition;
-import org.ships.implementation.sponge.inventory.inventories.item.SItemStack;
+import org.ships.implementation.sponge.inventory.inventories.item.SLiveItemStack;
 import org.ships.implementation.sponge.inventory.inventories.item.SItemStackSnapshot;
 import org.ships.implementation.sponge.inventory.inventories.snapshot.SSnapshotFurnaceInventory;
 import org.ships.implementation.sponge.world.position.SBlockPosition;
@@ -37,7 +37,7 @@ public class SLiveFurnaceInventory implements FurnaceInventory {
         public Optional<ItemStack> getItem() {
             Optional<org.spongepowered.api.item.inventory.ItemStack> opItem = this.slot.peek();
             if(opItem.isPresent()){
-                return Optional.of(new SItemStack(opItem.get()));
+                return Optional.of(new SLiveItemStack(opItem.get()));
             }
             return Optional.empty();
         }
@@ -49,8 +49,8 @@ public class SLiveFurnaceInventory implements FurnaceInventory {
                 return this;
             }
             org.spongepowered.api.item.inventory.ItemStack stack1 = null;
-            if(stack instanceof SItemStack){
-                stack1 = ((SItemStack)stack).getSponge();
+            if(stack instanceof SLiveItemStack){
+                stack1 = ((SLiveItemStack)stack).getSponge();
             }else if(stack instanceof SItemStackSnapshot){
                 stack1 = ((SItemStackSnapshot)stack).getSponge().createStack();
             }

@@ -1,7 +1,7 @@
 package org.ships.implementation.sponge.inventory;
 
-import org.core.inventory.item.ItemStack;
 import org.core.inventory.item.ItemType;
+import org.core.inventory.item.stack.ItemStackSnapshot;
 import org.core.world.position.block.BlockType;
 import org.ships.implementation.sponge.inventory.inventories.item.SItemStackSnapshot;
 import org.ships.implementation.sponge.world.position.block.SBlockType;
@@ -10,14 +10,14 @@ import java.util.Optional;
 
 public class SItemType implements ItemType {
 
-    org.spongepowered.api.item.ItemType type;
+    private org.spongepowered.api.item.ItemType type;
 
     public SItemType(org.spongepowered.api.item.ItemType type){
         this.type = type;
     }
 
     @Override
-    public ItemStack getDefaultItemStack() {
+    public ItemStackSnapshot getDefaultItemStack() {
         return new SItemStackSnapshot(this.type.getTemplate());
     }
 
