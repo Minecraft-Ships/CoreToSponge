@@ -39,7 +39,7 @@ public class DirectionWrapper implements DirectionalData {
         //this.details.getKey()
         boolean check = this.details.setKey(Keys.DIRECTION, direction1);
         if (!check){
-            System.out.println("Direction not supported");
+            System.err.println("Direction not supported");
             throw new DirectionNotSupported(direction, this.details.getState().getType().getId());
         }
         return this;

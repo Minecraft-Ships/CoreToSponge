@@ -13,9 +13,17 @@ import org.ships.implementation.sponge.text.SText;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.event.cause.Cause;
+import org.spongepowered.api.event.cause.EventContext;
+import org.spongepowered.api.event.cause.EventContextKeys;
+import org.spongepowered.api.service.ProviderRegistration;
+import org.spongepowered.api.service.economy.EconomyService;
+import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.serializer.TextSerializers;
 
+import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 public class SLivePlayer extends SLiveEntity implements LivePlayer {
@@ -129,5 +137,41 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     public boolean sudo(String wholeCommand) {
         CommandResult result = Sponge.getCommandManager().process(getSpongeEntity(), wholeCommand);
         return result.getSuccessCount().isPresent();
+    }
+
+    @Override
+    public BigDecimal getBalance() {
+        Optional<UniqueAccount> opAccount = getAccount();
+        if (!opAccount.isPresent()){
+            return new BigDecimal(0);
+        }
+        return opAccount.get().getBalance(Sponge.getServiceManager().getRegistration(EconomyService.class).get().getProvider().getDefaultCurrency());
+    }
+
+    @Override
+    public void setBalance(BigDecimal decimal) {
+        Optional<UniqueAccount> opAccount = getAccount();
+        if (!opAccount.isPresent()){
+            return;
+        }
+        opAccount.get()
+                .setBalance(Sponge
+                        .getServiceManager()
+                        .getRegistration(EconomyService.class)
+                        .get()
+                        .getProvider()
+                        .getDefaultCurrency(),
+                        decimal,
+                        Cause
+                                .builder()
+                                .build(EventContext
+                                        .builder()
+                                        .add(EventContextKeys.PLAYER, this.getSpongeEntity())
+                                        .build()));
+    }
+
+    private Optional<UniqueAccount> getAccount(){
+        Optional<ProviderRegistration<EconomyService>> opReg = Sponge.getServiceManager().getRegistration(EconomyService.class);
+        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration.getProvider().getOrCreateAccount(this.getUniqueId()));
     }
 }
