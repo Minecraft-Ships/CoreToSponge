@@ -1,6 +1,6 @@
 package org.ships.implementation.sponge.world.position.block.entity;
 
-import org.core.world.position.BlockPosition;
+import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.core.world.position.block.entity.LiveTileEntity;
 import org.ships.implementation.sponge.world.position.SBlockPosition;
 
@@ -17,7 +17,7 @@ public abstract class AbstractLiveTileEntity <T extends org.spongepowered.api.bl
     }
 
     @Override
-    public BlockPosition getPosition() {
+    public SyncBlockPosition getPosition() {
         return new SBlockPosition(this.tileEntity.getLocation());
     }
 }

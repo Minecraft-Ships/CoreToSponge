@@ -5,9 +5,9 @@ import org.core.entity.EntitySnapshot;
 import org.core.entity.LiveEntity;
 import org.core.text.Text;
 import org.core.vector.types.Vector3Double;
-import org.core.world.position.BlockPosition;
-import org.core.world.position.ExactPosition;
-import org.core.world.position.Position;
+import org.core.world.position.impl.sync.SyncBlockPosition;
+import org.core.world.position.impl.sync.SyncExactPosition;
+import org.core.world.position.impl.sync.SyncPosition;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -18,7 +18,7 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     protected double pitch;
     protected double yaw;
     protected double roll;
-    protected ExactPosition position;
+    protected SyncExactPosition position;
     protected boolean gravity;
     protected Vector3Double velocity;
     protected Text customName;
@@ -62,7 +62,7 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     }
 
     @Override
-    public ExactPosition getPosition() {
+    public SyncExactPosition getPosition() {
         return this.position;
     }
 
@@ -85,11 +85,11 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     }
 
     @Override
-    public EntitySnapshot<? extends LiveEntity> setPosition(Position<? extends Number> position) {
-        if(position instanceof ExactPosition){
-            this.position = (ExactPosition) position;
+    public EntitySnapshot<? extends LiveEntity> setPosition(SyncPosition<? extends Number> position) {
+        if(position instanceof SyncExactPosition){
+            this.position = (SyncExactPosition) position;
         }else{
-            this.position = ((BlockPosition)position).toExactPosition();
+            this.position = ((SyncBlockPosition)position).toExactPosition();
         }
         return null;
     }

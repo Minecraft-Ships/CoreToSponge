@@ -1,7 +1,7 @@
 package org.ships.implementation.sponge.world.position.block.details.blocks;
 
 import org.core.CorePlugin;
-import org.core.world.position.BlockPosition;
+import org.core.world.position.impl.Position;
 import org.core.world.position.block.BlockType;
 import org.core.world.position.block.details.BlockDetails;
 import org.core.world.position.block.details.BlockSnapshot;
@@ -54,7 +54,7 @@ public class SBlockDetails implements BlockDetails {
     }
 
     @Override
-    public BlockSnapshot createSnapshot(BlockPosition position) {
+    public <P extends Position<Integer>> BlockSnapshot<P> createSnapshot(P position) {
         org.spongepowered.api.world.Location<World> loc = ((SBlockPosition)position).getSpongeLocation();
         return new SBlockSnapshot(org.spongepowered.api.block.BlockSnapshot.builder().blockState(this.blockstate).world(loc.getExtent().getProperties()).position(loc.getBlockPosition()).build());
     }

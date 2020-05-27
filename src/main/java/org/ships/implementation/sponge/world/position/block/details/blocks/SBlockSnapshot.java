@@ -2,7 +2,8 @@ package org.ships.implementation.sponge.world.position.block.details.blocks;
 
 import org.core.CorePlugin;
 import org.core.text.Text;
-import org.core.world.position.BlockPosition;
+import org.core.world.position.impl.Position;
+import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.core.world.position.block.details.BlockSnapshot;
 import org.core.world.position.block.entity.LiveTileEntity;
 import org.core.world.position.block.entity.TileEntitySnapshot;
@@ -51,7 +52,7 @@ public class SBlockSnapshot extends SBlockDetails implements BlockSnapshot {
     }
 
     @Override
-    public BlockSnapshot createSnapshot(BlockPosition position) {
+    public <P extends Position<Integer>> BlockSnapshot<P> createSnapshot(P position) {
         SBlockPosition position1 = (SBlockPosition) position;
         org.spongepowered.api.block.BlockSnapshot snapshot = org.spongepowered.api.block.BlockSnapshot.builder().from(this.snapshot).world(position1.getSpongeLocation().getExtent().getProperties()).position(position1.getSpongeLocation().getBlockPosition()).build();
         if(this.tileEntitySnapshot != null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot){
@@ -65,7 +66,7 @@ public class SBlockSnapshot extends SBlockDetails implements BlockSnapshot {
     }
 
     @Override
-    public BlockPosition getPosition() {
+    public SyncBlockPosition getPosition() {
         return new SBlockPosition(this.snapshot.getLocation().get());
     }
 

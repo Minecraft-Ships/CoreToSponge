@@ -21,7 +21,7 @@ import org.core.text.TextColour;
 import org.core.text.TextColours;
 import org.core.world.boss.colour.BossColour;
 import org.core.world.boss.colour.BossColours;
-import org.core.world.position.ExactPosition;
+import org.core.world.position.impl.sync.SyncExactPosition;
 import org.core.world.position.block.BlockType;
 import org.core.world.position.block.entity.LiveTileEntity;
 import org.core.world.position.block.entity.TileEntity;
@@ -82,9 +82,9 @@ public class SpongePlatform implements Platform {
         return null;
     }
 
-    public <E extends LiveEntity, S extends EntitySnapshot<E>> Optional<S> createSnapshot(EntityType<E, S> type, ExactPosition pos){
+    public <E extends LiveEntity, S extends EntitySnapshot<E>> Optional<S> createSnapshot(EntityType<E, S> type, SyncExactPosition pos){
         try {
-            S snapshot = type.getSnapshotClass().getConstructor(ExactPosition.class).newInstance(pos);
+            S snapshot = type.getSnapshotClass().getConstructor(SyncExactPosition.class).newInstance(pos);
             return Optional.of(snapshot);
         } catch (InstantiationException e) {
             e.printStackTrace();

@@ -4,9 +4,9 @@ import com.flowpowered.math.vector.Vector3d;
 import org.core.CorePlugin;
 import org.core.entity.LiveEntity;
 import org.core.vector.types.Vector3Double;
-import org.core.world.position.BlockPosition;
-import org.core.world.position.ExactPosition;
-import org.core.world.position.Position;
+import org.core.world.position.impl.sync.SyncBlockPosition;
+import org.core.world.position.impl.sync.SyncExactPosition;
+import org.core.world.position.impl.sync.SyncPosition;
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.text.SText;
 import org.ships.implementation.sponge.world.SWorldExtent;
@@ -32,7 +32,7 @@ public abstract class SLiveEntity implements LiveEntity {
     }
 
     @Override
-    public ExactPosition getPosition() {
+    public SyncExactPosition getPosition() {
         return new SExactPosition(this.entity.getLocation());
     }
 
@@ -55,8 +55,8 @@ public abstract class SLiveEntity implements LiveEntity {
     }
 
     @Override
-    public LiveEntity setPosition(Position<? extends Number> position) {
-        ExactPosition position1 = position instanceof ExactPosition ? (ExactPosition)position : ((BlockPosition)position).toExactPosition();
+    public LiveEntity setPosition(SyncPosition<? extends Number> position) {
+        SyncExactPosition position1 = position instanceof SyncExactPosition ? (SyncExactPosition)position : ((SyncBlockPosition)position).toExactPosition();
         this.entity.setLocation(new org.spongepowered.api.world.Location<>(((SWorldExtent)position1.getWorld()).getSpongeWorld(), position1.getX(), position1.getY(), position1.getZ()));
         return this;
     }

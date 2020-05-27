@@ -3,8 +3,10 @@ package org.ships.implementation.sponge.world;
 import org.core.CorePlugin;
 import org.core.entity.LiveEntity;
 import org.core.world.WorldExtent;
-import org.core.world.position.BlockPosition;
-import org.core.world.position.ExactPosition;
+import org.core.world.position.impl.async.ASyncBlockPosition;
+import org.core.world.position.impl.async.ASyncExactPosition;
+import org.core.world.position.impl.sync.SyncBlockPosition;
+import org.core.world.position.impl.sync.SyncExactPosition;
 import org.core.world.position.block.entity.LiveTileEntity;
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.world.position.SBlockPosition;
@@ -42,13 +44,23 @@ public class SWorldExtent implements WorldExtent {
     }
 
     @Override
-    public ExactPosition getPosition(double x, double y, double z) {
+    public SyncExactPosition getPosition(double x, double y, double z) {
         return new SExactPosition(this.world.getLocation(x, y, z));
     }
 
     @Override
-    public BlockPosition getPosition(int x, int y, int z) {
+    public ASyncExactPosition getAsyncPosition(double x, double y, double z) {
+        return null;
+    }
+
+    @Override
+    public SyncBlockPosition getPosition(int x, int y, int z) {
         return new SBlockPosition(this.world.getLocation(x, y, z));
+    }
+
+    @Override
+    public ASyncBlockPosition getAsyncPosition(int x, int y, int z) {
+        return null;
     }
 
     @Override

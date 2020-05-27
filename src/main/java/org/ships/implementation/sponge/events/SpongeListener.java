@@ -8,7 +8,7 @@ import org.core.event.Event;
 import org.core.event.HEvent;
 import org.core.event.events.entity.EntityInteractEvent;
 import org.core.world.direction.Direction;
-import org.core.world.position.BlockPosition;
+import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.core.world.position.block.entity.sign.SignTileEntitySnapshot;
 import org.ships.implementation.sponge.entity.living.human.player.live.SLivePlayer;
 import org.ships.implementation.sponge.events.events.block.tileentity.SSignChangeEvent;
@@ -31,7 +31,7 @@ public class SpongeListener {
     public void onSignChangeEvent(org.spongepowered.api.event.block.tileentity.ChangeSignEvent event){
         SSignChangeEvent sEvent;
         Object rootCause = event.getCause().root();
-        BlockPosition bp = new SBlockPosition(event.getTargetTile().getLocation());
+        SyncBlockPosition bp = new SBlockPosition(event.getTargetTile().getLocation());
         SignTileEntitySnapshot from = new SSignTileEntitySnapshot(event.getOriginalText());
         SignTileEntitySnapshot to = new SSignTileEntitySnapshot(event.getText());
         if (rootCause instanceof org.spongepowered.api.entity.living.player.Player) {
@@ -59,7 +59,7 @@ public class SpongeListener {
             return;
         }
         Vector3d vector = opVector.get();
-        BlockPosition bp = player1.getPosition().getWorld().getPosition(vector.getX(), vector.getY(), vector.getZ()).toBlockPosition();
+        SyncBlockPosition bp = player1.getPosition().getWorld().getPosition(vector.getX(), vector.getY(), vector.getZ()).toBlockPosition();
         Vector3i spongeVector = event.getTargetSide().asBlockOffset();
         int action = -1;
         if(event instanceof org.spongepowered.api.event.block.InteractBlockEvent.Primary){

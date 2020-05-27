@@ -7,7 +7,7 @@ import org.core.entity.EntityType;
 import org.core.entity.LiveEntity;
 import org.core.vector.types.Vector3Int;
 import org.core.world.WorldExtent;
-import org.core.world.position.Position;
+import org.core.world.position.impl.sync.SyncPosition;
 import org.core.world.position.block.details.BlockSnapshot;
 import org.core.world.position.block.entity.LiveTileEntity;
 import org.ships.implementation.sponge.platform.SpongePlatform;
@@ -19,7 +19,7 @@ import org.spongepowered.api.world.World;
 
 import java.util.Optional;
 
-public abstract class SPosition <N extends Number> implements Position<N> {
+public abstract class SPosition <N extends Number> implements SyncPosition<N> {
 
     protected Location<World> location;
 
@@ -64,10 +64,10 @@ public abstract class SPosition <N extends Number> implements Position<N> {
 
     @Override
     public boolean equals(Object obj){
-        if(!(obj instanceof Position)){
+        if(!(obj instanceof SyncPosition)){
             return false;
         }
-        Position pos = (Position) obj;
+        SyncPosition pos = (SyncPosition) obj;
         if(!pos.getWorld().equals(this.getWorld())){
             return false;
         }

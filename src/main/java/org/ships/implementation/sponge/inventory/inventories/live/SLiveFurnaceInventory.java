@@ -4,7 +4,7 @@ import org.core.inventory.inventories.general.block.FurnaceInventory;
 import org.core.inventory.inventories.snapshots.block.FurnaceInventorySnapshot;
 import org.core.inventory.item.stack.ItemStack;
 import org.core.inventory.parts.Slot;
-import org.core.world.position.BlockPosition;
+import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.ships.implementation.sponge.inventory.inventories.item.SLiveItemStack;
 import org.ships.implementation.sponge.inventory.inventories.item.SItemStackSnapshot;
 import org.ships.implementation.sponge.inventory.inventories.snapshot.SSnapshotFurnaceInventory;
@@ -94,7 +94,7 @@ public class SLiveFurnaceInventory implements FurnaceInventory {
     }
 
     @Override
-    public BlockPosition getPosition() {
+    public SyncBlockPosition getPosition() {
         org.spongepowered.api.world.Location<org.spongepowered.api.world.World> location = this.furnace.getLocation();
         return new SBlockPosition(location);
     }

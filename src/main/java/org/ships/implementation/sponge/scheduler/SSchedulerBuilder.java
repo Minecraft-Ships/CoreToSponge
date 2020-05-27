@@ -17,6 +17,7 @@ public class SSchedulerBuilder implements SchedulerBuilder {
     protected Runnable executor;
     protected String displayName;
     protected Scheduler runAfter;
+    protected boolean async;
 
     @Override
     public Optional<Integer> getDelay() {
@@ -92,6 +93,17 @@ public class SSchedulerBuilder implements SchedulerBuilder {
     @Override
     public SchedulerBuilder setDisplayName(String displayName) {
         this.displayName = displayName;
+        return this;
+    }
+
+    @Override
+    public boolean isAsync() {
+        return this.async;
+    }
+
+    @Override
+    public SchedulerBuilder setAsync(boolean check) {
+        this.async = check;
         return this;
     }
 

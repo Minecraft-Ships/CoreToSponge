@@ -4,24 +4,24 @@ import org.core.entity.Entity;
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.event.events.entity.EntityInteractEvent;
 import org.core.world.direction.Direction;
-import org.core.world.position.BlockPosition;
-import org.core.world.position.Position;
+import org.core.world.position.impl.sync.SyncBlockPosition;
+import org.core.world.position.impl.sync.SyncPosition;
 
 public class SEntityInteractEvent <T extends Entity> implements EntityInteractEvent<T> {
 
     protected boolean cancelled;
-    protected Position<? extends Number> interactPoint;
+    protected SyncPosition<? extends Number> interactPoint;
     protected T entity;
     protected int click;
 
-    public SEntityInteractEvent(Position<? extends Number> position, int click, T entity){
+    public SEntityInteractEvent(SyncPosition<? extends Number> position, int click, T entity){
         this.entity = entity;
         this.interactPoint = position;
         this.click = click;
     }
 
     @Override
-    public Position<? extends Number> getInteractPosition() {
+    public SyncPosition<? extends Number> getInteractPosition() {
         return this.interactPoint;
     }
 
@@ -49,14 +49,14 @@ public class SEntityInteractEvent <T extends Entity> implements EntityInteractEv
 
         protected Direction clickedSide;
 
-        public SPlayerInteractWithBlockEvent(BlockPosition position, int click, Direction clickedSide, LivePlayer entity) {
+        public SPlayerInteractWithBlockEvent(SyncBlockPosition position, int click, Direction clickedSide, LivePlayer entity) {
             super(position, click, entity);
             this.clickedSide = clickedSide;
         }
 
         @Override
-        public BlockPosition getInteractPosition(){
-            return (BlockPosition)super.getInteractPosition();
+        public SyncBlockPosition getInteractPosition(){
+            return (SyncBlockPosition)super.getInteractPosition();
         }
 
         @Override

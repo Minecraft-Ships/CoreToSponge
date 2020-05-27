@@ -3,8 +3,8 @@ package org.ships.implementation.sponge.world.position;
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.exceptions.BlockNotSupported;
 import org.core.vector.types.Vector3Int;
-import org.core.world.position.BlockPosition;
-import org.core.world.position.Position;
+import org.core.world.position.impl.sync.SyncBlockPosition;
+import org.core.world.position.impl.sync.SyncPosition;
 import org.core.world.position.block.details.BlockDetails;
 import org.core.world.position.block.details.data.keyed.KeyedData;
 import org.core.world.position.block.entity.TileEntity;
@@ -20,7 +20,7 @@ import org.spongepowered.api.world.World;
 
 import java.util.stream.Stream;
 
-public class SBlockPosition extends SPosition<Integer> implements BlockPosition {
+public class SBlockPosition extends SPosition<Integer> implements SyncBlockPosition {
 
     public SBlockPosition(Location<World> location) {
         super(location);
@@ -48,7 +48,7 @@ public class SBlockPosition extends SPosition<Integer> implements BlockPosition 
     }
 
     @Override
-    public Position<Integer> setBlock(BlockDetails details, LivePlayer... players) {
+    public SyncPosition<Integer> setBlock(BlockDetails details, LivePlayer... players) {
         for(LivePlayer player : players){
             if(player.getPosition().getWorld().equals(this.getWorld())) {
                 ((SLivePlayer) player).getSpongeEntity().sendBlockChange(this.location.getBlockPosition(), ((SBlockDetails)details).getState());
@@ -58,7 +58,7 @@ public class SBlockPosition extends SPosition<Integer> implements BlockPosition 
     }
 
     @Override
-    public Position<Integer> resetBlock(LivePlayer... players) {
+    public SyncPosition<Integer> resetBlock(LivePlayer... players) {
         for(LivePlayer player : players){
             if(player.getPosition().getWorld().equals(this.getWorld())) {
                 ((SLivePlayer) player).getSpongeEntity().resetBlockChange(this.location.getBlockPosition());
