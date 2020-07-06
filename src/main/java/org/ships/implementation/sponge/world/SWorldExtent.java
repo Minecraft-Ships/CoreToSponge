@@ -9,8 +9,8 @@ import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.core.world.position.impl.sync.SyncExactPosition;
 import org.core.world.position.block.entity.LiveTileEntity;
 import org.ships.implementation.sponge.platform.SpongePlatform;
-import org.ships.implementation.sponge.world.position.SBlockPosition;
-import org.ships.implementation.sponge.world.position.SExactPosition;
+import org.ships.implementation.sponge.world.position.synced.SBlockPosition;
+import org.ships.implementation.sponge.world.position.synced.SExactPosition;
 
 import java.util.HashSet;
 import java.util.Set;

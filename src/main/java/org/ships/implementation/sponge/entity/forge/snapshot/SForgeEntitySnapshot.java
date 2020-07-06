@@ -5,7 +5,7 @@ import org.core.entity.EntityType;
 import org.ships.implementation.sponge.entity.SEntitySnapshot;
 import org.ships.implementation.sponge.entity.SEntityType;
 import org.ships.implementation.sponge.entity.forge.live.SForgeEntity;
-import org.ships.implementation.sponge.world.position.SExactPosition;
+import org.ships.implementation.sponge.world.position.synced.SExactPosition;
 
 public class SForgeEntitySnapshot extends SEntitySnapshot<SForgeEntity> implements EntitySnapshot<SForgeEntity> {
 

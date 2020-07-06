@@ -1,4 +1,4 @@
-package org.ships.implementation.sponge.world.position.block.details.blocks;
+package org.ships.implementation.sponge.world.position.block.details.blocks.details;
 
 import org.core.CorePlugin;
 import org.core.world.position.impl.Position;
@@ -9,8 +9,10 @@ import org.core.world.position.block.details.data.DirectionalData;
 import org.core.world.position.block.details.data.keyed.*;
 import org.core.world.position.block.entity.TileEntity;
 import org.core.world.position.block.entity.TileEntitySnapshot;
-import org.ships.implementation.sponge.world.position.SBlockPosition;
+import org.ships.implementation.sponge.world.position.block.details.blocks.StateDetails;
+import org.ships.implementation.sponge.world.position.synced.SBlockPosition;
 import org.ships.implementation.sponge.world.position.block.SBlockType;
+import org.ships.implementation.sponge.world.position.block.details.blocks.snapshot.SBlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.key.Key;
 import org.spongepowered.api.data.key.Keys;
@@ -18,7 +20,7 @@ import org.spongepowered.api.world.World;
 
 import java.util.Optional;
 
-public class SBlockDetails implements BlockDetails {
+public class SBlockDetails implements BlockDetails, StateDetails {
 
     public class STileEntityKeyedData implements TileEntityKeyedData {
 
@@ -62,7 +64,7 @@ public class SBlockDetails implements BlockDetails {
     @Override
     public Optional<DirectionalData> getDirectionalData() {
         if(this.blockstate.supports(Keys.DIRECTION)){
-            return Optional.of(new DirectionWrapper(this));
+            return Optional.of(new DirectionStateWrapper(this));
         }
         return Optional.empty();
     }

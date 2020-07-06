@@ -324,8 +324,11 @@ public class SpongePlatform implements Platform {
 
     @Override
     public ItemType get(ItemTypeCommon itemId) {
-        org.spongepowered.api.item.ItemType item = org.spongepowered.api.Sponge.getRegistry().getType(org.spongepowered.api.item.ItemType.class, itemId.getId()).get();
-        return new SItemType(item);
+        Optional<org.spongepowered.api.item.ItemType> opItem = Sponge.getRegistry().getAllOf(org.spongepowered.api.item.ItemType.class).stream().filter(i -> i.getId().equals(itemId.getId())).findAny();
+        if(opItem.isPresent()){
+            return new SItemType(opItem.get());
+        }
+        throw new IllegalStateException("Unknown item of " + itemId.getId() + CorePlugin.toString("", t -> "\n - " + t.getId(), org.spongepowered.api.Sponge.getRegistry().getAllOf(org.spongepowered.api.item.ItemType.class)));
     }
 
     @Override

@@ -1,19 +1,21 @@
-package org.ships.implementation.sponge.world.position.block.details.blocks;
+package org.ships.implementation.sponge.world.position.block.details.blocks.snapshot;
 
 import org.core.exceptions.DirectionNotSupported;
 import org.core.world.direction.Direction;
 import org.core.world.position.block.details.data.DirectionalData;
+import org.core.world.position.impl.Position;
 import org.ships.implementation.sponge.utils.DirectionUtils;
+import org.ships.implementation.sponge.world.position.block.details.blocks.details.SBlockDetails;
 import org.spongepowered.api.data.key.Keys;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class DirectionWrapper implements DirectionalData {
+public class DirectionSnapshotWrapper implements DirectionalData {
 
-    SBlockDetails details;
+    private SBlockSnapshot<? extends Position<Integer>> details;
 
-    public DirectionWrapper(SBlockDetails details){
+    public DirectionSnapshotWrapper(SBlockSnapshot<? extends Position<Integer>> details){
         this.details = details;
     }
 
@@ -36,7 +38,7 @@ public class DirectionWrapper implements DirectionalData {
     @Override
     public DirectionalData setDirection(Direction direction) throws DirectionNotSupported {
         org.spongepowered.api.util.Direction direction1 = DirectionUtils.getSpongeDirection(direction);
-        //this.details.getKey()
+        System.out.println("BlockState: " + this.details.getClass().getSimpleName());
         boolean check = this.details.setKey(Keys.DIRECTION, direction1);
         if (!check){
             System.err.println("Direction not supported");

@@ -1,6 +1,7 @@
 package org.ships.implementation.sponge.configuration;
 
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import org.core.CorePlugin;
 import org.core.configuration.ConfigurationFile;
 import org.core.configuration.ConfigurationNode;
 import org.core.configuration.parser.Parser;
@@ -65,7 +66,9 @@ public class AbstractConfigurationFile implements ConfigurationFile {
     @Override
     public Map<ConfigurationNode, Object> getKeyValues() {
         Map<ConfigurationNode, Object> map = new HashMap<>();
-        root.getChildrenMap().forEach((key, value) -> map.put(new ConfigurationNode((String[]) value.getPath()), key));
+        root.getChildrenMap().forEach((key, value) -> {
+            map.put(new ConfigurationNode(value.getPath()), key);
+        });
         return map;
     }
 
@@ -73,7 +76,7 @@ public class AbstractConfigurationFile implements ConfigurationFile {
     public <T> Optional<T> parse(ConfigurationNode node, Parser<?, T> parser) {
         if (parser instanceof StringParser) {
             StringParser<T> parser1 = (StringParser<T>) parser;
-            Object value = this.root.getNode((Object[]) node.getPath()).getValue();
+            Object value = this.root.getNode(node.getPath()).getValue();
             if (value == null) {
                 return Optional.empty();
             }
@@ -81,7 +84,7 @@ public class AbstractConfigurationFile implements ConfigurationFile {
         } else if (parser instanceof StringMapParser) {
             StringMapParser<T> parser1 = (StringMapParser) parser;
             Map<String, String> map = new HashMap<>();
-            ninja.leaping.configurate.ConfigurationNode node2 = this.root.getNode((Object[])node.getPath());
+            ninja.leaping.configurate.ConfigurationNode node2 = this.root.getNode(node.getPath());
             parser1.getKeys().forEach(k -> {
                 String value2 = node2.getNode(k).getString();
                 map.put(k, value2);
@@ -99,7 +102,7 @@ public class AbstractConfigurationFile implements ConfigurationFile {
 
     @Override
     public Optional<String> parseString(ConfigurationNode node) {
-        return Optional.ofNullable(this.root.getNode((Object[]) node.getPath()).getString());
+        return Optional.ofNullable(this.root.getNode(node.getPath()).getString());
     }
 
     @Override
@@ -134,7 +137,7 @@ public class AbstractConfigurationFile implements ConfigurationFile {
 
     @Override
     public <T> Optional<List<T>> parseList(ConfigurationNode node, StringParser<T> parser) {
-        return Optional.of(this.root.getNode((Object[]) node.getPath()).getChildrenList().stream().map(c -> {
+        return Optional.of(this.root.getNode(node.getPath()).getChildrenList().stream().map(c -> {
             String value = c.getString();
             Optional<T> opValue = parser.parse(value);
             if(opValue.isPresent()){
@@ -145,8 +148,33 @@ public class AbstractConfigurationFile implements ConfigurationFile {
     }
 
     @Override
+    public String parseString(ConfigurationNode node, String defaut) {
+        return this.root.getString(defaut);
+    }
+
+    @Override
+    public int parseInt(ConfigurationNode node, int defaut) {
+        return 0;
+    }
+
+    @Override
+    public double parseDouble(ConfigurationNode node, double defaut) {
+        return 0;
+    }
+
+    @Override
+    public boolean parseBoolean(ConfigurationNode node, boolean defaut) {
+        return false;
+    }
+
+    @Override
+    public <T> List<T> parseList(ConfigurationNode node, StringParser<T> parser, List<T> defaut) {
+        return null;
+    }
+
+    @Override
     public <T> void set(ConfigurationNode node, Parser<?, T> parser, T value) {
-        ninja.leaping.configurate.ConfigurationNode node2 = this.root.getNode((Object[]) node.getPath());
+        ninja.leaping.configurate.ConfigurationNode node2 = this.root.getNode(node.getPath());
         if (parser instanceof StringMapParser) {
             StringMapParser<T> mapParser = ((StringMapParser) parser);
             Map<String, String> value2 = mapParser.unparse(value);
@@ -179,7 +207,7 @@ public class AbstractConfigurationFile implements ConfigurationFile {
 
     @Override
     public ConfigurationNode getRootNode() {
-        return new ConfigurationNode((String[]) this.root.getPath());
+        return new ConfigurationNode(this.root.getPath());
     }
 
     @Override

@@ -2,7 +2,7 @@ package org.ships.implementation.sponge.world.position.block.entity;
 
 import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.core.world.position.block.entity.LiveTileEntity;
-import org.ships.implementation.sponge.world.position.SBlockPosition;
+import org.ships.implementation.sponge.world.position.synced.SBlockPosition;
 
 public abstract class AbstractLiveTileEntity <T extends org.spongepowered.api.block.tileentity.TileEntity> implements LiveTileEntity{
 

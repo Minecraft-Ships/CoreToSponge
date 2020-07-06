@@ -10,7 +10,7 @@ import org.core.world.position.impl.sync.SyncPosition;
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.text.SText;
 import org.ships.implementation.sponge.world.SWorldExtent;
-import org.ships.implementation.sponge.world.position.SExactPosition;
+import org.ships.implementation.sponge.world.position.synced.SExactPosition;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.data.key.Keys;
 import org.spongepowered.api.text.Text;

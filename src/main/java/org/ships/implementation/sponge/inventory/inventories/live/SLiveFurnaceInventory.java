@@ -8,7 +8,7 @@ import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.ships.implementation.sponge.inventory.inventories.item.SLiveItemStack;
 import org.ships.implementation.sponge.inventory.inventories.item.SItemStackSnapshot;
 import org.ships.implementation.sponge.inventory.inventories.snapshot.SSnapshotFurnaceInventory;
-import org.ships.implementation.sponge.world.position.SBlockPosition;
+import org.ships.implementation.sponge.world.position.synced.SBlockPosition;
 import org.spongepowered.api.block.tileentity.carrier.TileEntityCarrier;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.slot.FuelSlot;

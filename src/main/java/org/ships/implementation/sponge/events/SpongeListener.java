@@ -16,7 +16,7 @@ import org.ships.implementation.sponge.events.events.entity.interact.SEntityInte
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.text.SText;
 import org.ships.implementation.sponge.utils.DirectionUtils;
-import org.ships.implementation.sponge.world.position.SBlockPosition;
+import org.ships.implementation.sponge.world.position.synced.SBlockPosition;
 import org.ships.implementation.sponge.world.position.block.entity.sign.SSignTileEntitySnapshot;
 import org.spongepowered.api.data.manipulator.mutable.tileentity.SignData;
 
