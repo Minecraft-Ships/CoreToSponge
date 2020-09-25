@@ -1,8 +1,8 @@
 package org.ships.implementation.sponge.platform;
 
 import org.core.CorePlugin;
-import org.core.configuration.parser.unspecific.UnspecificParser;
-import org.core.configuration.parser.unspecific.UnspecificParsers;
+import org.core.config.parser.unspecific.UnspecificParser;
+import org.core.config.parser.unspecific.UnspecificParsers;
 import org.core.configuration.type.ConfigurationLoaderType;
 import org.core.configuration.type.ConfigurationLoaderTypes;
 import org.core.entity.*;
@@ -21,7 +21,6 @@ import org.core.text.TextColour;
 import org.core.text.TextColours;
 import org.core.world.boss.colour.BossColour;
 import org.core.world.boss.colour.BossColours;
-import org.core.world.position.impl.sync.SyncExactPosition;
 import org.core.world.position.block.BlockType;
 import org.core.world.position.block.entity.LiveTileEntity;
 import org.core.world.position.block.entity.TileEntity;
@@ -32,6 +31,7 @@ import org.core.world.position.block.grouptype.BlockGroup;
 import org.core.world.position.block.grouptype.BlockGroups;
 import org.core.world.position.flags.physics.ApplyPhysicsFlag;
 import org.core.world.position.flags.physics.ApplyPhysicsFlags;
+import org.core.world.position.impl.sync.SyncExactPosition;
 import org.ships.implementation.sponge.configuration.JsonConfigurationLoaderType;
 import org.ships.implementation.sponge.configuration.YamlConfigurationLoaderType;
 import org.ships.implementation.sponge.entity.SEntityType;

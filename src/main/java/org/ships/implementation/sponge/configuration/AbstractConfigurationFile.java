@@ -1,24 +1,19 @@
 package org.ships.implementation.sponge.configuration;
 
 import ninja.leaping.configurate.loader.ConfigurationLoader;
-import org.core.CorePlugin;
-import org.core.configuration.ConfigurationFile;
-import org.core.configuration.ConfigurationNode;
-import org.core.configuration.parser.Parser;
-import org.core.configuration.parser.StringMapParser;
-import org.core.configuration.parser.StringParser;
-import org.core.configuration.type.ConfigurationLoaderType;
-import org.core.configuration.type.ConfigurationLoaderTypes;
+import org.core.config.ConfigurationFormat;
+import org.core.config.ConfigurationNode;
+import org.core.config.ConfigurationStream;
+import org.core.config.parser.Parser;
+import org.core.config.parser.StringMapParser;
+import org.core.config.parser.StringParser;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
-public class AbstractConfigurationFile implements ConfigurationFile {
+public class AbstractConfigurationFile implements ConfigurationStream.ConfigurationFile {
 
     protected File file;
     protected ConfigurationLoader loader;
@@ -51,6 +46,66 @@ public class AbstractConfigurationFile implements ConfigurationFile {
     @Override
     public File getFile() {
         return this.file;
+    }
+
+    @Override
+    public ConfigurationFormat getFormat() {
+        return null;
+    }
+
+    @Override
+    public Optional<Double> getDouble(ConfigurationNode node) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Integer> getInteger(ConfigurationNode node) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Boolean> getBoolean(ConfigurationNode node) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<String> getString(ConfigurationNode node) {
+        return Optional.empty();
+    }
+
+    @Override
+    public <T, C extends Collection<T>> C parseCollection(ConfigurationNode node, Parser<String, T> parser, C collection) {
+        return null;
+    }
+
+    @Override
+    public void set(ConfigurationNode node, int value) {
+
+    }
+
+    @Override
+    public void set(ConfigurationNode node, double value) {
+
+    }
+
+    @Override
+    public void set(ConfigurationNode node, boolean value) {
+
+    }
+
+    @Override
+    public void set(ConfigurationNode node, String value) {
+
+    }
+
+    @Override
+    public <T> void set(ConfigurationNode node, Parser<String, T> parser, Collection<T> collection) {
+
+    }
+
+    @Override
+    public Set<ConfigurationNode> getChildren(ConfigurationNode node) {
+        return null;
     }
 
     @Override
