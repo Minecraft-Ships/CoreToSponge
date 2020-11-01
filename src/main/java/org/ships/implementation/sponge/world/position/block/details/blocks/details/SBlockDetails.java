@@ -1,7 +1,7 @@
 package org.ships.implementation.sponge.world.position.block.details.blocks.details;
 
 import org.core.CorePlugin;
-import org.core.world.position.impl.Position;
+import org.core.world.position.impl.BlockPosition;
 import org.core.world.position.block.BlockType;
 import org.core.world.position.block.details.BlockDetails;
 import org.core.world.position.block.details.BlockSnapshot;
@@ -14,9 +14,10 @@ import org.ships.implementation.sponge.world.position.synced.SBlockPosition;
 import org.ships.implementation.sponge.world.position.block.SBlockType;
 import org.ships.implementation.sponge.world.position.block.details.blocks.snapshot.SBlockSnapshot;
 import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.data.key.Key;
-import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.Key;
+import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.server.ServerWorld;
 
 import java.util.Optional;
 
@@ -56,9 +57,21 @@ public class SBlockDetails implements BlockDetails, StateDetails {
     }
 
     @Override
-    public <P extends Position<Integer>> BlockSnapshot<P> createSnapshot(P position) {
-        org.spongepowered.api.world.Location<World> loc = ((SBlockPosition)position).getSpongeLocation();
-        return new SBlockSnapshot(org.spongepowered.api.block.BlockSnapshot.builder().blockState(this.blockstate).world(loc.getExtent().getProperties()).position(loc.getBlockPosition()).build());
+    public <P extends BlockPosition> BlockSnapshot<P> createSnapshot(P position) {
+        org.spongepowered.api.world.Location<? extends World<?>> loc = ((SBlockPosition)position).getSpongeLocation();
+        if(loc.getWorld() instanceof ServerWorld){
+            org.spongepowered.api.block.BlockSnapshot blockSnapshot = org.spongepowered.api.block.BlockSnapshot.builder()
+                    .blockState(this.blockstate)
+                    .world(((ServerWorld)loc.getWorld()).getProperties())
+                    .position(loc.getBlockPosition())
+                    .build();
+            return new SBlockSnapshot<>(blockSnapshot);
+        }
+        org.spongepowered.api.block.BlockSnapshot blockSnapshot = org.spongepowered.api.block.BlockSnapshot.builder()
+                .blockState(this.blockstate)
+                .position(loc.getBlockPosition())
+                .build();
+        return new SBlockSnapshot<>(blockSnapshot);
     }
 
     @Override
@@ -107,8 +120,8 @@ public class SBlockDetails implements BlockDetails, StateDetails {
         KeyedData<T> key = null;
         if(data.isAssignableFrom(TileEntityKeyedData.class)){
             key = (KeyedData<T>) new STileEntityKeyedData();
-        }else if(data.isAssignableFrom(OpenableKeyedData.class) && (this.blockstate.supports(Keys.OPEN))){
-        }else if(data.isAssignableFrom(AttachableKeyedData.class) && this.blockstate.supports(Keys.ATTACHED)){
+        }else if(data.isAssignableFrom(OpenableKeyedData.class) && (this.blockstate.supports(Keys.IS_OPEN))){
+        }else if(data.isAssignableFrom(AttachableKeyedData.class) && this.blockstate.supports(Keys.IS_ATTACHED)){
         }else if(data.isAssignableFrom(MultiDirectionalKeyedData.class) && this.blockstate.supports(Keys.CONNECTED_DIRECTIONS)){
         }
         return Optional.ofNullable(key);

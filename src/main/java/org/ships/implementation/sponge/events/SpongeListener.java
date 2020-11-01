@@ -1,7 +1,7 @@
 package org.ships.implementation.sponge.events;
 
-import com.flowpowered.math.vector.Vector3d;
-import com.flowpowered.math.vector.Vector3i;
+import net.kyori.adventure.text.Component;
+import org.array.utils.ArrayUtils;
 import org.core.CorePlugin;
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.event.Event;
@@ -18,7 +18,9 @@ import org.ships.implementation.sponge.text.SText;
 import org.ships.implementation.sponge.utils.DirectionUtils;
 import org.ships.implementation.sponge.world.position.synced.SBlockPosition;
 import org.ships.implementation.sponge.world.position.block.entity.sign.SSignTileEntitySnapshot;
-import org.spongepowered.api.data.manipulator.mutable.tileentity.SignData;
+import org.spongepowered.api.data.value.ListValue;
+import org.spongepowered.math.vector.Vector3d;
+import org.spongepowered.math.vector.Vector3i;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -28,10 +30,10 @@ import java.util.*;
 public class SpongeListener {
 
     @org.spongepowered.api.event.Listener
-    public void onSignChangeEvent(org.spongepowered.api.event.block.tileentity.ChangeSignEvent event){
+    public void onSignChangeEvent(org.spongepowered.api.event.block.entity.ChangeSignEvent event){
         SSignChangeEvent sEvent;
         Object rootCause = event.getCause().root();
-        SyncBlockPosition bp = new SBlockPosition(event.getTargetTile().getLocation());
+        SyncBlockPosition bp = new SBlockPosition(event.getSign().getLocation());
         SignTileEntitySnapshot from = new SSignTileEntitySnapshot(event.getOriginalText());
         SignTileEntitySnapshot to = new SSignTileEntitySnapshot(event.getText());
         if (rootCause instanceof org.spongepowered.api.entity.living.player.Player) {
@@ -44,10 +46,10 @@ public class SpongeListener {
         if(sEvent.isCancelled()){
             event.setCancelled(true);
         }
-        SignData data = event.getText();
+        ListValue.Mutable<Component> data = event.getText();
         org.core.text.Text[] setToLines = sEvent.getTo().getLines();
         for(int A = 0; A < setToLines.length; A++){
-            data.addElement(A, ((SText)setToLines[A]).toSponge());
+            data.add(A, ((SText<?>)setToLines[A]).toSponge());
         }
     }
 
@@ -103,7 +105,7 @@ public class SpongeListener {
                 }
                 Class<?> class1 = parameters[0].getType();
                 if (!Event.class.isAssignableFrom(classEvent)){
-                    System.err.println("Failed to know what to do: HEvent found on method, but no known event on " + el.getClass().getName() + "." + method.getName() + "(" + CorePlugin.toString(", ", p -> p.getType().getSimpleName() + " " + p.getName(), parameters) + ")");
+                    System.err.println("Failed to know what to do: HEvent found on method, but no known event on " + el.getClass().getName() + "." + method.getName() + "(" + ArrayUtils.toString(", ", p -> p.getType().getSimpleName() + " " + p.getName(), parameters) + ")");
                 }
                 if (class1.isAssignableFrom(classEvent)){
                     methods.add(new SEventLaunch(key, el, method));

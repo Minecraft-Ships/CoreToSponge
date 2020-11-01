@@ -5,15 +5,14 @@ import org.core.world.position.block.entity.container.furnace.FurnaceTileEntityS
 import org.core.world.position.block.entity.container.furnace.LiveFurnaceTileEntity;
 import org.ships.implementation.sponge.inventory.inventories.live.SLiveFurnaceInventory;
 import org.ships.implementation.sponge.world.position.block.entity.AbstractLiveTileEntity;
-import org.spongepowered.api.block.tileentity.carrier.Furnace;
 
-public class SLiveFurnaceEntity extends AbstractLiveTileEntity<org.spongepowered.api.block.tileentity.carrier.Furnace> implements LiveFurnaceTileEntity {
+public class SLiveFurnaceEntity extends AbstractLiveTileEntity<org.spongepowered.api.block.entity.carrier.furnace.Furnace> implements LiveFurnaceTileEntity {
 
-    public SLiveFurnaceEntity(org.spongepowered.api.block.tileentity.TileEntity tileEntity){
-        super((Furnace) tileEntity);
+    public SLiveFurnaceEntity(org.spongepowered.api.block.entity.BlockEntity tileEntity){
+        super((org.spongepowered.api.block.entity.carrier.furnace.Furnace)tileEntity);
     }
 
-    public SLiveFurnaceEntity(Furnace tileEntity) {
+    public SLiveFurnaceEntity(org.spongepowered.api.block.entity.carrier.furnace.Furnace tileEntity) {
         super(tileEntity);
     }
 

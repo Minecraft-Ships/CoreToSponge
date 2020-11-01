@@ -4,7 +4,7 @@ import org.core.entity.Entity;
 import org.core.entity.EntitySnapshot;
 import org.core.entity.LiveEntity;
 import org.core.text.Text;
-import org.core.vector.types.Vector3Double;
+import org.core.vector.type.Vector3;
 import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.core.world.position.impl.sync.SyncExactPosition;
 import org.core.world.position.impl.sync.SyncPosition;
@@ -20,9 +20,10 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     protected double roll;
     protected SyncExactPosition position;
     protected boolean gravity;
-    protected Vector3Double velocity;
+    protected Vector3<Double> velocity;
     protected Text customName;
     protected boolean customNameVisible;
+    protected boolean isOnGround;
     protected Collection<EntitySnapshot<? extends LiveEntity>> passengers = new HashSet<>();
     protected E createdFrom;
 
@@ -38,8 +39,8 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
         this.createdFrom = entity;
     }
 
-    private void init(Entity entity){
-        this.customName = (Text)entity.getCustomName().orElse(null);
+    private void init(Entity<?> entity){
+        this.customName = entity.getCustomName().orElse(null);
         this.customNameVisible = entity.isCustomNameVisible();
         this.gravity = entity.hasGravity();
         this.pitch = entity.getPitch();
@@ -47,6 +48,7 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
         this.yaw = entity.getYaw();
         this.position = entity.getPosition();
         this.velocity = entity.getVelocity();
+        this.isOnGround = entity.isOnGround();
     }
 
     protected LiveEntity applyDefault(LiveEntity entity){
@@ -64,6 +66,11 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     @Override
     public SyncExactPosition getPosition() {
         return this.position;
+    }
+
+    @Override
+    public boolean isOnGround() {
+        return this.isOnGround;
     }
 
     @Override
@@ -101,12 +108,13 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     }
 
     @Override
-    public EntitySnapshot<? extends LiveEntity> setVelocity(Vector3Double velocity) {
+    public EntitySnapshot<? extends LiveEntity> setVelocity(Vector3<Double> velocity) {
         this.velocity = velocity;
         return this;
     }
 
     @Override
+    @Deprecated
     public EntitySnapshot<? extends LiveEntity> setCustomName(Text text) {
         this.customName = text;
         return this;
@@ -139,11 +147,12 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     }
 
     @Override
-    public Vector3Double getVelocity() {
+    public Vector3<Double> getVelocity() {
         return this.velocity;
     }
 
     @Override
+    @Deprecated
     public Optional<Text> getCustomName() {
         return Optional.ofNullable(this.customName);
     }

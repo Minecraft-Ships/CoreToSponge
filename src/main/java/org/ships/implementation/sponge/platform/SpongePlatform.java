@@ -1,10 +1,11 @@
 package org.ships.implementation.sponge.platform;
 
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.array.utils.ArrayUtils;
 import org.core.CorePlugin;
+import org.core.config.ConfigurationFormat;
 import org.core.config.parser.unspecific.UnspecificParser;
 import org.core.config.parser.unspecific.UnspecificParsers;
-import org.core.configuration.type.ConfigurationLoaderType;
-import org.core.configuration.type.ConfigurationLoaderTypes;
 import org.core.entity.*;
 import org.core.entity.living.animal.parrot.ParrotType;
 import org.core.entity.living.animal.parrot.ParrotTypes;
@@ -32,8 +33,6 @@ import org.core.world.position.block.grouptype.BlockGroups;
 import org.core.world.position.flags.physics.ApplyPhysicsFlag;
 import org.core.world.position.flags.physics.ApplyPhysicsFlags;
 import org.core.world.position.impl.sync.SyncExactPosition;
-import org.ships.implementation.sponge.configuration.JsonConfigurationLoaderType;
-import org.ships.implementation.sponge.configuration.YamlConfigurationLoaderType;
 import org.ships.implementation.sponge.entity.SEntityType;
 import org.ships.implementation.sponge.entity.forge.live.SForgeEntity;
 import org.ships.implementation.sponge.entity.living.human.player.live.SLivePlayer;
@@ -55,20 +54,20 @@ public class SpongePlatform implements Platform {
 
     protected Set<? extends EntityType<? extends Entity, ? extends EntitySnapshot<? extends Entity>>> entityTypes = new HashSet<>();
     protected Map<Class<? extends org.spongepowered.api.entity.Entity>, Class<? extends LiveEntity>> entityToEntityMap = new HashMap<>();
-    protected Map<Class<? extends org.spongepowered.api.block.tileentity.TileEntity>, Class<? extends LiveTileEntity>> blockStateToTileEntity = new HashMap<>();
+    protected Map<Class<? extends org.spongepowered.api.block.entity.BlockEntity>, Class<? extends LiveTileEntity>> blockStateToTileEntity = new HashMap<>();
     protected Collection<TileEntitySnapshot<? extends TileEntity>> defaultTileEntities = new HashSet<>();
     protected Collection<UnspecificParser<? extends Object>> unspecificParsers = new HashSet<>();
 
     public SpongePlatform(){
         this.entityToEntityMap.put(org.spongepowered.api.entity.living.player.Player.class, SLivePlayer.class);
 
-        this.blockStateToTileEntity.put(org.spongepowered.api.block.tileentity.Sign.class, SLiveSignEntity.class);
-        this.blockStateToTileEntity.put(org.spongepowered.api.block.tileentity.carrier.Furnace.class, SLiveFurnaceEntity.class);
+        this.blockStateToTileEntity.put(org.spongepowered.api.block.entity.Sign.class, SLiveSignEntity.class);
+        this.blockStateToTileEntity.put(org.spongepowered.api.block.entity.carrier.furnace.Furnace.class, SLiveFurnaceEntity.class);
 
         this.defaultTileEntities.add(new SSignTileEntitySnapshot());
     }
 
-    public CommandSource get(org.spongepowered.api.command.CommandSource source){
+    /*public CommandSource get(org.spongepowered.api.command.CommandSource source){
         if (source instanceof org.spongepowered.api.entity.living.player.Player) {
             return new SLivePlayer((org.spongepowered.api.entity.living.player.Player)source);
         }
@@ -80,19 +79,13 @@ public class SpongePlatform implements Platform {
             return CorePlugin.getConsole();
         }
         return null;
-    }
+    }*/
 
     public <E extends LiveEntity, S extends EntitySnapshot<E>> Optional<S> createSnapshot(EntityType<E, S> type, SyncExactPosition pos){
         try {
             S snapshot = type.getSnapshotClass().getConstructor(SyncExactPosition.class).newInstance(pos);
             return Optional.of(snapshot);
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             e.printStackTrace();
         }
         return Optional.empty();
@@ -120,14 +113,14 @@ public class SpongePlatform implements Platform {
         return null;
     }
 
-    public Optional<LiveTileEntity> createTileEntityInstance(org.spongepowered.api.block.tileentity.TileEntity tileEntity){
-        Optional<Map.Entry<Class<? extends org.spongepowered.api.block.tileentity.TileEntity>, Class<? extends LiveTileEntity>>> opEntry = blockStateToTileEntity.entrySet().stream().filter(e -> e.getKey().isInstance(tileEntity)).findAny();
+    public Optional<LiveTileEntity> createTileEntityInstance(org.spongepowered.api.block.entity.BlockEntity tileEntity){
+        Optional<Map.Entry<Class<? extends org.spongepowered.api.block.entity.BlockEntity>, Class<? extends LiveTileEntity>>> opEntry = blockStateToTileEntity.entrySet().stream().filter(e -> e.getKey().isInstance(tileEntity)).findAny();
         if(!opEntry.isPresent()){
             return Optional.empty();
         }
         Class<? extends LiveTileEntity> bdclass = opEntry.get().getValue();
         try {
-            return Optional.of(bdclass.getConstructor(org.spongepowered.api.block.tileentity.TileEntity.class).newInstance(tileEntity));
+            return Optional.of(bdclass.getConstructor(org.spongepowered.api.block.entity.BlockEntity.class).newInstance(tileEntity));
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
@@ -151,6 +144,11 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
+    public ConfigurationFormat getConfigFormat() {
+        return ConfigurationFormat.FORMAT_YAML;
+    }
+
+    @Override
     public Set<Plugin> getPlugins() {
         return null;
     }
@@ -165,22 +163,14 @@ public class SpongePlatform implements Platform {
         if(id.equals("minecraft:player")){
             return Optional.of(new SEntityType.SPlayerType());
         }
-        Optional<org.spongepowered.api.entity.EntityType> opEntity = org.spongepowered.api.Sponge.getRegistry().getAllOf(org.spongepowered.api.entity.EntityType.class).stream().filter(et -> et.getId().equals(id)).findAny();
-        if(!opEntity.isPresent()){
-            return Optional.empty();
-        }
-        return Optional.of(new SEntityType.SForgedEntityType(opEntity.get()));
+        Optional<org.spongepowered.api.entity.EntityType> opEntity = org.spongepowered.api.Sponge.getRegistry().getCatalogRegistry().streamAllOf(org.spongepowered.api.entity.EntityType.class).filter(et -> et.getKey().asString().equals(id)).findAny();
+        return opEntity.map(SEntityType.SForgedEntityType::new);
     }
 
     @Override
     public Optional<BlockType> getBlockType(String id) {
-        Optional<org.spongepowered.api.block.BlockType> opBlock = org.spongepowered.api.Sponge.getRegistry().getType(org.spongepowered.api.block.BlockType.class, id);
-        if(opBlock.isPresent()){
-            return Optional.of(new SBlockType(opBlock.get()));
-        }
-        System.err.println("Failed to find: " + id);
-        org.spongepowered.api.Sponge.getRegistry().getAllOf(org.spongepowered.api.block.BlockType.class).stream().forEach(bt -> System.out.println("\t- " + bt.getId()));
-        return null;
+        Optional<org.spongepowered.api.block.BlockType> opBlock = org.spongepowered.api.Sponge.getRegistry().getCatalogRegistry().streamAllOf(org.spongepowered.api.block.BlockType.class).filter(b -> b.getKey().asString().equals(id)).findAny();
+        return opBlock.map(SBlockType::new);
     }
 
     @Override
@@ -200,11 +190,6 @@ public class SpongePlatform implements Platform {
 
     @Override
     public Optional<PatternLayerType> getPatternLayerType(String id) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<ConfigurationLoaderType> getConfigurationLoaderType(String id) {
         return Optional.empty();
     }
 
@@ -231,8 +216,8 @@ public class SpongePlatform implements Platform {
     @Override
     public Collection<EntityType<? extends Entity, ? extends EntitySnapshot<? extends Entity>>> getEntityTypes() {
         Set<EntityType<? extends Entity, ? extends EntitySnapshot<? extends Entity>>> set = new HashSet<>();
-        org.spongepowered.api.Sponge.getRegistry().getAllOf(org.spongepowered.api.entity.EntityType.class).stream().forEach(e -> {
-            getEntityType(e.getId()).ifPresent(i -> set.add(i));
+        org.spongepowered.api.Sponge.getRegistry().getCatalogRegistry().streamAllOf(org.spongepowered.api.entity.EntityType.class).forEach(e -> {
+            getEntityType(e.getKey().asString()).ifPresent(set::add);
         });
         return set;
     }
@@ -240,7 +225,7 @@ public class SpongePlatform implements Platform {
     @Override
     public Collection<BlockType> getBlockTypes() {
         Set<BlockType> blockTypes = new HashSet<>();
-        Sponge.getRegistry().getAllOf(org.spongepowered.api.block.BlockType.class).stream().forEach(b -> blockTypes.add(new SBlockType(b)));
+        Sponge.getRegistry().getCatalogRegistry().streamAllOf(org.spongepowered.api.block.BlockType.class).forEach(b -> blockTypes.add(new SBlockType(b)));
         return blockTypes;
     }
 
@@ -251,9 +236,7 @@ public class SpongePlatform implements Platform {
 
     @Override
     public Collection<TextColour> getTextColours() {
-        Set<TextColour> set = new HashSet<>();
-        Sponge.getRegistry().getAllOf(org.spongepowered.api.text.format.TextColor.class).stream().forEach(t -> set.add(STextColour.getInstance(t)));
-        return set;
+        return ArrayUtils.convert(STextColour::getInstance, NamedTextColor.NAMES.values());
     }
 
     @Override
@@ -263,11 +246,6 @@ public class SpongePlatform implements Platform {
 
     @Override
     public Collection<PatternLayerType> getPatternLayerTypes() {
-        return null;
-    }
-
-    @Override
-    public Collection<ConfigurationLoaderType> getConfigurationLoaderTypes() {
         return null;
     }
 
@@ -324,11 +302,12 @@ public class SpongePlatform implements Platform {
 
     @Override
     public ItemType get(ItemTypeCommon itemId) {
-        Optional<org.spongepowered.api.item.ItemType> opItem = Sponge.getRegistry().getAllOf(org.spongepowered.api.item.ItemType.class).stream().filter(i -> i.getId().equals(itemId.getId())).findAny();
+        Optional<org.spongepowered.api.item.ItemType> opItem = Sponge.getRegistry().getCatalogRegistry().streamAllOf(org.spongepowered.api.item.ItemType.class).filter(i -> i.getKey().asString().equals(itemId.getId())).findAny();
         if(opItem.isPresent()){
             return new SItemType(opItem.get());
         }
-        throw new IllegalStateException("Unknown item of " + itemId.getId() + CorePlugin.toString("", t -> "\n - " + t.getId(), org.spongepowered.api.Sponge.getRegistry().getAllOf(org.spongepowered.api.item.ItemType.class)));
+        throw new IllegalStateException("Unknown item of " + itemId.getId() + ArrayUtils.toString("", t -> "\n - " + t.getKey().asString(), org.spongepowered.api.Sponge.getRegistry().getCatalogRegistry().getAllOf(org.spongepowered.api.item.ItemType.class)));
+
     }
 
     @Override
@@ -338,11 +317,7 @@ public class SpongePlatform implements Platform {
 
     @Override
     public TextColour get(TextColours id) {
-        Optional<org.spongepowered.api.text.format.TextColor> opText = org.spongepowered.api.Sponge.getRegistry().getAllOf(org.spongepowered.api.text.format.TextColor.class).stream().filter(t -> t.getId().equalsIgnoreCase(id.getName())).findAny();
-        if(opText.isPresent()){
-            return STextColour.getInstance(opText.get());
-        }
-        return null;
+        return STextColour.getInstance(NamedTextColor.NAMES.value(id.getName()));
     }
 
     @Override
@@ -352,16 +327,6 @@ public class SpongePlatform implements Platform {
 
     @Override
     public PatternLayerType get(PatternLayerTypes id) {
-        return null;
-    }
-
-    @Override
-    public ConfigurationLoaderType get(ConfigurationLoaderTypes id) {
-        if(id.getName().equals("YetAnotherMarkupLang")){
-            return new YamlConfigurationLoaderType();
-        }else if(id.getName().equals("Json") || id.getName().equals("Default")){
-            return new JsonConfigurationLoaderType();
-        }
         return null;
     }
 

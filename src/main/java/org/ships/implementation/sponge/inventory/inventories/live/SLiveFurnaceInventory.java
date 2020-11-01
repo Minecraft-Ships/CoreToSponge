@@ -9,12 +9,12 @@ import org.ships.implementation.sponge.inventory.inventories.item.SLiveItemStack
 import org.ships.implementation.sponge.inventory.inventories.item.SItemStackSnapshot;
 import org.ships.implementation.sponge.inventory.inventories.snapshot.SSnapshotFurnaceInventory;
 import org.ships.implementation.sponge.world.position.synced.SBlockPosition;
-import org.spongepowered.api.block.tileentity.carrier.TileEntityCarrier;
+import org.spongepowered.api.block.entity.carrier.CarrierBlockEntity;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.slot.FuelSlot;
 import org.spongepowered.api.item.inventory.slot.InputSlot;
 import org.spongepowered.api.item.inventory.slot.OutputSlot;
-import org.spongepowered.api.item.inventory.type.TileEntityInventory;
+import org.spongepowered.api.item.inventory.type.BlockEntityInventory;
 
 import java.util.Optional;
 
@@ -35,11 +35,11 @@ public class SLiveFurnaceInventory implements FurnaceInventory {
 
         @Override
         public Optional<ItemStack> getItem() {
-            Optional<org.spongepowered.api.item.inventory.ItemStack> opItem = this.slot.peek();
-            if(opItem.isPresent()){
-                return Optional.of(new SLiveItemStack(opItem.get()));
+            org.spongepowered.api.item.inventory.ItemStack item = this.slot.peek();
+            if(item.equalTo(org.spongepowered.api.item.inventory.ItemStack.empty())) {
+                return Optional.empty();
             }
-            return Optional.empty();
+            return Optional.of(new SLiveItemStack(item));
         }
 
         @Override
@@ -59,14 +59,14 @@ public class SLiveFurnaceInventory implements FurnaceInventory {
         }
     }
 
-    protected org.spongepowered.api.block.tileentity.carrier.Furnace furnace;
+    protected org.spongepowered.api.block.entity.carrier.furnace.Furnace furnace;
     protected SLiveFurnaceInventory.FurnaceSlot fuel;
     protected SLiveFurnaceInventory.FurnaceSlot output;
     protected SLiveFurnaceInventory.FurnaceSlot input;
 
-    public SLiveFurnaceInventory(org.spongepowered.api.block.tileentity.carrier.Furnace furnace){
+    public SLiveFurnaceInventory(org.spongepowered.api.block.entity.carrier.furnace.Furnace furnace){
         this.furnace = furnace;
-        TileEntityInventory<TileEntityCarrier> inv = furnace.getInventory();
+        BlockEntityInventory<CarrierBlockEntity> inv = furnace.getInventory();
         SLiveFurnaceInventory.FurnaceSlot[] slots = getSlots(inv);
         this.output = slots[2];
         this.fuel = slots[1];
@@ -95,11 +95,11 @@ public class SLiveFurnaceInventory implements FurnaceInventory {
 
     @Override
     public SyncBlockPosition getPosition() {
-        org.spongepowered.api.world.Location<org.spongepowered.api.world.World> location = this.furnace.getLocation();
+        org.spongepowered.api.world.Location<? extends org.spongepowered.api.world.World<?>> location = this.furnace.getLocation();
         return new SBlockPosition(location);
     }
 
-    private static SLiveFurnaceInventory.FurnaceSlot[] getSlots(TileEntityInventory<TileEntityCarrier> inv){
+    private static SLiveFurnaceInventory.FurnaceSlot[] getSlots(BlockEntityInventory<CarrierBlockEntity> inv){
         SLiveFurnaceInventory.FurnaceSlot[] slots = new SLiveFurnaceInventory.FurnaceSlot[3];
         for (Inventory inv1 : inv.slots()){
             org.spongepowered.api.item.inventory.Slot slot = (org.spongepowered.api.item.inventory.Slot) inv1;
@@ -113,7 +113,6 @@ public class SLiveFurnaceInventory implements FurnaceInventory {
             }
             if(slot instanceof InputSlot){
                 slots[0] = new SLiveFurnaceInventory.FurnaceSlot(slot);
-                continue;
             }
         }
         return slots;

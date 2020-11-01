@@ -1,17 +1,12 @@
 package org.ships.implementation.sponge.entity.living.human.player.snapshot;
 
-import org.core.CorePlugin;
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.entity.living.human.player.PlayerSnapshot;
 import org.core.inventory.inventories.general.entity.PlayerInventory;
 import org.ships.implementation.sponge.entity.SEntitySnapshot;
 import org.ships.implementation.sponge.entity.SEntityType;
-import org.ships.implementation.sponge.entity.living.human.player.live.SUser;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.EventContext;
-import org.spongepowered.api.event.cause.EventContextKeys;
-import org.spongepowered.api.service.ProviderRegistration;
+import org.spongepowered.api.service.ServiceRegistration;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 
@@ -54,6 +49,11 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
     @Override
     public PlayerSnapshot createSnapshot() {
         return new SPlayerSnapshot(this);
+    }
+
+    @Override
+    public boolean isOnGround() {
+        return false;
     }
 
     @Override
@@ -123,7 +123,7 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
     @Override
     public BigDecimal getBalance() {
         Optional<UniqueAccount> opAccount = getAccount();
-        return opAccount.map(uniqueAccount -> uniqueAccount.getBalance(Sponge.getServiceManager().getRegistration(EconomyService.class).get().getProvider().getDefaultCurrency())).orElseGet(() -> new BigDecimal(0));
+        return opAccount.map(uniqueAccount -> uniqueAccount.getBalance(Sponge.getServiceProvider().getRegistration(EconomyService.class).get().service().getDefaultCurrency())).orElseGet(() -> new BigDecimal(0));
     }
 
     @Override
@@ -134,22 +134,21 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
         }
         opAccount.get()
                 .setBalance(Sponge
-                                .getServiceManager()
+                                .getServiceProvider()
                                 .getRegistration(EconomyService.class)
                                 .get()
-                                .getProvider()
+                                .service()
                                 .getDefaultCurrency(),
-                        decimal,
-                        Cause
-                                .builder()
-                                .build(EventContext
-                                        .builder()
-                                        .add(EventContextKeys.OWNER, ((SUser)CorePlugin.getServer().getOfflineUser(this.getUniqueId()).get()).getUser())
-                                        .build()));
+                        decimal);
     }
 
     private Optional<UniqueAccount> getAccount(){
-        Optional<ProviderRegistration<EconomyService>> opReg = Sponge.getServiceManager().getRegistration(EconomyService.class);
-        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration.getProvider().getOrCreateAccount(this.getUniqueId()));
+        Optional<ServiceRegistration<EconomyService>> opReg = Sponge.getServiceProvider().getRegistration(EconomyService.class);
+        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration.service().getOrCreateAccount(this.getUniqueId()));
+    }
+
+    @Override
+    public LivePlayer teleportEntity(boolean keepInventory) {
+        return null;
     }
 }

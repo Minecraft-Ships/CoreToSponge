@@ -2,10 +2,7 @@ package org.ships.implementation.sponge.entity.living.human.player.live;
 
 import org.core.entity.living.human.player.User;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.event.cause.Cause;
-import org.spongepowered.api.event.cause.EventContext;
-import org.spongepowered.api.event.cause.EventContextKeys;
-import org.spongepowered.api.service.ProviderRegistration;
+import org.spongepowered.api.service.ServiceRegistration;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
 
@@ -41,7 +38,7 @@ public class SUser implements User {
         if (!opAccount.isPresent()){
             return new BigDecimal(0);
         }
-        return opAccount.get().getBalance(Sponge.getServiceManager().getRegistration(EconomyService.class).get().getProvider().getDefaultCurrency());
+        return opAccount.get().getBalance(Sponge.getServiceProvider().getRegistration(EconomyService.class).get().service().getDefaultCurrency());
     }
 
     @Override
@@ -52,22 +49,16 @@ public class SUser implements User {
         }
         opAccount.get()
                 .setBalance(Sponge
-                                .getServiceManager()
+                                .getServiceProvider()
                                 .getRegistration(EconomyService.class)
                                 .get()
-                                .getProvider()
+                                .service()
                                 .getDefaultCurrency(),
-                        decimal,
-                        Cause
-                                .builder()
-                                .build(EventContext
-                                        .builder()
-                                        .add(EventContextKeys.OWNER, this.user)
-                                        .build()));
+                        decimal);
     }
 
     private Optional<UniqueAccount> getAccount(){
-        Optional<ProviderRegistration<EconomyService>> opReg = Sponge.getServiceManager().getRegistration(EconomyService.class);
-        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration.getProvider().getOrCreateAccount(this.getUniqueId()));
+        Optional<ServiceRegistration<EconomyService>> opReg = Sponge.getServiceProvider().getRegistration(EconomyService.class);
+        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration.service().getOrCreateAccount(this.getUniqueId()));
     }
 }

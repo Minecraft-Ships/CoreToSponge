@@ -1,14 +1,15 @@
 package org.ships.implementation.sponge.text;
 
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.core.text.TextColour;
-import org.spongepowered.api.text.format.TextColors;
 
 public abstract class STextColour implements TextColour {
 
     public static class STextColourWhite extends STextColour {
 
         private STextColourWhite() {
-            super(org.spongepowered.api.text.format.TextColors.WHITE);
+            super(NamedTextColor.WHITE);
         }
 
         @Override
@@ -20,7 +21,7 @@ public abstract class STextColour implements TextColour {
     public static class STextColourDarkRed extends STextColour {
 
         private STextColourDarkRed() {
-            super(org.spongepowered.api.text.format.TextColors.DARK_RED);
+            super(NamedTextColor.DARK_RED);
         }
 
         @Override
@@ -32,7 +33,7 @@ public abstract class STextColour implements TextColour {
     public static class STextColourGold extends STextColour {
 
         private STextColourGold() {
-            super(org.spongepowered.api.text.format.TextColors.GOLD);
+            super(NamedTextColor.GOLD);
         }
 
         @Override
@@ -44,7 +45,7 @@ public abstract class STextColour implements TextColour {
     public static class STextColourBlue extends STextColour {
 
         private STextColourBlue() {
-            super(org.spongepowered.api.text.format.TextColors.BLUE);
+            super(NamedTextColor.BLUE);
         }
 
         @Override
@@ -56,7 +57,7 @@ public abstract class STextColour implements TextColour {
     public static class STextColourGreen extends STextColour {
 
         private STextColourGreen() {
-            super(org.spongepowered.api.text.format.TextColors.GREEN);
+            super(NamedTextColor.GREEN);
         }
 
         @Override
@@ -68,7 +69,7 @@ public abstract class STextColour implements TextColour {
     public static class STextColourAqua extends STextColour {
 
         private STextColourAqua() {
-            super(org.spongepowered.api.text.format.TextColors.AQUA);
+            super(NamedTextColor.AQUA);
         }
 
         @Override
@@ -80,7 +81,7 @@ public abstract class STextColour implements TextColour {
     public static class STextColourRed extends STextColour {
 
         private STextColourRed() {
-            super(org.spongepowered.api.text.format.TextColors.RED);
+            super(NamedTextColor.RED);
         }
 
         @Override
@@ -92,7 +93,7 @@ public abstract class STextColour implements TextColour {
     public static class STextColourYellow extends STextColour {
 
         private STextColourYellow() {
-            super(org.spongepowered.api.text.format.TextColors.YELLOW);
+            super(NamedTextColor.YELLOW);
         }
 
         @Override
@@ -104,7 +105,7 @@ public abstract class STextColour implements TextColour {
     public static class STextColourDarkGreen extends STextColour {
 
         private STextColourDarkGreen() {
-            super(org.spongepowered.api.text.format.TextColors.DARK_GREEN);
+            super(NamedTextColor.DARK_GREEN);
         }
 
         @Override
@@ -116,7 +117,7 @@ public abstract class STextColour implements TextColour {
     public static class STextColourDarkAqua extends STextColour {
 
         private STextColourDarkAqua() {
-            super(org.spongepowered.api.text.format.TextColors.DARK_AQUA);
+            super(NamedTextColor.DARK_AQUA);
         }
 
         @Override
@@ -128,7 +129,7 @@ public abstract class STextColour implements TextColour {
     public static class STextColourDarkBlue extends STextColour {
 
         private STextColourDarkBlue() {
-            super(org.spongepowered.api.text.format.TextColors.DARK_BLUE);
+            super(NamedTextColor.DARK_BLUE);
         }
 
         @Override
@@ -140,7 +141,7 @@ public abstract class STextColour implements TextColour {
     public static class STextColourDarkGray extends STextColour {
 
         private STextColourDarkGray() {
-            super(org.spongepowered.api.text.format.TextColors.DARK_GRAY);
+            super(NamedTextColor.DARK_GRAY);
         }
 
         @Override
@@ -152,7 +153,7 @@ public abstract class STextColour implements TextColour {
     public static class STextColourLightPurple extends STextColour {
 
         private STextColourLightPurple() {
-            super(org.spongepowered.api.text.format.TextColors.LIGHT_PURPLE);
+            super(NamedTextColor.LIGHT_PURPLE);
         }
 
         @Override
@@ -164,7 +165,7 @@ public abstract class STextColour implements TextColour {
     public static class STextColourDarkPurple extends STextColour {
 
         private STextColourDarkPurple() {
-            super(org.spongepowered.api.text.format.TextColors.DARK_PURPLE);
+            super(NamedTextColor.DARK_PURPLE);
         }
 
         @Override
@@ -176,7 +177,7 @@ public abstract class STextColour implements TextColour {
     public static class STextColourGray extends STextColour {
 
         private STextColourGray() {
-            super(org.spongepowered.api.text.format.TextColors.GRAY);
+            super(NamedTextColor.GRAY);
         }
 
         @Override
@@ -188,7 +189,7 @@ public abstract class STextColour implements TextColour {
     public static class STextColourBlack extends STextColour {
 
         private STextColourBlack() {
-            super(org.spongepowered.api.text.format.TextColors.BLACK);
+            super(NamedTextColor.BLACK);
         }
 
         @Override
@@ -197,44 +198,44 @@ public abstract class STextColour implements TextColour {
         }
     }
 
-    public static class STextColourNone extends STextColour {
+    /*public static class STextColourNone extends STextColour {
 
         private STextColourNone() {
-            super(org.spongepowered.api.text.format.TextColors.NONE);
+            super(NamedTextColor.NONE);
         }
 
         @Override
         public String formatChar() {
             return "§r";
         }
-    }
+    }*/
 
-    public static class STextColourReset extends STextColour {
+    /*public static class STextColourReset extends STextColour {
 
         private STextColourReset() {
-            super(TextColors.RESET);
+            super(NamedTextColor.RESET);
         }
 
         @Override
         public String formatChar() {
             return "§r";
         }
-    }
+    }*/
 
-    protected org.spongepowered.api.text.format.TextColor colour;
+    protected NamedTextColor colour;
 
-    protected STextColour(org.spongepowered.api.text.format.TextColor colour){
+    protected STextColour(NamedTextColor colour){
         this.colour = colour;
     }
 
     @Override
     public String getId() {
-        return this.colour.getId();
+        return "minecraft:" + this.colour.toString();
     }
 
     @Override
     public String getName() {
-        return this.colour.getName();
+        return this.colour.toString();
     }
 
     @Override
@@ -242,45 +243,45 @@ public abstract class STextColour implements TextColour {
         return this.formatChar();
     }
 
-    public static STextColour getInstance(org.spongepowered.api.text.format.TextColor colour){
-        if(colour.equals(org.spongepowered.api.text.format.TextColors.YELLOW)){
+    public static STextColour getInstance(TextColor colour){
+        if(colour.equals(NamedTextColor.YELLOW)){
             return new STextColourYellow();
-        }else if(colour.equals(org.spongepowered.api.text.format.TextColors.RED)){
+        }else if(colour.equals(NamedTextColor.RED)){
             return new STextColourRed();
-        }else if(colour.equals(org.spongepowered.api.text.format.TextColors.AQUA)) {
+        }else if(colour.equals(NamedTextColor.AQUA)) {
             return new STextColourAqua();
-        }else if(colour.equals(org.spongepowered.api.text.format.TextColors.GREEN)) {
+        }else if(colour.equals(NamedTextColor.GREEN)) {
             return new STextColourGreen();
-        }else if(colour.equals(org.spongepowered.api.text.format.TextColors.BLUE)) {
+        }else if(colour.equals(NamedTextColor.BLUE)) {
             return new STextColourBlue();
-        }else if(colour.equals(org.spongepowered.api.text.format.TextColors.RESET)) {
-            return new STextColourReset();
-        }else if(colour.equals(org.spongepowered.api.text.format.TextColors.WHITE)) {
+        /*}else if(colour.equals(NamedTextColor.RESET)) {
+            return new STextColourReset();*/
+        }else if(colour.equals(NamedTextColor.WHITE)) {
             return new STextColourWhite();
-        }else if(colour.equals(org.spongepowered.api.text.format.TextColors.GOLD)){
+        }else if(colour.equals(NamedTextColor.GOLD)){
             return new STextColourGold();
-        }else if(colour.equals(org.spongepowered.api.text.format.TextColors.DARK_RED)){
+        }else if(colour.equals(NamedTextColor.DARK_RED)){
             return new STextColourDarkRed();
-        }else if(colour.equals(org.spongepowered.api.text.format.TextColors.DARK_GREEN)){
+        }else if(colour.equals(NamedTextColor.DARK_GREEN)){
             return new STextColourDarkGreen();
-        }else if(colour.equals(org.spongepowered.api.text.format.TextColors.DARK_AQUA)){
+        }else if(colour.equals(NamedTextColor.DARK_AQUA)){
             return new STextColourDarkAqua();
-        }else if(colour.equals(org.spongepowered.api.text.format.TextColors.DARK_BLUE)){
+        }else if(colour.equals(NamedTextColor.DARK_BLUE)){
             return new STextColourDarkBlue();
-        }else if(colour.equals(org.spongepowered.api.text.format.TextColors.DARK_GRAY)){
+        }else if(colour.equals(NamedTextColor.DARK_GRAY)){
             return new STextColourDarkGray();
-        }else if(colour.equals(org.spongepowered.api.text.format.TextColors.DARK_PURPLE)){
+        }else if(colour.equals(NamedTextColor.DARK_PURPLE)){
             return new STextColourDarkPurple();
-        }else if(colour.equals(org.spongepowered.api.text.format.TextColors.LIGHT_PURPLE)){
+        }else if(colour.equals(NamedTextColor.LIGHT_PURPLE)){
             return new STextColourLightPurple();
-        }else if(colour.equals(org.spongepowered.api.text.format.TextColors.GRAY)){
+        }else if(colour.equals(NamedTextColor.GRAY)){
             return new STextColourGray();
-        }else if(colour.equals(org.spongepowered.api.text.format.TextColors.BLACK)){
+        }else if(colour.equals(NamedTextColor.BLACK)){
             return new STextColourBlack();
-        }else if(colour.equals(org.spongepowered.api.text.format.TextColors.NONE)){
-            return new STextColourNone();
+        /*}else if(colour.equals(NamedTextColor.NONE)){
+            return new STextColourNone();*/
         }else{
-            System.err.println("Text colour ("+ colour.getId() + ") is not supported with getInstance");
+            System.err.println("Text colour ("+ colour.toString() + ") is not supported with getInstance");
             return null;
         }
     }

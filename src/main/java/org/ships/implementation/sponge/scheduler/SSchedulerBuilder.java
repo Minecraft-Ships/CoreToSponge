@@ -3,10 +3,10 @@ package org.ships.implementation.sponge.scheduler;
 import org.core.platform.Plugin;
 import org.core.schedule.Scheduler;
 import org.core.schedule.SchedulerBuilder;
+import org.core.schedule.unit.TimeUnit;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 public class SSchedulerBuilder implements SchedulerBuilder {
 
@@ -31,12 +31,12 @@ public class SSchedulerBuilder implements SchedulerBuilder {
     }
 
     @Override
-    public Optional<TimeUnit> getDelayUnit() {
+    public Optional<org.core.schedule.unit.TimeUnit> getDelayUnit() {
         return Optional.ofNullable(this.delayUnit);
     }
 
     @Override
-    public SchedulerBuilder setDelayUnit(TimeUnit unit) {
+    public SchedulerBuilder setDelayUnit(org.core.schedule.unit.TimeUnit unit) {
         this.delayUnit = unit;
         return this;
     }
@@ -53,12 +53,12 @@ public class SSchedulerBuilder implements SchedulerBuilder {
     }
 
     @Override
-    public Optional<TimeUnit> getIterationUnit() {
+    public Optional<org.core.schedule.unit.TimeUnit> getIterationUnit() {
         return Optional.ofNullable(this.iterationUnit);
     }
 
     @Override
-    public SchedulerBuilder setIterationUnit(TimeUnit unit) {
+    public SchedulerBuilder setIterationUnit(org.core.schedule.unit.TimeUnit unit) {
         this.iterationUnit = unit;
         return this;
     }

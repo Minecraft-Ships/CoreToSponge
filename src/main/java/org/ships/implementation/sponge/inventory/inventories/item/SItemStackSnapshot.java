@@ -1,12 +1,13 @@
 package org.ships.implementation.sponge.inventory.inventories.item;
 
+import net.kyori.adventure.text.Component;
 import org.core.CorePlugin;
 import org.core.inventory.item.stack.ItemStack;
 import org.core.inventory.item.ItemType;
 import org.core.text.Text;
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.text.SText;
-import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class SItemStackSnapshot implements org.core.inventory.item.stack.ItemSta
     @Override
     public ItemType getType() {
         SpongePlatform platform = ((SpongePlatform) CorePlugin.getPlatform());
-        return platform.getItemType(this.item.getType().getId()).get();
+        return platform.getItemType(this.item.getType().getKey().asString()).get();
     }
 
     @Override
@@ -43,15 +44,15 @@ public class SItemStackSnapshot implements org.core.inventory.item.stack.ItemSta
     @Override
     public List<Text> getLore() {
         List<Text> list = new ArrayList<>();
-        this.item.get(Keys.ITEM_LORE).get().stream().forEach(t -> list.add(new SText(t)));
+        this.item.get(Keys.LORE).get().forEach(t -> list.add(SText.of(t)));
         return list;
     }
 
     @Override
     public ItemStack setLore(Collection<Text> lore) {
-        List<org.spongepowered.api.text.Text> list = new ArrayList<>();
-        lore.stream().forEach(t -> list.add(((SText)t).toSponge()));
-        this.item = this.item.with(Keys.ITEM_LORE, list).get();
+        List<Component> list = new ArrayList<>();
+        lore.forEach(t -> list.add(((SText<?>)t).toSponge()));
+        this.item = this.item.with(Keys.LORE, list).get();
         return this;
     }
 

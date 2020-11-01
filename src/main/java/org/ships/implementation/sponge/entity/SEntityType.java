@@ -12,30 +12,30 @@ import org.ships.implementation.sponge.entity.living.human.player.snapshot.SPlay
 
 public abstract class SEntityType<T extends LiveEntity, S extends EntitySnapshot<T>> implements EntityType<T, S> {
 
-    protected org.spongepowered.api.entity.EntityType type;
+    protected org.spongepowered.api.entity.EntityType<?> type;
 
-    public SEntityType(org.spongepowered.api.entity.EntityType type){
+    public SEntityType(org.spongepowered.api.entity.EntityType<?> type){
         this.type = type;
     }
 
-    public org.spongepowered.api.entity.EntityType getSpongeType(){
+    public org.spongepowered.api.entity.EntityType<?> getSpongeType(){
         return this.type;
     }
 
     @Override
     public String getId() {
-        return this.type.getId();
+        return this.type.getKey().asString();
     }
 
     @Override
     public String getName() {
-        return this.type.getName();
+        return this.type.getKey().getValue();
     }
 
     public static class SPlayerType extends SEntityType<LivePlayer, PlayerSnapshot> {
 
         public SPlayerType() {
-            super(org.spongepowered.api.entity.EntityTypes.PLAYER);
+            super(org.spongepowered.api.entity.EntityTypes.PLAYER.get());
         }
 
         @Override
@@ -51,7 +51,7 @@ public abstract class SEntityType<T extends LiveEntity, S extends EntitySnapshot
 
     public static class SForgedEntityType extends SEntityType<SForgeEntity, SForgeEntitySnapshot> {
 
-        public SForgedEntityType(org.spongepowered.api.entity.EntityType type) {
+        public SForgedEntityType(org.spongepowered.api.entity.EntityType<?> type) {
             super(type);
         }
 

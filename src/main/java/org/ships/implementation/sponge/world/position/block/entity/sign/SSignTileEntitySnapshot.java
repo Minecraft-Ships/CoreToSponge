@@ -1,14 +1,13 @@
 package org.ships.implementation.sponge.world.position.block.entity.sign;
 
+import net.kyori.adventure.text.Component;
 import org.core.world.position.block.BlockType;
 import org.core.world.position.block.BlockTypes;
 import org.core.world.position.block.entity.sign.LiveSignTileEntity;
 import org.core.world.position.block.entity.sign.SignTileEntity;
 import org.core.world.position.block.entity.sign.SignTileEntitySnapshot;
 import org.ships.implementation.sponge.text.SText;
-import org.spongepowered.api.data.value.immutable.ImmutableListValue;
-import org.spongepowered.api.data.value.mutable.ListValue;
-import org.spongepowered.api.text.Text;
+import org.spongepowered.api.data.value.ListValue;
 
 import java.util.Collection;
 
@@ -16,19 +15,10 @@ public class SSignTileEntitySnapshot implements SignTileEntitySnapshot {
 
     protected org.core.text.Text[] lines;
 
-    public SSignTileEntitySnapshot(org.spongepowered.api.data.manipulator.immutable.tileentity.ImmutableSignData sign) {
+    public SSignTileEntitySnapshot(ListValue<Component> sign) {
         this.lines = new org.core.text.Text[4];
-        ImmutableListValue<Text> lines = sign.lines();
-        for(int A = 0; A < lines.size(); A++){
-            this.lines[A] = new SText(lines.get(A));
-        }
-    }
-
-    public SSignTileEntitySnapshot(org.spongepowered.api.data.manipulator.mutable.tileentity.SignData sign) {
-        this.lines = new org.core.text.Text[4];
-        ListValue<Text> lines = sign.lines();
-        for(int A = 0; A < lines.size(); A++){
-            this.lines[A] = new SText(lines.get(A));
+        for(int A = 0; A < sign.size(); A++){
+            this.lines[A] = SText.of(sign.get(A));
         }
     }
 

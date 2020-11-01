@@ -5,12 +5,13 @@ import org.core.inventory.item.stack.ItemStackSnapshot;
 import org.core.world.position.block.BlockType;
 import org.ships.implementation.sponge.inventory.inventories.item.SItemStackSnapshot;
 import org.ships.implementation.sponge.world.position.block.SBlockType;
+import org.spongepowered.api.item.inventory.ItemStack;
 
 import java.util.Optional;
 
 public class SItemType implements ItemType {
 
-    private org.spongepowered.api.item.ItemType type;
+    private final org.spongepowered.api.item.ItemType type;
 
     public SItemType(org.spongepowered.api.item.ItemType type){
         this.type = type;
@@ -18,7 +19,7 @@ public class SItemType implements ItemType {
 
     @Override
     public ItemStackSnapshot getDefaultItemStack() {
-        return new SItemStackSnapshot(this.type.getTemplate());
+        return new SItemStackSnapshot(ItemStack.builder().itemType(this.type).build().createSnapshot());
     }
 
     @Override
@@ -33,11 +34,11 @@ public class SItemType implements ItemType {
 
     @Override
     public String getId() {
-        return this.type.getId();
+        return this.type.getKey().asString();
     }
 
     @Override
     public String getName() {
-        return this.type.getName();
+        return this.type.getKey().getValue();
     }
 }

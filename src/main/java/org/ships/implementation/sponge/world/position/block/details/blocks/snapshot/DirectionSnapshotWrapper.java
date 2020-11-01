@@ -5,8 +5,7 @@ import org.core.world.direction.Direction;
 import org.core.world.position.block.details.data.DirectionalData;
 import org.core.world.position.impl.Position;
 import org.ships.implementation.sponge.utils.DirectionUtils;
-import org.ships.implementation.sponge.world.position.block.details.blocks.details.SBlockDetails;
-import org.spongepowered.api.data.key.Keys;
+import org.spongepowered.api.data.Keys;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -39,10 +38,10 @@ public class DirectionSnapshotWrapper implements DirectionalData {
     public DirectionalData setDirection(Direction direction) throws DirectionNotSupported {
         org.spongepowered.api.util.Direction direction1 = DirectionUtils.getSpongeDirection(direction);
         System.out.println("BlockState: " + this.details.getClass().getSimpleName());
-        boolean check = this.details.setKey(Keys.DIRECTION, direction1);
+        boolean check = this.details.setKey(Keys.DIRECTION.get(), direction1);
         if (!check){
             System.err.println("Direction not supported");
-            throw new DirectionNotSupported(direction, this.details.getState().getType().getId());
+            throw new DirectionNotSupported(direction, this.details.getState().getType().getKey().asString());
         }
         return this;
     }
