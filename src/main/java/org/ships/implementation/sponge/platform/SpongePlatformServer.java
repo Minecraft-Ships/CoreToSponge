@@ -70,7 +70,7 @@ public class SpongePlatformServer implements PlatformServer {
         return this.tpsExecutor;
     }
 
-    @Override
+    /*@Override
     public Collection<CommandLauncher> getCommands() {
         return Collections.unmodifiableCollection(this.commands);
     }
@@ -78,10 +78,10 @@ public class SpongePlatformServer implements PlatformServer {
     @Override
     public void registerCommands(CommandLauncher... commandLaunchers) {
         for(CommandLauncher commandLauncher : commandLaunchers) {
-            Object plugin = commandLauncher.getPlugin().getLauncher();
+            Object plugin = commandLauncher.getPlugin().getLauncher();*/
             /*SCommand command = new SCommand(commandLauncher);
             Sponge.getCommandManager().register(plugin, command, commandLauncher.getName());
             this.commands.add(commandLauncher);*/
-        }
-    }
+        /*}
+    }*/
 }
