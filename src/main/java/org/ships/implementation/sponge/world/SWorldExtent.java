@@ -49,7 +49,7 @@ public class SWorldExtent implements WorldExtent {
     }
 
     @Override
-    public UUID getUniquieId() {
+    public UUID getUniqueId() {
         if(this.world instanceof ServerWorld) {
             return ((ServerWorld)this.world).getUniqueId();
         }
@@ -57,7 +57,7 @@ public class SWorldExtent implements WorldExtent {
     }
 
     @Override
-    public String getPlatformUniquieId() {
+    public String getPlatformUniqueId() {
         if(this.world instanceof ServerWorld){
             return ((ServerWorld)this.world).getKey().asString();
         }
@@ -130,6 +130,6 @@ public class SWorldExtent implements WorldExtent {
             return false;
         }
         WorldExtent extent = (WorldExtent) object;
-        return extent.getPlatformUniquieId().equals(this.getPlatformUniquieId());
+        return extent.getPlatformUniqueId().equals(this.getPlatformUniqueId());
     }
 }
