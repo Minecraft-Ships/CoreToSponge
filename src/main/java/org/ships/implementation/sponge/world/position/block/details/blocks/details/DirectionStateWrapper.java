@@ -36,10 +36,8 @@ public class DirectionStateWrapper implements DirectionalData {
     @Override
     public DirectionalData setDirection(Direction direction) throws DirectionNotSupported {
         org.spongepowered.api.util.Direction direction1 = DirectionUtils.getSpongeDirection(direction);
-        System.out.println("BlockState: " + this.details.getClass().getSimpleName());
         boolean check = this.details.setKey(Keys.DIRECTION.get(), direction1);
         if (!check){
-            System.err.println("Direction not supported");
             throw new DirectionNotSupported(direction, this.details.getState().getType().getKey().asString());
         }
         return this;

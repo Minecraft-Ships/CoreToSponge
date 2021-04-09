@@ -61,7 +61,6 @@ public class SBlockPosition extends SSyncedPosition<Integer> implements SyncBloc
             BlockSnapshot snapshot1 = snapshot.getSnapshot();
             snapshot1 = snapshot1.withLocation(this.location.onServer().get());
             SApplyPhysicsFlag physicsFlag = (SApplyPhysicsFlag) Stream.of(flags).filter(f -> f instanceof ApplyPhysicsFlag).findAny().orElse(ApplyPhysicsFlags.NONE);
-            System.out.println("Snapshot restore: " + snapshot1.getState().getKey().asString());
             snapshot1.restore(true, physicsFlag.getFlag());
         }else {
             org.spongepowered.api.block.BlockState state = ((StateDetails) details).getState();
