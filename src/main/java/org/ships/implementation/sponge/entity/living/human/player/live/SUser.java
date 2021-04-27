@@ -14,51 +14,51 @@ public class SUser implements User {
 
     protected org.spongepowered.api.entity.living.player.User user;
 
-    public SUser(org.spongepowered.api.entity.living.player.User user){
+    public SUser(org.spongepowered.api.entity.living.player.User user) {
         this.user = user;
     }
 
-    public org.spongepowered.api.entity.living.player.User getUser(){
+    public org.spongepowered.api.entity.living.player.User getUser() {
         return this.user;
     }
 
     @Override
     public String getName() {
-        return this.user.getName();
+        return this.user.name();
     }
 
     @Override
     public UUID getUniqueId() {
-        return this.user.getUniqueId();
+        return this.user.uniqueId();
     }
 
     @Override
     public BigDecimal getBalance() {
         Optional<UniqueAccount> opAccount = getAccount();
-        if (!opAccount.isPresent()){
+        if (!opAccount.isPresent()) {
             return new BigDecimal(0);
         }
-        return opAccount.get().getBalance(Sponge.getServiceProvider().getRegistration(EconomyService.class).get().service().getDefaultCurrency());
+        return opAccount.get().balance(Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency());
     }
 
     @Override
     public void setBalance(BigDecimal decimal) {
         Optional<UniqueAccount> opAccount = getAccount();
-        if (!opAccount.isPresent()){
+        if (!opAccount.isPresent()) {
             return;
         }
         opAccount.get()
                 .setBalance(Sponge
-                                .getServiceProvider()
-                                .getRegistration(EconomyService.class)
+                                .serviceProvider()
+                                .registration(EconomyService.class)
                                 .get()
                                 .service()
-                                .getDefaultCurrency(),
+                                .defaultCurrency(),
                         decimal);
     }
 
-    private Optional<UniqueAccount> getAccount(){
-        Optional<ServiceRegistration<EconomyService>> opReg = Sponge.getServiceProvider().getRegistration(EconomyService.class);
-        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration.service().getOrCreateAccount(this.getUniqueId()));
+    private Optional<UniqueAccount> getAccount() {
+        Optional<ServiceRegistration<EconomyService>> opReg = Sponge.serviceProvider().registration(EconomyService.class);
+        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration.service().findOrCreateAccount(this.getUniqueId()));
     }
 }

@@ -23,18 +23,18 @@ import java.util.function.Function;
 
 public abstract class SSyncedPosition<N extends Number> extends SPosition<N> implements SyncPosition<N> {
 
-    public SSyncedPosition(Location<? extends World<?>> location, Function<? extends Location<? extends World<?>>, ? extends SPosition<N>> newInstance) {
+    public SSyncedPosition(Location<? extends World<?, ?>, ?> location, Function<? extends Location<? extends World<?, ?>, ?>, ? extends SPosition<N>> newInstance) {
         super(location, newInstance);
     }
 
     @Override
     public SyncPosition<N> destroy() {
-        World<?> world = this.location.getWorld();
-        if(!(world instanceof ServerWorld)){
+        World<?, ?> world = this.location.world();
+        if (!(world instanceof ServerWorld)) {
             return this;
         }
-        ServerWorld sWorld = (ServerWorld)world;
-        sWorld.destroyBlock(this.location.getBlockPosition(), true);
+        ServerWorld sWorld = (ServerWorld) world;
+        sWorld.destroyBlock(this.location.blockPosition(), true);
         return this;
     }
 
@@ -55,8 +55,8 @@ public abstract class SSyncedPosition<N extends Number> extends SPosition<N> imp
 
     @Override
     public Optional<LiveTileEntity> getTileEntity() {
-        Optional<? extends BlockEntity> opSTileEntity = this.location.getBlockEntity();
-        if(!opSTileEntity.isPresent()){
+        Optional<? extends BlockEntity> opSTileEntity = this.location.blockEntity();
+        if (!opSTileEntity.isPresent()) {
             return Optional.empty();
         }
         LiveTileEntity lte = ((SpongePlatform) CorePlugin.getPlatform()).createTileEntityInstance(opSTileEntity.get()).get();

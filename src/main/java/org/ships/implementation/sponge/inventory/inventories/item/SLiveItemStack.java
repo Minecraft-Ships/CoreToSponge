@@ -2,14 +2,15 @@ package org.ships.implementation.sponge.inventory.inventories.item;
 
 import net.kyori.adventure.text.Component;
 import org.core.CorePlugin;
-import org.core.inventory.item.stack.ItemStack;
 import org.core.inventory.item.ItemType;
+import org.core.inventory.item.stack.ItemStack;
 import org.core.inventory.item.stack.ItemStackSnapshot;
 import org.core.inventory.item.stack.LiveItemStack;
 import org.core.text.Text;
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.text.SText;
 import org.spongepowered.api.data.Keys;
+import org.spongepowered.api.registry.RegistryTypes;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,27 +20,27 @@ public class SLiveItemStack implements LiveItemStack {
 
     protected org.spongepowered.api.item.inventory.ItemStack stack;
 
-    public SLiveItemStack(org.spongepowered.api.item.inventory.ItemStack stack){
+    public SLiveItemStack(org.spongepowered.api.item.inventory.ItemStack stack) {
         this.stack = stack;
     }
 
-    public org.spongepowered.api.item.inventory.ItemStack getSponge(){
+    public org.spongepowered.api.item.inventory.ItemStack getSponge() {
         return this.stack;
     }
 
-    public SItemStackSnapshot toSpongeSnapshot(){
+    public SItemStackSnapshot toSpongeSnapshot() {
         return new SItemStackSnapshot(this.stack.createSnapshot());
     }
 
     @Override
     public ItemType getType() {
-        SpongePlatform platform = ((SpongePlatform)CorePlugin.getPlatform());
-        return platform.getItemType(this.stack.getType().getKey().asString()).get();
+        SpongePlatform platform = ((SpongePlatform) CorePlugin.getPlatform());
+        return platform.getItemType(this.stack.type().key(RegistryTypes.ITEM_TYPE).asString()).get();
     }
 
     @Override
     public int getQuantity() {
-        return this.stack.getQuantity();
+        return this.stack.quantity();
     }
 
     @Override
@@ -52,7 +53,7 @@ public class SLiveItemStack implements LiveItemStack {
     @Override
     public ItemStack setLore(Collection<Text> lore) {
         List<Component> list = new ArrayList<>();
-        lore.forEach(t -> list.add(((SText<?>)t).toSponge()));
+        lore.forEach(t -> list.add(((SText<?>) t).toSponge()));
         this.stack.offer(Keys.LORE, list);
         return this;
     }

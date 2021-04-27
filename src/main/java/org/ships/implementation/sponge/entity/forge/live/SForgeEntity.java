@@ -13,11 +13,11 @@ public class SForgeEntity extends SLiveEntity {
 
     @Override
     public SEntityType<SForgeEntity, SForgeEntitySnapshot> getType() {
-        return new SEntityType.SForgedEntityType(this.entity.getType());
+        return new SEntityType.SForgedEntityType(this.entity.type());
     }
 
     @Override
-    public EntitySnapshot createSnapshot() {
+    public EntitySnapshot<?> createSnapshot() {
         return new SForgeEntitySnapshot(this);
     }
 }

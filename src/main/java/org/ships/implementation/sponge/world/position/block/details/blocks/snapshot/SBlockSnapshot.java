@@ -5,26 +5,26 @@ import org.core.CorePlugin;
 import org.core.text.Text;
 import org.core.world.position.block.BlockType;
 import org.core.world.position.block.details.BlockDetails;
+import org.core.world.position.block.details.BlockSnapshot;
 import org.core.world.position.block.details.data.DirectionalData;
 import org.core.world.position.block.details.data.keyed.*;
-import org.core.world.position.block.entity.TileEntity;
-import org.core.world.position.impl.BlockPosition;
-import org.core.world.position.impl.Position;
-import org.core.world.position.block.details.BlockSnapshot;
 import org.core.world.position.block.entity.LiveTileEntity;
+import org.core.world.position.block.entity.TileEntity;
 import org.core.world.position.block.entity.TileEntitySnapshot;
 import org.core.world.position.block.entity.sign.SignTileEntitySnapshot;
+import org.core.world.position.impl.BlockPosition;
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.text.SText;
 import org.ships.implementation.sponge.world.position.SPosition;
+import org.ships.implementation.sponge.world.position.block.SBlockType;
 import org.ships.implementation.sponge.world.position.block.details.blocks.StateDetails;
 import org.ships.implementation.sponge.world.position.synced.SBlockPosition;
-import org.ships.implementation.sponge.world.position.block.SBlockType;
 import org.spongepowered.api.data.Key;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.data.value.Value;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.server.ServerLocation;
 import org.spongepowered.api.world.server.ServerWorld;
 
 import java.util.ArrayList;
@@ -49,14 +49,14 @@ public class SBlockSnapshot<P extends BlockPosition> implements BlockSnapshot<P>
 
     protected TileEntitySnapshot<? extends TileEntity> tileEntitySnapshot;
     protected org.spongepowered.api.block.BlockSnapshot snapshot;
-    protected Function<Location<? extends World<?>>, P> newPosition;
+    protected Function<Location<? extends World<?, ?>, ?>, P> newPosition;
 
-    public SBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot){
+    public SBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot) {
         this.snapshot = snapshot;
-        this.newPosition = (Function<Location<? extends World<?>>, P>)SPosition.TO_SYNCED_BLOCK_POSITION;
-        if(this.tileEntitySnapshot != null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot){
+        this.newPosition = (Function<Location<? extends World<?, ?>, ?>, P>) SPosition.TO_SYNCED_BLOCK_POSITION;
+        if (this.tileEntitySnapshot != null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot) {
             Optional<List<Component>> opLines = this.snapshot.get(Keys.SIGN_LINES);
-            if(opLines.isPresent()) {
+            if (opLines.isPresent()) {
                 List<Component> lines = opLines.get();
                 for (int A = 0; A < lines.size(); A++) {
                     ((SignTileEntitySnapshot) this.tileEntitySnapshot).setLine(A, SText.of(lines.get(A)));
@@ -65,44 +65,42 @@ public class SBlockSnapshot<P extends BlockPosition> implements BlockSnapshot<P>
         }
     }
 
-    public SBlockSnapshot(org.spongepowered.api.world.Location<? extends World<?>> location, Function<Location<? extends World<?>>, P> newInstance){
-        this.snapshot = location.getWorld().createSnapshot(location.getBlockPosition());
+    public SBlockSnapshot(ServerLocation location, Function<Location<? extends World<?, ?>, ?>, P> newInstance) {
+        this.snapshot = location.world().createSnapshot(location.blockPosition());
         this.newPosition = newInstance;
-        Optional<? extends org.spongepowered.api.block.entity.BlockEntity> opTileEntity = location.getBlockEntity();
-        if(opTileEntity.isPresent()){
-            ((SpongePlatform) CorePlugin.getPlatform()).createTileEntityInstance(opTileEntity.get()).ifPresent(te -> this.tileEntitySnapshot = te.getSnapshot());
-        }
+        Optional<? extends org.spongepowered.api.block.entity.BlockEntity> opTileEntity = location.blockEntity();
+        opTileEntity.flatMap(blockEntity -> ((SpongePlatform) CorePlugin.getPlatform()).createTileEntityInstance(blockEntity)).ifPresent(te -> this.tileEntitySnapshot = te.getSnapshot());
     }
 
-    public SBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot, TileEntitySnapshot<? extends LiveTileEntity> tileEntity){
+    public SBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot, TileEntitySnapshot<? extends LiveTileEntity> tileEntity) {
         this.snapshot = snapshot;
-        this.newPosition = (Function<org.spongepowered.api.world.Location<? extends World<?>>, P>)SPosition.TO_SYNCED_BLOCK_POSITION;
+        this.newPosition = (Function<org.spongepowered.api.world.Location<? extends World<?, ?>, ?>, P>) SPosition.TO_SYNCED_BLOCK_POSITION;
         this.tileEntitySnapshot = tileEntity;
     }
 
-    public org.spongepowered.api.block.BlockSnapshot getSnapshot(){
+    public org.spongepowered.api.block.BlockSnapshot getSnapshot() {
         return this.snapshot;
     }
 
     @Override
-    public org.spongepowered.api.block.BlockState getState(){
-        return this.getSnapshot().getState();
+    public org.spongepowered.api.block.BlockState getState() {
+        return this.getSnapshot().state();
     }
 
-    private <T> Optional<KeyedData<T>> getKey(Class<? extends KeyedData<T>> data){
+    private <T> Optional<KeyedData<T>> getKey(Class<? extends KeyedData<T>> data) {
         KeyedData<T> key = null;
-        if(data.isAssignableFrom(TileEntityKeyedData.class)){
+        if (data.isAssignableFrom(TileEntityKeyedData.class)) {
             key = (KeyedData<T>) new SBlockSnapshot.STileEntityKeyedData();
-        }else if(data.isAssignableFrom(OpenableKeyedData.class) && (this.snapshot.supports(Keys.IS_OPEN))){
-        }else if(data.isAssignableFrom(AttachableKeyedData.class) && this.snapshot.supports(Keys.IS_ATTACHED)){
-        }else if(data.isAssignableFrom(MultiDirectionalKeyedData.class) && this.snapshot.supports(Keys.CONNECTED_DIRECTIONS)){
+        } else if (data.isAssignableFrom(OpenableKeyedData.class) && (this.snapshot.supports(Keys.IS_OPEN))) {
+        } else if (data.isAssignableFrom(AttachableKeyedData.class) && this.snapshot.supports(Keys.IS_ATTACHED)) {
+        } else if (data.isAssignableFrom(MultiDirectionalKeyedData.class) && this.snapshot.supports(Keys.CONNECTED_DIRECTIONS)) {
         }
         return Optional.ofNullable(key);
     }
 
     public <T> boolean setKey(Key<? extends Value<T>> key, T value) {
         Optional<org.spongepowered.api.block.BlockSnapshot> opState = this.snapshot.with(key, value);
-        if(opState.isPresent()){
+        if (opState.isPresent()) {
             this.snapshot = opState.get();
             return true;
         }
@@ -111,28 +109,28 @@ public class SBlockSnapshot<P extends BlockPosition> implements BlockSnapshot<P>
 
     @Override
     public BlockType getType() {
-        return new SBlockType(this.snapshot.getState().getType());
+        return new SBlockType(this.snapshot.state().type());
     }
 
     @Override
     public <BP extends BlockPosition> BlockSnapshot<BP> createSnapshot(BP position) {
         SBlockPosition position1 = (SBlockPosition) position;
         org.spongepowered.api.block.BlockSnapshot snapshot = null;
-        if(position1.getSpongeLocation().getWorld() instanceof ServerWorld){
+        if (position1.getSpongeLocation().world() instanceof ServerWorld) {
             snapshot = org.spongepowered.api.block.BlockSnapshot.builder()
                     .from(this.snapshot)
-                    .world(((ServerWorld) position1.getSpongeLocation().getWorld()).getProperties())
-                    .position(position1.getSpongeLocation().getBlockPosition()).build();
-        }else{
+                    .world(((ServerWorld) position1.getSpongeLocation().world()).properties())
+                    .position(position1.getSpongeLocation().blockPosition()).build();
+        } else {
             snapshot = org.spongepowered.api.block.BlockSnapshot.builder()
                     .from(this.snapshot)
-                    .position(position1.getSpongeLocation().getBlockPosition())
+                    .position(position1.getSpongeLocation().blockPosition())
                     .build();
         }
-        if(this.tileEntitySnapshot != null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot){
+        if (this.tileEntitySnapshot != null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot) {
             List<Component> lines = new ArrayList<>();
-            for (Text text : ((SignTileEntitySnapshot) this.tileEntitySnapshot).getLines()){
-                lines.add(((SText<? extends Component>)text).toSponge());
+            for (Text text : ((SignTileEntitySnapshot) this.tileEntitySnapshot).getLines()) {
+                lines.add(((SText<? extends Component>) text).toSponge());
             }
             snapshot = snapshot.with(Keys.SIGN_LINES, lines).get();
         }
@@ -141,7 +139,7 @@ public class SBlockSnapshot<P extends BlockPosition> implements BlockSnapshot<P>
 
     @Override
     public Optional<DirectionalData> getDirectionalData() {
-        if(this.snapshot.supports(Keys.DIRECTION)){
+        if (this.snapshot.supports(Keys.DIRECTION)) {
             return Optional.of(new DirectionSnapshotWrapper(this));
         }
         return Optional.empty();
@@ -149,7 +147,7 @@ public class SBlockSnapshot<P extends BlockPosition> implements BlockSnapshot<P>
 
     @Override
     public P getPosition() {
-        return this.newPosition.apply(this.snapshot.getLocation().get());
+        return this.newPosition.apply(this.snapshot.location().get());
     }
 
     @Override
@@ -160,7 +158,7 @@ public class SBlockSnapshot<P extends BlockPosition> implements BlockSnapshot<P>
     @Override
     public <T> Optional<T> get(Class<? extends KeyedData<T>> data) {
         Optional<KeyedData<T>> opKey = getKey(data);
-        if(opKey.isPresent()){
+        if (opKey.isPresent()) {
             return opKey.get().getData();
         }
         return Optional.empty();

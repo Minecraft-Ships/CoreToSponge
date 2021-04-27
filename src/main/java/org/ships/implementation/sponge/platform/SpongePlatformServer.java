@@ -11,58 +11,69 @@ import org.ships.implementation.sponge.entity.living.human.player.live.SUser;
 import org.ships.implementation.sponge.world.SWorldExtent;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Server;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
-import org.spongepowered.api.world.World;
-import org.spongepowered.api.world.server.ServerWorld;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SpongePlatformServer implements PlatformServer {
 
-    private Server platform = Sponge.getServer();
-    private Set<CommandLauncher> commands = new HashSet<>();
-    private TPSExecutor tpsExecutor = new TPSExecutor();
+    private final Server platform;
+    private final Set<CommandLauncher> commands = new HashSet<>();
+    private final TPSExecutor tpsExecutor = new TPSExecutor();
 
-    public SpongePlatformServer(Server platform){
+    public SpongePlatformServer(Server platform) {
         this.platform = platform;
+    }
+
+    public Server getServer() {
+        return this.platform;
     }
 
     @Override
     public Set<WorldExtent> getWorlds() {
-        Set<WorldExtent> set = new HashSet<>();
-        this.platform.getWorldManager().getWorlds().forEach(w -> set.add(new SWorldExtent(w)));
-        return set;
+        return this
+                .platform
+                .worldManager()
+                .worlds()
+                .stream()
+                .map(SWorldExtent::new)
+                .collect(Collectors.toSet());
     }
 
     @Override
+    @Deprecated
     public Optional<WorldExtent> getWorldByPlatformSpecific(String name) {
-        Optional<ServerWorld> opWorld = this.platform.getWorldManager().getWorld(ResourceKey.resolve(name));
-        if(!opWorld.isPresent()){
+        Optional<ResourceKey> opKey = this.platform.worldManager().worldKey(UUID.fromString(name));
+        if (!opKey.isPresent()) {
             return Optional.empty();
         }
-        return Optional.of(new SWorldExtent(opWorld.get()));
+        return this
+                .platform
+                .worldManager()
+                .world(opKey.get())
+                .map(SWorldExtent::new);
     }
 
     @Override
     public Collection<LivePlayer> getOnlinePlayers() {
         List<LivePlayer> list = new ArrayList<>();
-        Sponge.getServer().getOnlinePlayers().forEach(p -> list.add(new SLivePlayer(p)));
-        return list;
+        return this
+                .platform
+                .onlinePlayers()
+                .stream()
+                .map(SLivePlayer::new)
+                .collect(Collectors.toSet());
     }
 
     @Override
     public Optional<User> getOfflineUser(UUID uuid) {
-        Optional<ServerPlayer> opPlayer = Sponge.getServer().getPlayer(uuid);
-        if(opPlayer.isPresent()){
-           return Optional.of(new SLivePlayer(opPlayer.get()));
+        Optional<ServerPlayer> opPlayer = this.platform.player(uuid);
+        if (opPlayer.isPresent()) {
+            return opPlayer.map(SLivePlayer::new);
         }
-        Optional<org.spongepowered.api.entity.living.player.User> opUser = Sponge.getServer().getUserManager().get(uuid);
-        if(!opUser.isPresent()){
-            return Optional.empty();
-        }
-        return Optional.of(new SUser(opUser.get()));
+        Optional<org.spongepowered.api.entity.living.player.User> opUser = this.platform.userManager().find(uuid);
+        return opUser.map(SUser::new);
     }
 
     @Override

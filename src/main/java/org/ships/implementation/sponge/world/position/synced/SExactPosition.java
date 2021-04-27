@@ -14,7 +14,7 @@ import org.spongepowered.api.world.World;
 
 public class SExactPosition extends SSyncedPosition<Double> implements SyncExactPosition {
 
-    public SExactPosition(Location<? extends World<?>> location) {
+    public SExactPosition(Location<? extends World<?, ?>, ?> location) {
         super(location, SExactPosition.TO_SYNCED_EXACT_POSITION);
     }
 
@@ -35,7 +35,7 @@ public class SExactPosition extends SSyncedPosition<Double> implements SyncExact
 
     @Override
     public Vector3<Double> getPosition() {
-        return Vector3.valueOf(this.location.getX(), this.location.getY(), this.location.getZ());
+        return Vector3.valueOf(this.location.x(), this.location.y(), this.location.z());
     }
 
     @Override

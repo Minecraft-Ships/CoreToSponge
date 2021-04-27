@@ -123,28 +123,28 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
     @Override
     public BigDecimal getBalance() {
         Optional<UniqueAccount> opAccount = getAccount();
-        return opAccount.map(uniqueAccount -> uniqueAccount.getBalance(Sponge.getServiceProvider().getRegistration(EconomyService.class).get().service().getDefaultCurrency())).orElseGet(() -> new BigDecimal(0));
+        return opAccount.map(uniqueAccount -> uniqueAccount.balance(Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency())).orElseGet(() -> new BigDecimal(0));
     }
 
     @Override
     public void setBalance(BigDecimal decimal) {
         Optional<UniqueAccount> opAccount = getAccount();
-        if (!opAccount.isPresent()){
+        if (!opAccount.isPresent()) {
             return;
         }
         opAccount.get()
                 .setBalance(Sponge
-                                .getServiceProvider()
-                                .getRegistration(EconomyService.class)
+                                .serviceProvider()
+                                .registration(EconomyService.class)
                                 .get()
                                 .service()
-                                .getDefaultCurrency(),
+                                .defaultCurrency(),
                         decimal);
     }
 
-    private Optional<UniqueAccount> getAccount(){
-        Optional<ServiceRegistration<EconomyService>> opReg = Sponge.getServiceProvider().getRegistration(EconomyService.class);
-        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration.service().getOrCreateAccount(this.getUniqueId()));
+    private Optional<UniqueAccount> getAccount() {
+        Optional<ServiceRegistration<EconomyService>> opReg = Sponge.serviceProvider().registration(EconomyService.class);
+        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration.service().findOrCreateAccount(this.getUniqueId()));
     }
 
     @Override

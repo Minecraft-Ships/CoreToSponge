@@ -1,15 +1,15 @@
 package org.ships.implementation.sponge.scheduler;
 
+import net.kyori.adventure.util.Ticks;
+import org.core.CorePlugin;
 import org.core.platform.Plugin;
 import org.core.schedule.Scheduler;
 import org.core.schedule.SchedulerBuilder;
 import org.core.schedule.unit.TimeUnit;
-import org.spongepowered.api.Sponge;
+import org.ships.implementation.sponge.platform.SpongePlatformServer;
 import org.spongepowered.api.scheduler.ScheduledTask;
 import org.spongepowered.api.scheduler.Task;
-import org.spongepowered.api.util.TemporalUnits;
 
-import java.time.temporal.TemporalUnit;
 import java.util.Optional;
 
 public class SScheduler implements Scheduler {
@@ -20,7 +20,7 @@ public class SScheduler implements Scheduler {
         public void run() {
             SScheduler.this.taskToRun.run();
             Scheduler scheduler = SScheduler.this.runAfter;
-            if(scheduler != null){
+            if (scheduler != null) {
                 scheduler.run();
             }
         }
@@ -35,7 +35,7 @@ public class SScheduler implements Scheduler {
     protected Plugin plugin;
     protected ScheduledTask task;
 
-    public SScheduler(SchedulerBuilder builder, Plugin plugin){
+    public SScheduler(SchedulerBuilder builder, Plugin plugin) {
         this.taskToRun = builder.getExecutor();
         this.iteration = builder.getIteration().orElse(null);
         this.iterationTimeUnit = builder.getIterationUnit().orElse(null);
@@ -45,19 +45,17 @@ public class SScheduler implements Scheduler {
         builder.getToRunAfter().ifPresent(s -> this.runAfter = s);
     }
 
-    public Optional<ScheduledTask> getSpongeTask(){
+    public Optional<ScheduledTask> getSpongeTask() {
         return Optional.ofNullable(this.task);
     }
 
-    private TemporalUnit to(TimeUnit unit1){
-        TemporalUnit unit;
-        if(unit1.equals(TimeUnit.MINECRAFT_TICKS)){
-            unit = TemporalUnits.MINECRAFT_TICKS;
-        }else if(unit1.equals(TimeUnit.SECONDS)){
-            unit = TemporalUnits.SECONDS;
-        }else if(unit1.equals(TimeUnit.MINUTES)){
-            unit = TemporalUnits.MINUTES;
-        }else{
+    private java.util.concurrent.TimeUnit to(TimeUnit unit1) {
+        java.util.concurrent.TimeUnit unit;
+        if (unit1.equals(TimeUnit.SECONDS)) {
+            unit = java.util.concurrent.TimeUnit.SECONDS;
+        } else if (unit1.equals(TimeUnit.MINUTES)) {
+            unit = java.util.concurrent.TimeUnit.MINUTES;
+        } else {
             throw new IllegalStateException("Unknown unit");
         }
         return unit;
@@ -66,21 +64,21 @@ public class SScheduler implements Scheduler {
     @Override
     public void run() {
         Task.Builder builder = Task.builder().execute(new SScheduler.RunAfterScheduler());
-        if(this.delayCount != null){
-            if(this.delayTimeUnit == null){
-                builder = builder.delayTicks(this.delayCount);
-            }else{
+        if (this.delayCount != null) {
+            if (this.delayTimeUnit == null || this.delayTimeUnit == TimeUnit.MINECRAFT_TICKS) {
+                builder = builder.delay(Ticks.duration(this.delayCount));
+            } else {
                 builder = builder.delay(this.delayCount, to(this.delayTimeUnit));
             }
         }
-        if(this.iteration != null){
-            if(this.iterationTimeUnit == null){
-                builder = builder.intervalTicks(this.iteration);
-            }else{
+        if (this.iteration != null) {
+            if (this.iterationTimeUnit == null || this.iterationTimeUnit == TimeUnit.MINECRAFT_TICKS) {
+                builder = builder.interval(Ticks.duration(this.iteration));
+            } else {
                 builder = builder.interval(this.iteration, to(this.iterationTimeUnit));
             }
         }
-        this.task = Sponge.getServer().getScheduler().submit(builder.build());
+        this.task = ((SpongePlatformServer) CorePlugin.getServer()).getServer().scheduler().submit(builder.build());
     }
 
     @Override

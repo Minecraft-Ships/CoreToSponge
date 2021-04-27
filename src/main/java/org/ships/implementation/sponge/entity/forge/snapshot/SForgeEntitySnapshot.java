@@ -24,8 +24,8 @@ public class SForgeEntitySnapshot extends SEntitySnapshot<SForgeEntity> implemen
 
     @Override
     public SForgeEntity spawnEntity() {
-        Location<? extends World<?>> location = ((SExactPosition)this.position).getSpongeLocation();
-        Entity entity = location.getWorld().createEntity(this.spongeType, location.getPosition());
+        Location<? extends World<?, ?>, ?> location = ((SExactPosition)this.position).getSpongeLocation();
+        Entity entity = location.world().createEntity(this.spongeType, location.position());
         SForgeEntity sEntity = new SForgeEntity(entity);
         applyDefault(sEntity);
         return sEntity;

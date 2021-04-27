@@ -1,24 +1,26 @@
 package org.ships.implementation.sponge.configuration;
 
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.loader.ConfigurationLoader;
 import org.array.utils.ArrayUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.core.config.ConfigurationStream;
 import org.core.config.parser.Parser;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.loader.ConfigurationLoader;
+import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
-public abstract class AbstractConfigurationFile <N extends ConfigurationNode, L extends ConfigurationLoader<N>> implements ConfigurationStream.ConfigurationFile {
+public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L extends ConfigurationLoader<N>> implements ConfigurationStream.ConfigurationFile {
 
     protected File file;
     protected L loader;
     protected N root;
 
-    public AbstractConfigurationFile(File file, L loader){
+    public AbstractConfigurationFile(File file, L loader) {
         this.file = file;
         this.loader = loader;
         this.reload();
@@ -29,9 +31,9 @@ public abstract class AbstractConfigurationFile <N extends ConfigurationNode, L 
         return this.file;
     }
 
-    private <T> Optional<T> get(org.core.config.ConfigurationNode node, Function<ConfigurationNode, T> value){
-        @NonNull ConfigurationNode node1 = this.root.getNode(node.getPath());
-        if(node1.isEmpty()){
+    private <T> Optional<T> get(org.core.config.ConfigurationNode node, Function<ConfigurationNode, T> value) {
+        @NonNull ConfigurationNode node1 = this.root.node(node.getPath());
+        if (node1.empty()) {
             return Optional.empty();
         }
         return Optional.of(value.apply(node1));
@@ -59,57 +61,76 @@ public abstract class AbstractConfigurationFile <N extends ConfigurationNode, L 
 
     @Override
     public <T, C extends Collection<T>> C parseCollection(org.core.config.ConfigurationNode node, Parser<String, T> parser, C collection) {
-        @NonNull ConfigurationNode node1 = this.root.getNode(node.getPath());
-        if(node1.isEmpty()){
+        @NonNull ConfigurationNode node1 = this.root.node(node.getPath());
+        if (node1.empty()) {
             return collection;
         }
-        if(!node1.isList()){
+        if (!node1.isList()) {
             return collection;
         }
-        List<T> list = node1.getList(v -> parser.parse(v.toString()).get());
+        List<T> list = node1.childrenList().stream().map(v -> parser.parse(v.toString()).get()).collect(Collectors.toList());
         collection.addAll(list);
         return collection;
     }
 
     @Override
     public void set(org.core.config.ConfigurationNode node, int value) {
-        this.root.setValue(value);
+        try {
+            this.root.set(value);
+        } catch (SerializationException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override
     public void set(org.core.config.ConfigurationNode node, double value) {
-        this.root.setValue(value);
-    }
+        try {
+            this.root.set(value);
+        } catch (SerializationException e) {
+            throw new IllegalStateException(e);
+        }    }
 
     @Override
     public void set(org.core.config.ConfigurationNode node, boolean value) {
-        this.root.setValue(value);
+        try {
+            this.root.set(value);
+        } catch (SerializationException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override
     public void set(org.core.config.ConfigurationNode node, String value) {
-        this.root.setValue(value);
+        try {
+            this.root.set(value);
+        } catch (SerializationException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override
     public <T> void set(org.core.config.ConfigurationNode node, Parser<String, T> parser, Collection<T> collection) {
         List<String> list = new ArrayList<>();
         collection.forEach(v -> list.add(parser.unparse(v)));
-        this.root.getNode(node.getPath()).setValue(list);
+        try {
+            this.root.node(node.getPath()).set(list);
+        } catch (SerializationException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override
     public Set<org.core.config.ConfigurationNode> getChildren(org.core.config.ConfigurationNode node) {
-        Collection<? extends ConfigurationNode> values = this.root.getNode(node.getPath()).getChildrenMap().values();
+        Collection<? extends ConfigurationNode> values = this.root.node(node.getPath()).childrenList();
         Set<org.core.config.ConfigurationNode> set = new HashSet<>();
-        values.stream().filter(n -> n.getPath().length == (node.getPath().length + 1)).filter(n -> {
-            for(int A = 0; A < node.getPath().length; A++){
-                if(!node.getPath()[A].equals(n.getPath()[A].toString())){
+        values.stream().filter(n -> n.path().size() == (node.getPath().length + 1)).filter(n -> {
+            for (int A = 0; A < node.getPath().length; A++) {
+                if (!node.getPath()[A].equals(n.path().get(A).toString())) {
                     return false;
                 }
             }
             return true;
-        }).forEach(v -> set.add(new org.core.config.ConfigurationNode(ArrayUtils.convert(String.class, Object::toString, v.getPath()))));
+        }).forEach(v -> set.add(new org.core.config.ConfigurationNode(ArrayUtils.convert(String.class, Object::toString, v.path()))));
         return set;
     }
 

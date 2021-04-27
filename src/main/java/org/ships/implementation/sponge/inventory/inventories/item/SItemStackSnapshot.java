@@ -2,13 +2,14 @@ package org.ships.implementation.sponge.inventory.inventories.item;
 
 import net.kyori.adventure.text.Component;
 import org.core.CorePlugin;
-import org.core.inventory.item.stack.ItemStack;
 import org.core.inventory.item.ItemType;
+import org.core.inventory.item.stack.ItemStack;
 import org.core.text.Text;
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.text.SText;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
+import org.spongepowered.api.registry.RegistryTypes;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,27 +19,27 @@ public class SItemStackSnapshot implements org.core.inventory.item.stack.ItemSta
 
     protected ItemStackSnapshot item;
 
-    public SItemStackSnapshot(ItemStackSnapshot item){
+    public SItemStackSnapshot(ItemStackSnapshot item) {
         this.item = item;
     }
 
-    public org.spongepowered.api.item.inventory.ItemStackSnapshot getSponge(){
+    public org.spongepowered.api.item.inventory.ItemStackSnapshot getSponge() {
         return this.item;
     }
 
-    public SLiveItemStack toSpongeItem(){
+    public SLiveItemStack toSpongeItem() {
         return new SLiveItemStack(this.item.createStack());
     }
 
     @Override
     public ItemType getType() {
         SpongePlatform platform = ((SpongePlatform) CorePlugin.getPlatform());
-        return platform.getItemType(this.item.getType().getKey().asString()).get();
+        return platform.getItemType(this.item.type().key(RegistryTypes.ITEM_TYPE).asString()).get();
     }
 
     @Override
     public int getQuantity() {
-        return this.item.getQuantity();
+        return this.item.quantity();
     }
 
     @Override
@@ -51,7 +52,7 @@ public class SItemStackSnapshot implements org.core.inventory.item.stack.ItemSta
     @Override
     public ItemStack setLore(Collection<Text> lore) {
         List<Component> list = new ArrayList<>();
-        lore.forEach(t -> list.add(((SText<?>)t).toSponge()));
+        lore.forEach(t -> list.add(((SText<?>) t).toSponge()));
         this.item = this.item.with(Keys.LORE, list).get();
         return this;
     }

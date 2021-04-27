@@ -2,80 +2,95 @@ package org.ships.implementation.sponge.world;
 
 import org.core.CorePlugin;
 import org.core.entity.LiveEntity;
+import org.core.vector.type.Vector3;
+import org.core.world.ChunkExtent;
 import org.core.world.WorldExtent;
+import org.core.world.position.block.entity.LiveTileEntity;
 import org.core.world.position.impl.async.ASyncBlockPosition;
 import org.core.world.position.impl.async.ASyncExactPosition;
 import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.core.world.position.impl.sync.SyncExactPosition;
-import org.core.world.position.block.entity.LiveTileEntity;
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.world.position.synced.SBlockPosition;
 import org.ships.implementation.sponge.world.position.synced.SExactPosition;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.entity.living.player.client.LocalPlayer;
+import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.util.AABB;
-import org.spongepowered.api.world.dimension.DimensionTypes;
+import org.spongepowered.api.world.WorldType;
+import org.spongepowered.api.world.WorldTypes;
 import org.spongepowered.api.world.server.ServerWorld;
+import org.spongepowered.math.vector.Vector3i;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class SWorldExtent implements WorldExtent {
 
-    protected org.spongepowered.api.world.World<?> world;
+    protected org.spongepowered.api.world.World<?, ?> world;
 
-    public SWorldExtent(org.spongepowered.api.world.World<?> world){
+    public SWorldExtent(org.spongepowered.api.world.World<?, ?> world) {
         this.world = world;
     }
 
-    public org.spongepowered.api.world.World<?> getSpongeWorld(){
+    public org.spongepowered.api.world.World<?, ?> getSpongeWorld() {
         return this.world;
     }
 
     @Override
     public String getName() {
-        if(this.world instanceof ServerWorld){
-            return ((ServerWorld)this.world).getKey().getValue();
+        if (this.world instanceof ServerWorld) {
+            return ((ServerWorld) this.world).key().value();
         }
-        if(this.world.getDimensionType().equals(DimensionTypes.OVERWORLD.get())){
+        WorldType type = this.world.worldType();
+        if (type.equals(WorldTypes.OVERWORLD.get())) {
             return "World";
         }
-        if(this.world.getDimensionType().equals(DimensionTypes.THE_END.get())){
+        if (type.equals(WorldTypes.THE_END.get())) {
             return "The_End";
         }
-        if(this.world.getDimensionType().equals(DimensionTypes.THE_NETHER.get())){
+        if (type.equals(WorldTypes.THE_NETHER.get())) {
             return "The_Nether";
         }
-        throw new IllegalStateException("Unknown World name of " + this.world.getDimensionType().getKey().asString() + " | " + this.world.getSeed());
+        throw new IllegalStateException("Unknown World name of " + this.world.worldType().key(RegistryTypes.WORLD_TYPE).asString() + " | " + this.world.seed());
     }
 
     @Override
+    @Deprecated
     public UUID getUniqueId() {
-        if(this.world instanceof ServerWorld) {
-            return ((ServerWorld)this.world).getUniqueId();
+        if (this.world instanceof ServerWorld) {
+            return ((ServerWorld) this.world).uniqueId();
         }
         throw new IllegalStateException("UUID not accessible via client");
     }
 
     @Override
     public String getPlatformUniqueId() {
-        if(this.world instanceof ServerWorld){
-            return ((ServerWorld)this.world).getKey().asString();
+        if (this.world instanceof ServerWorld) {
+            return ((ServerWorld) this.world).key().asString();
         }
-        if(this.world.getDimensionType().equals(DimensionTypes.OVERWORLD.get())){
-            return "World";
-        }
-        if(this.world.getDimensionType().equals(DimensionTypes.THE_END.get())){
-            return "The_End";
-        }
-        if(this.world.getDimensionType().equals(DimensionTypes.THE_NETHER.get())){
-            return "The_Nether";
-        }
-        throw new IllegalStateException("Unknown World name of " + this.world.getDimensionType().getKey().asString() + " | " + this.world.getSeed());
+        return getName();
+    }
+
+    @Override
+    public Set<ChunkExtent> getChunks() {
+        return null;
+    }
+
+    @Override
+    public Optional<ChunkExtent> getChunk(Vector3<Integer> vector) {
+        return Optional.empty();
+    }
+
+    @Override
+    public ChunkExtent loadChunk(Vector3<Integer> vector) {
+        return null;
     }
 
     @Override
     public SyncExactPosition getPosition(double x, double y, double z) {
-        return new SExactPosition(this.world.getLocation(x, y, z));
+        return new SExactPosition(this.world.location(x, y, z));
     }
 
     @Override
@@ -85,7 +100,7 @@ public class SWorldExtent implements WorldExtent {
 
     @Override
     public SyncBlockPosition getPosition(int x, int y, int z) {
-        return new SBlockPosition(this.world.getLocation(x, y, z));
+        return new SBlockPosition(this.world.location(x, y, z));
     }
 
     @Override
@@ -101,32 +116,39 @@ public class SWorldExtent implements WorldExtent {
     @Override
     public Set<LiveEntity> getEntities() {
         Set<LiveEntity> set = new HashSet<>();
-        SpongePlatform platform = ((SpongePlatform)CorePlugin.getPlatform());
-        if(this.world instanceof ServerWorld) {
-            ((ServerWorld)this.world).getEntities().forEach(e -> {
-                LiveEntity entity = platform.createEntityInstance(e);
-                set.add(entity);
-            });
-        }else{
-            Optional<LocalPlayer> opPlayer = Sponge.getClient().getPlayer();
-            if(!opPlayer.isPresent()){
-                return Collections.emptySet();
-            }
-            this.world.getEntities(opPlayer.get().getBoundingBox().get());
+        SpongePlatform platform = ((SpongePlatform) CorePlugin.getPlatform());
+
+
+        if (this.world instanceof ServerWorld) {
+            ServerWorld world = (ServerWorld) this.world;
+            return world.entities().stream().map(platform::createEntityInstance).collect(Collectors.toSet());
         }
-        return set;
+        Vector3i min = this.getSpongeWorld().blockMin();
+        Vector3i max = this.getSpongeWorld().blockMax();
+        AABB aabb = AABB.of(min, max);
+        return this
+                .world
+                .entities(aabb)
+                .stream()
+                .map(e -> ((SpongePlatform) CorePlugin.getPlatform()).createEntityInstance(e))
+                .collect(Collectors.toSet());
     }
 
     @Override
     public Set<LiveTileEntity> getTileEntities() {
-        Set<LiveTileEntity> set = new HashSet<>();
-        this.world.getBlockEntities().forEach(te -> ((SpongePlatform)CorePlugin.getPlatform()).createTileEntityInstance(te).ifPresent(set::add));
-        return set;
+        return this
+                .world
+                .blockEntities()
+                .stream()
+                .map(te -> ((SpongePlatform) CorePlugin.getPlatform()).createTileEntityInstance(te))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet());
     }
 
     @Override
-    public boolean equals(Object object){
-        if(!(object instanceof WorldExtent)){
+    public boolean equals(Object object) {
+        if (!(object instanceof WorldExtent)) {
             return false;
         }
         WorldExtent extent = (WorldExtent) object;

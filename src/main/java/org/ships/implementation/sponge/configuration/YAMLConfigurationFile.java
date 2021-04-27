@@ -1,16 +1,16 @@
 package org.ships.implementation.sponge.configuration;
 
-import ninja.leaping.configurate.ConfigurationNode;
-import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.core.config.ConfigurationFormat;
+import org.spongepowered.configurate.CommentedConfigurationNode;
+import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 
 import java.io.File;
 import java.io.IOException;
 
-public class YAMLConfigurationFile extends AbstractConfigurationFile<ConfigurationNode, YAMLConfigurationLoader>{
+public class YAMLConfigurationFile extends AbstractConfigurationFile<CommentedConfigurationNode, YamlConfigurationLoader> {
 
     public YAMLConfigurationFile(File file) {
-        super(file, YAMLConfigurationLoader.builder().setIndent(4).setFile(file).build());
+        super(file, YamlConfigurationLoader.builder().indent(4).file(file).build());
     }
 
     @Override
@@ -23,7 +23,7 @@ public class YAMLConfigurationFile extends AbstractConfigurationFile<Configurati
         try {
             this.root = this.loader.load();
         } catch (IOException e) {
-            this.root = this.loader.createEmptyNode();
+            this.root = this.loader.createNode();
         }
     }
 }

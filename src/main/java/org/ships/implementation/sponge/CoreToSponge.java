@@ -42,13 +42,13 @@ public class CoreToSponge extends CorePlugin.CoreImplementation {
     protected SpongePlatform platform = new SpongePlatform();
     protected SEventManager eventManager = new SEventManager();
     protected PlatformConsole console = new PlatformConsole();
-    protected SpongePlatformServer server = new SpongePlatformServer(org.spongepowered.api.Sponge.getServer());
+    protected SpongePlatformServer server = new SpongePlatformServer(org.spongepowered.api.Sponge.server());
 
     public CoreToSponge(PluginContainer plugin){
         CoreImplementation.IMPLEMENTATION = this;
-        org.spongepowered.api.Sponge.getEventManager().registerListeners(plugin, eventManager.getRawListener());
+        org.spongepowered.api.Sponge.eventManager().registerListeners(plugin, eventManager.getRawListener());
         //TODO CHECK IF CORRECT
-        Task.builder().delayTicks(1).intervalTicks(1).name("tps").execute(getRawServer().getTPSExecutor()).build();
+        //Task.builder().delayTicks(1).intervalTicks(1).name("tps").execute(getRawServer().getTPSExecutor()).build();
     }
 
     @Override

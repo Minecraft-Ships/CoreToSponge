@@ -6,6 +6,7 @@ import org.core.world.position.block.BlockType;
 import org.ships.implementation.sponge.inventory.inventories.item.SItemStackSnapshot;
 import org.ships.implementation.sponge.world.position.block.SBlockType;
 import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.registry.RegistryTypes;
 
 import java.util.Optional;
 
@@ -13,7 +14,7 @@ public class SItemType implements ItemType {
 
     private final org.spongepowered.api.item.ItemType type;
 
-    public SItemType(org.spongepowered.api.item.ItemType type){
+    public SItemType(org.spongepowered.api.item.ItemType type) {
         this.type = type;
     }
 
@@ -24,8 +25,8 @@ public class SItemType implements ItemType {
 
     @Override
     public Optional<BlockType> getBlockType() {
-        Optional<org.spongepowered.api.block.BlockType> opType = this.type.getBlock();
-        if(!opType.isPresent()){
+        Optional<org.spongepowered.api.block.BlockType> opType = this.type.block();
+        if (!opType.isPresent()) {
             return Optional.empty();
         }
         BlockType type = new SBlockType(opType.get());
@@ -34,11 +35,11 @@ public class SItemType implements ItemType {
 
     @Override
     public String getId() {
-        return this.type.getKey().asString();
+        return this.type.key(RegistryTypes.ITEM_TYPE).asString();
     }
 
     @Override
     public String getName() {
-        return this.type.getKey().getValue();
+        return this.type.key(RegistryTypes.ITEM_TYPE).value();
     }
 }

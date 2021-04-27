@@ -18,6 +18,6 @@ public abstract class AbstractLiveTileEntity <T extends org.spongepowered.api.bl
 
     @Override
     public SyncBlockPosition getPosition() {
-        return new SBlockPosition(this.tileEntity.getLocation());
+        return new SBlockPosition(this.tileEntity.location());
     }
 }

@@ -1,6 +1,7 @@
 package org.ships.implementation.sponge.entity.living.human.player.live;
 
 import net.kyori.adventure.identity.Identity;
+import org.core.CorePlugin;
 import org.core.entity.EntityType;
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.entity.living.human.player.PlayerSnapshot;
@@ -11,15 +12,14 @@ import org.core.world.position.impl.BlockPosition;
 import org.ships.implementation.sponge.entity.SEntityType;
 import org.ships.implementation.sponge.entity.SLiveEntity;
 import org.ships.implementation.sponge.entity.living.human.player.snapshot.SPlayerSnapshot;
+import org.ships.implementation.sponge.platform.SpongePlatformServer;
 import org.ships.implementation.sponge.text.SText;
+import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
-import org.spongepowered.api.event.Cause;
-import org.spongepowered.api.event.EventContext;
-import org.spongepowered.api.event.EventContextKeys;
 import org.spongepowered.api.service.ServiceRegistration;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
@@ -31,7 +31,7 @@ import java.util.UUID;
 public class SLivePlayer extends SLiveEntity implements LivePlayer {
 
     @Deprecated
-    public SLivePlayer(org.spongepowered.api.entity.Entity entity){
+    public SLivePlayer(org.spongepowered.api.entity.Entity entity) {
         this((org.spongepowered.api.entity.living.player.Player) entity);
     }
 
@@ -40,8 +40,8 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     }
 
     @Override
-    public org.spongepowered.api.entity.living.player.Player getSpongeEntity(){
-        return (org.spongepowered.api.entity.living.player.Player)super.getSpongeEntity();
+    public org.spongepowered.api.entity.living.player.Player getSpongeEntity() {
+        return (org.spongepowered.api.entity.living.player.Player) super.getSpongeEntity();
     }
 
     @Override
@@ -72,12 +72,12 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
 
     @Override
     public String getName() {
-        return getSpongeEntity().getName();
+        return getSpongeEntity().name();
     }
 
     @Override
     public UUID getUniqueId() {
-        return getSpongeEntity().getUniqueId();
+        return getSpongeEntity().uniqueId();
     }
 
     @Override
@@ -116,10 +116,10 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
 
     @Override
     public boolean hasPermission(String permission) {
-        if(!(this.entity instanceof ServerPlayer)){
+        if (!(this.entity instanceof ServerPlayer)) {
             return true;
         }
-        return ((ServerPlayer)getSpongeEntity()).hasPermission(permission);
+        return ((ServerPlayer) getSpongeEntity()).hasPermission(permission);
     }
 
     @Override
@@ -140,17 +140,17 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     @Override
     @Deprecated
     public CommandViewer sendMessage(Text message, UUID uuid) {
-        if(uuid == null){
+        if (uuid == null) {
             return sendMessage(message);
         }
-        this.getSpongeEntity().sendMessage(Identity.identity(uuid), ((SText<?>)message).toSponge());
+        this.getSpongeEntity().sendMessage(Identity.identity(uuid), ((SText<?>) message).toSponge());
         return this;
     }
 
     @Override
     @Deprecated
     public CommandViewer sendMessage(org.core.text.Text message) {
-        getSpongeEntity().sendMessage(((SText<?>)message).toSponge());
+        getSpongeEntity().sendMessage(((SText<?>) message).toSponge());
         return this;
     }
 
@@ -163,11 +163,12 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
 
     @Override
     public boolean sudo(String wholeCommand) {
-        CommandResult result = null;
+        CommandResult result;
+        Server server = ((SpongePlatformServer) CorePlugin.getServer()).getServer();
         try {
-            result = Sponge.getCommandManager().process((ServerPlayer)this.getSpongeEntity(), Sponge.getServer().getBroadcastAudience(), wholeCommand);
+            result = server.commandManager().process((ServerPlayer) this.getSpongeEntity(), server.broadcastAudience(), wholeCommand);
         } catch (CommandException e) {
-            e.printStackTrace();
+            throw new IllegalStateException(e);
         }
         return result.isSuccess();
     }
@@ -175,30 +176,30 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     @Override
     public BigDecimal getBalance() {
         Optional<UniqueAccount> opAccount = getAccount();
-        if (!opAccount.isPresent()){
+        if (!opAccount.isPresent()) {
             return new BigDecimal(0);
         }
-        return opAccount.get().getBalance(Sponge.getServiceProvider().getRegistration(EconomyService.class).get().service().getDefaultCurrency());
+        return opAccount.get().balance(Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency());
     }
 
     @Override
     public void setBalance(BigDecimal decimal) {
         Optional<UniqueAccount> opAccount = getAccount();
-        if (!opAccount.isPresent()){
+        if (!opAccount.isPresent()) {
             return;
         }
         opAccount.get()
                 .setBalance(Sponge
-                        .getServiceProvider()
-                        .getRegistration(EconomyService.class)
-                        .get()
+                                .serviceProvider()
+                                .registration(EconomyService.class)
+                                .get()
                                 .service()
-                        .getDefaultCurrency(),
+                                .defaultCurrency(),
                         decimal);
     }
 
-    private Optional<UniqueAccount> getAccount(){
-        Optional<ServiceRegistration<EconomyService>> opReg = Sponge.getServiceProvider().getRegistration(EconomyService.class);
-        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration.service().getOrCreateAccount(this.getUniqueId()));
+    private Optional<UniqueAccount> getAccount() {
+        Optional<ServiceRegistration<EconomyService>> opReg = Sponge.serviceProvider().registration(EconomyService.class);
+        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration.service().findOrCreateAccount(this.getUniqueId()));
     }
 }

@@ -5,8 +5,8 @@ import org.core.inventory.inventories.snapshots.block.FurnaceInventorySnapshot;
 import org.core.inventory.item.stack.ItemStack;
 import org.core.inventory.parts.Slot;
 import org.core.world.position.impl.sync.SyncBlockPosition;
-import org.ships.implementation.sponge.inventory.inventories.item.SLiveItemStack;
 import org.ships.implementation.sponge.inventory.inventories.item.SItemStackSnapshot;
+import org.ships.implementation.sponge.inventory.inventories.item.SLiveItemStack;
 import org.ships.implementation.sponge.inventory.inventories.snapshot.SSnapshotFurnaceInventory;
 import org.ships.implementation.sponge.world.position.synced.SBlockPosition;
 import org.spongepowered.api.block.entity.carrier.CarrierBlockEntity;
@@ -36,7 +36,7 @@ public class SLiveFurnaceInventory implements FurnaceInventory {
         @Override
         public Optional<ItemStack> getItem() {
             org.spongepowered.api.item.inventory.ItemStack item = this.slot.peek();
-            if(item.equalTo(org.spongepowered.api.item.inventory.ItemStack.empty())) {
+            if (item.equalTo(org.spongepowered.api.item.inventory.ItemStack.empty())) {
                 return Optional.empty();
             }
             return Optional.of(new SLiveItemStack(item));
@@ -44,15 +44,15 @@ public class SLiveFurnaceInventory implements FurnaceInventory {
 
         @Override
         public Slot setItem(ItemStack stack) {
-            if(stack == null){
+            if (stack == null) {
                 this.slot.set(org.spongepowered.api.item.inventory.ItemStack.empty());
                 return this;
             }
             org.spongepowered.api.item.inventory.ItemStack stack1 = null;
-            if(stack instanceof SLiveItemStack){
-                stack1 = ((SLiveItemStack)stack).getSponge();
-            }else if(stack instanceof SItemStackSnapshot){
-                stack1 = ((SItemStackSnapshot)stack).getSponge().createStack();
+            if (stack instanceof SLiveItemStack) {
+                stack1 = ((SLiveItemStack) stack).getSponge();
+            } else if (stack instanceof SItemStackSnapshot) {
+                stack1 = ((SItemStackSnapshot) stack).getSponge().createStack();
             }
             this.slot.set(stack1);
             return this;
@@ -64,9 +64,9 @@ public class SLiveFurnaceInventory implements FurnaceInventory {
     protected SLiveFurnaceInventory.FurnaceSlot output;
     protected SLiveFurnaceInventory.FurnaceSlot input;
 
-    public SLiveFurnaceInventory(org.spongepowered.api.block.entity.carrier.furnace.Furnace furnace){
+    public SLiveFurnaceInventory(org.spongepowered.api.block.entity.carrier.furnace.Furnace furnace) {
         this.furnace = furnace;
-        BlockEntityInventory<CarrierBlockEntity> inv = furnace.getInventory();
+        BlockEntityInventory<CarrierBlockEntity> inv = furnace.inventory();
         SLiveFurnaceInventory.FurnaceSlot[] slots = getSlots(inv);
         this.output = slots[2];
         this.fuel = slots[1];
@@ -95,23 +95,23 @@ public class SLiveFurnaceInventory implements FurnaceInventory {
 
     @Override
     public SyncBlockPosition getPosition() {
-        org.spongepowered.api.world.Location<? extends org.spongepowered.api.world.World<?>> location = this.furnace.getLocation();
+        org.spongepowered.api.world.Location<? extends org.spongepowered.api.world.World<?, ?>, ?> location = this.furnace.location();
         return new SBlockPosition(location);
     }
 
-    private static SLiveFurnaceInventory.FurnaceSlot[] getSlots(BlockEntityInventory<CarrierBlockEntity> inv){
+    private static SLiveFurnaceInventory.FurnaceSlot[] getSlots(BlockEntityInventory<CarrierBlockEntity> inv) {
         SLiveFurnaceInventory.FurnaceSlot[] slots = new SLiveFurnaceInventory.FurnaceSlot[3];
-        for (Inventory inv1 : inv.slots()){
+        for (Inventory inv1 : inv.slots()) {
             org.spongepowered.api.item.inventory.Slot slot = (org.spongepowered.api.item.inventory.Slot) inv1;
-            if(slot instanceof OutputSlot){
+            if (slot instanceof OutputSlot) {
                 slots[2] = new SLiveFurnaceInventory.FurnaceSlot(slot);
                 continue;
             }
-            if(slot instanceof FuelSlot){
+            if (slot instanceof FuelSlot) {
                 slots[1] = new SLiveFurnaceInventory.FurnaceSlot(slot);
                 continue;
             }
-            if(slot instanceof InputSlot){
+            if (slot instanceof InputSlot) {
                 slots[0] = new SLiveFurnaceInventory.FurnaceSlot(slot);
             }
         }
