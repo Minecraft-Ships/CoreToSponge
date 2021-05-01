@@ -34,7 +34,7 @@ public abstract class SPosition<N extends Number> implements Position<N> {
     @Override
     public Vector3<Integer> getChunkPosition() {
         Vector3i vector = this.location.chunkPosition();
-        return Vector3.valueOf(vector.getX(), vector.getY(), vector.getZ());
+        return Vector3.valueOf(vector.x(), vector.y(), vector.z());
     }
 
     @Override

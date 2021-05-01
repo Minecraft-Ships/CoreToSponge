@@ -19,6 +19,6 @@ public interface DirectionUtils {
     }
 
     static boolean compare(Vector3<Integer> vector, Vector3i vector2){
-        return (vector.getZ() == vector2.getZ()) && (vector.getY() == vector2.getY()) && (vector.getX() == vector2.getX());
+        return (vector.getZ() == vector2.z()) && (vector.getY() == vector2.y()) && (vector.getX() == vector2.x());
     }
 }

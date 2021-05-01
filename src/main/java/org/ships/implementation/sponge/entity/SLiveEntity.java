@@ -44,19 +44,19 @@ public abstract class SLiveEntity implements LiveEntity {
 
     @Override
     public LiveEntity setPitch(double value) {
-        this.entity.setRotation(new Vector3d(value, this.entity.rotation().getY(), this.entity.rotation().getZ()));
+        this.entity.setRotation(new Vector3d(value, this.entity.rotation().y(), this.entity.rotation().z()));
         return this;
     }
 
     @Override
     public LiveEntity setYaw(double value) {
-        this.entity.setRotation(new Vector3d(this.entity.rotation().getX(), value, this.entity.rotation().getZ()));
+        this.entity.setRotation(new Vector3d(this.entity.rotation().x(), value, this.entity.rotation().z()));
         return this;
     }
 
     @Override
     public LiveEntity setRoll(double value) {
-        this.entity.setRotation(new Vector3d(this.entity.rotation().getX(), this.entity.rotation().getY(), value));
+        this.entity.setRotation(new Vector3d(this.entity.rotation().x(), this.entity.rotation().y(), value));
         return this;
     }
 
@@ -79,17 +79,17 @@ public abstract class SLiveEntity implements LiveEntity {
 
     @Override
     public double getPitch() {
-        return this.entity.rotation().getX();
+        return this.entity.rotation().x();
     }
 
     @Override
     public double getYaw() {
-        return this.entity.rotation().getY();
+        return this.entity.rotation().y();
     }
 
     @Override
     public double getRoll() {
-        return this.entity.rotation().getZ();
+        return this.entity.rotation().z();
     }
 
     @Override
@@ -141,7 +141,7 @@ public abstract class SLiveEntity implements LiveEntity {
     @Override
     public Vector3<Double> getVelocity() {
         Vector3d vector3d = entity.get(Keys.VELOCITY).get();
-        return Vector3.valueOf(vector3d.getX(), vector3d.getY(), vector3d.getZ());
+        return Vector3.valueOf(vector3d.x(), vector3d.y(), vector3d.z());
     }
 
     @Override

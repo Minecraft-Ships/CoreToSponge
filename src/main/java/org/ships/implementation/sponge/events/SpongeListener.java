@@ -75,7 +75,7 @@ public class SpongeListener {
         LivePlayer player1 = new SLivePlayer(player);
         BlockSnapshot snapshot = event.block();
 
-        SyncBlockPosition bp = player1.getPosition().getWorld().getPosition(snapshot.position().getX(), snapshot.position().getY(), snapshot.position().getZ());
+        SyncBlockPosition bp = player1.getPosition().getWorld().getPosition(snapshot.position().x(), snapshot.position().y(), snapshot.position().z());
         Vector3i spongeVector = event.targetSide().asBlockOffset();
         int action = -1;
         if (event instanceof org.spongepowered.api.event.block.InteractBlockEvent.Primary) {
