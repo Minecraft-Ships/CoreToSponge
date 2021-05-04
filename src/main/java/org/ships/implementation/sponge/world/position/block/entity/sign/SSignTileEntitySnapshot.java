@@ -17,16 +17,17 @@ public class SSignTileEntitySnapshot implements SignTileEntitySnapshot {
 
     public SSignTileEntitySnapshot(ListValue<Component> sign) {
         this.lines = new org.core.text.Text[4];
-        for(int A = 0; A < sign.size(); A++){
+        for (int A = 0; A < sign.size(); A++) {
             this.lines[A] = SText.of(sign.get(A));
         }
     }
 
-    public SSignTileEntitySnapshot(SignTileEntity ste){
+    public SSignTileEntitySnapshot(SignTileEntity ste) {
         this(ste.getLines());
     }
 
-    public SSignTileEntitySnapshot(org.core.text.Text... lines){
+    @Deprecated
+    public SSignTileEntitySnapshot(org.core.text.Text... lines) {
         this.lines = lines;
     }
 
@@ -38,7 +39,7 @@ public class SSignTileEntitySnapshot implements SignTileEntitySnapshot {
 
     @Override
     public Collection<BlockType> getSupportedBlocks() {
-        return BlockTypes.OAK_SIGN.get().getLike();
+        return BlockTypes.OAK_SIGN.getLike();
     }
 
     @Override
@@ -47,11 +48,13 @@ public class SSignTileEntitySnapshot implements SignTileEntitySnapshot {
     }
 
     @Override
+    @Deprecated
     public org.core.text.Text[] getLines() {
         return lines;
     }
 
     @Override
+    @Deprecated
     public SignTileEntity setLines(org.core.text.Text... lines) throws IndexOutOfBoundsException {
         this.lines = lines;
         return this;

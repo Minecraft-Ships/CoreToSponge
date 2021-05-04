@@ -32,7 +32,7 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
     }
 
     private <T> Optional<T> get(org.core.config.ConfigurationNode node, Function<ConfigurationNode, T> value) {
-        @NonNull ConfigurationNode node1 = this.root.node(node.getPath());
+        @NonNull ConfigurationNode node1 = this.root.node(node.getObjectPath());
         if (node1.empty()) {
             return Optional.empty();
         }
@@ -61,14 +61,20 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
 
     @Override
     public <T, C extends Collection<T>> C parseCollection(org.core.config.ConfigurationNode node, Parser<String, T> parser, C collection) {
-        @NonNull ConfigurationNode node1 = this.root.node(node.getPath());
+        @NonNull ConfigurationNode node1 = this.root.node(node.getObjectPath());
         if (node1.empty()) {
             return collection;
         }
         if (!node1.isList()) {
             return collection;
         }
-        List<T> list = node1.childrenList().stream().map(v -> parser.parse(v.toString()).get()).collect(Collectors.toList());
+        List<T> list = node1
+                .childrenList()
+                .stream()
+                .map(v -> parser.parse(v.toString()))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
         collection.addAll(list);
         return collection;
     }
@@ -88,7 +94,8 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
             this.root.set(value);
         } catch (SerializationException e) {
             throw new IllegalStateException(e);
-        }    }
+        }
+    }
 
     @Override
     public void set(org.core.config.ConfigurationNode node, boolean value) {
@@ -113,7 +120,7 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
         List<String> list = new ArrayList<>();
         collection.forEach(v -> list.add(parser.unparse(v)));
         try {
-            this.root.node(node.getPath()).set(list);
+            this.root.node(node.getObjectPath()).set(list);
         } catch (SerializationException e) {
             throw new IllegalStateException(e);
         }
@@ -121,7 +128,7 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
 
     @Override
     public Set<org.core.config.ConfigurationNode> getChildren(org.core.config.ConfigurationNode node) {
-        Collection<? extends ConfigurationNode> values = this.root.node(node.getPath()).childrenList();
+        Collection<? extends ConfigurationNode> values = this.root.node(node.getObjectPath()).childrenList();
         Set<org.core.config.ConfigurationNode> set = new HashSet<>();
         values.stream().filter(n -> n.path().size() == (node.getPath().length + 1)).filter(n -> {
             for (int A = 0; A < node.getPath().length; A++) {

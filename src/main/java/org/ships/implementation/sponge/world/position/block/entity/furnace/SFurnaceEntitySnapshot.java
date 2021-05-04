@@ -9,18 +9,18 @@ import org.core.world.position.block.entity.container.furnace.FurnaceTileEntityS
 import org.core.world.position.block.entity.container.furnace.LiveFurnaceTileEntity;
 import org.ships.implementation.sponge.inventory.inventories.snapshot.SSnapshotFurnaceInventory;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 public class SFurnaceEntitySnapshot implements FurnaceTileEntitySnapshot {
 
     protected FurnaceInventorySnapshot inventory;
 
-    public SFurnaceEntitySnapshot(){
+    public SFurnaceEntitySnapshot() {
         this.inventory = new SSnapshotFurnaceInventory();
     }
 
-    public SFurnaceEntitySnapshot(FurnaceTileEntity tileEntity){
+    public SFurnaceEntitySnapshot(FurnaceTileEntity tileEntity) {
         this.inventory = tileEntity.getInventory().createSnapshot();
     }
 
@@ -32,7 +32,7 @@ public class SFurnaceEntitySnapshot implements FurnaceTileEntitySnapshot {
 
     @Override
     public Collection<BlockType> getSupportedBlocks() {
-        return Arrays.asList(BlockTypes.FURNACE.get());
+        return Collections.singletonList(BlockTypes.FURNACE);
     }
 
     @Override
