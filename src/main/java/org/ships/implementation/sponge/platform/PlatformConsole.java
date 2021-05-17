@@ -2,6 +2,8 @@ package org.ships.implementation.sponge.platform;
 
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
+import org.core.adventureText.AText;
+import org.core.adventureText.adventure.AdventureText;
 import org.core.source.command.ConsoleSource;
 import org.core.source.viewer.CommandViewer;
 import org.core.text.Text;
@@ -12,7 +14,9 @@ import org.spongepowered.api.command.exception.CommandException;
 import java.util.UUID;
 
 public class PlatformConsole implements ConsoleSource {
+
     @Override
+    @Deprecated
     public CommandViewer sendMessage(Text message, UUID uuid) {
         if (uuid == null) {
             return sendMessage(message);
@@ -22,6 +26,7 @@ public class PlatformConsole implements ConsoleSource {
     }
 
     @Override
+    @Deprecated
     public CommandViewer sendMessage(org.core.text.Text message) {
         org.spongepowered.api.Sponge.systemSubject().sendMessage(((SText<?>) message).toSponge());
         return this;
@@ -30,6 +35,18 @@ public class PlatformConsole implements ConsoleSource {
     @Override
     public CommandViewer sendMessagePlain(String message) {
         org.spongepowered.api.Sponge.systemSubject().sendMessage(Component.text(message));
+        return this;
+    }
+
+    @Override
+    public CommandViewer sendMessage(AText message, UUID uuid) {
+        org.spongepowered.api.Sponge.systemSubject().sendMessage(Identity.identity(uuid), ((AdventureText) message).getComponent());
+        return this;
+    }
+
+    @Override
+    public CommandViewer sendMessage(AText message) {
+        org.spongepowered.api.Sponge.systemSubject().sendMessage(((AdventureText) message).getComponent());
         return this;
     }
 

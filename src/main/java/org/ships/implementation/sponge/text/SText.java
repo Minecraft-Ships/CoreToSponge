@@ -3,6 +3,8 @@ package org.ships.implementation.sponge.text;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.array.utils.ArrayUtils;
+import org.core.adventureText.AText;
+import org.core.adventureText.adventure.AdventureText;
 import org.core.text.Text;
 
 @Deprecated
@@ -57,6 +59,11 @@ public interface SText<S extends Component> extends Text {
                 text2 = text2.append(((SText) text1).toSponge());
             }
             return new GenericText(text2);
+        }
+
+        @Override
+        public AText toAdventure() {
+            return new AdventureText(this.component);
         }
 
         @Override

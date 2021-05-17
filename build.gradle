@@ -6,12 +6,6 @@ plugins {
     id 'java-library'
 }
 
-jar {
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-}
-
 repositories {
     mavenLocal()
     maven {
@@ -30,7 +24,7 @@ tasks.withType(JavaCompile) {
 }
 
 dependencies {
-    implementation project(":ShipsCore")
+    api project(":ShipsCore")
     compileOnly 'org.spongepowered:configurate-core:4.0.0'
     compileOnly 'org.spongepowered:configurate-yaml:4.0.0'
     compileOnly 'net.kyori:adventure-text-serializer-plain:4.0.0-SNAPSHOT'

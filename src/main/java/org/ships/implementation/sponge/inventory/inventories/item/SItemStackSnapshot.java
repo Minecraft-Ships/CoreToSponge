@@ -2,6 +2,8 @@ package org.ships.implementation.sponge.inventory.inventories.item;
 
 import net.kyori.adventure.text.Component;
 import org.core.CorePlugin;
+import org.core.adventureText.AText;
+import org.core.adventureText.adventure.AdventureText;
 import org.core.inventory.item.ItemType;
 import org.core.inventory.item.stack.ItemStack;
 import org.core.text.Text;
@@ -14,6 +16,7 @@ import org.spongepowered.api.registry.RegistryTypes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SItemStackSnapshot implements org.core.inventory.item.stack.ItemStackSnapshot {
 
@@ -50,11 +53,21 @@ public class SItemStackSnapshot implements org.core.inventory.item.stack.ItemSta
     }
 
     @Override
+    public List<AText> getLoreText() {
+        return this.item.get(Keys.LORE).get().stream().map(AdventureText::new).collect(Collectors.toList());
+    }
+
+    @Override
     public ItemStack setLore(Collection<Text> lore) {
         List<Component> list = new ArrayList<>();
         lore.forEach(t -> list.add(((SText<?>) t).toSponge()));
         this.item = this.item.with(Keys.LORE, list).get();
         return this;
+    }
+
+    @Override
+    public ItemStack setLoreText(Collection<AText> lore) {
+        return null;
     }
 
     @Override

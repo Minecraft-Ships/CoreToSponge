@@ -2,6 +2,8 @@ package org.ships.implementation.sponge.entity.living.human.player.live;
 
 import net.kyori.adventure.identity.Identity;
 import org.core.CorePlugin;
+import org.core.adventureText.AText;
+import org.core.adventureText.adventure.AdventureText;
 import org.core.entity.EntityType;
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.entity.living.human.player.PlayerSnapshot;
@@ -158,6 +160,19 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     @Deprecated
     public CommandViewer sendMessagePlain(String message) {
         /*TODO getSpongeEntity().sendMessage(Text.of(TextSerializers.FORMATTING_CODE.stripCodes(message)));*/
+        return this;
+    }
+
+    @Override
+    public CommandViewer sendMessage(AText message, UUID uuid) {
+        getSpongeEntity().sendMessage(Identity.identity(uuid), ((AdventureText) message).getComponent());
+        return this;
+    }
+
+    @Override
+    public CommandViewer sendMessage(AText message) {
+        getSpongeEntity().sendMessage(((AdventureText) message).getComponent());
+
         return this;
     }
 

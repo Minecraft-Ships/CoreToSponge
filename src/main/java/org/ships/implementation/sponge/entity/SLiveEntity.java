@@ -2,10 +2,14 @@ package org.ships.implementation.sponge.entity;
 
 import net.kyori.adventure.text.Component;
 import org.core.CorePlugin;
+import org.core.adventureText.AText;
+import org.core.adventureText.adventure.AdventureText;
+import org.core.entity.Entity;
 import org.core.entity.LiveEntity;
 import org.core.vector.type.Vector3;
 import org.core.world.position.impl.sync.SyncExactPosition;
 import org.core.world.position.impl.sync.SyncPosition;
+import org.jetbrains.annotations.Nullable;
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.text.SText;
 import org.ships.implementation.sponge.world.position.SPosition;
@@ -126,9 +130,20 @@ public abstract class SLiveEntity implements LiveEntity {
     }
 
     @Override
+    @Deprecated
     public LiveEntity setCustomName(org.core.text.Text text) {
         SText<?> sText = (SText<?>) text;
-        this.entity.offer(Keys.DISPLAY_NAME, sText.toSponge());
+        this.entity.offer(Keys.CUSTOM_NAME, sText.toSponge());
+        return this;
+    }
+
+    @Override
+    public Entity<LiveEntity> setCustomName(@Nullable AText text) {
+        if (text == null) {
+            this.entity.remove(Keys.CUSTOM_NAME);
+            return this;
+        }
+        this.entity.offer(Keys.CUSTOM_NAME, ((AdventureText) text).getComponent());
         return this;
     }
 
@@ -145,9 +160,9 @@ public abstract class SLiveEntity implements LiveEntity {
     }
 
     @Override
-    public Optional<org.core.text.Text> getCustomName() {
-        Optional<Component> opValue = this.entity.get(Keys.DISPLAY_NAME);
-        return opValue.map(SText::of);
+    public Optional<AText> getCustomName() {
+        Optional<Component> opValue = this.entity.get(Keys.CUSTOM_NAME);
+        return opValue.map(AdventureText::new);
     }
 
     @Override

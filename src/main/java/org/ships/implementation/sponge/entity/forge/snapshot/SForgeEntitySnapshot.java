@@ -1,7 +1,10 @@
 package org.ships.implementation.sponge.entity.forge.snapshot;
 
+import org.core.adventureText.AText;
 import org.core.entity.EntitySnapshot;
 import org.core.entity.EntityType;
+import org.core.entity.LiveEntity;
+import org.jetbrains.annotations.Nullable;
 import org.ships.implementation.sponge.entity.SEntitySnapshot;
 import org.ships.implementation.sponge.entity.SEntityType;
 import org.ships.implementation.sponge.entity.forge.live.SForgeEntity;
@@ -40,4 +43,5 @@ public class SForgeEntitySnapshot extends SEntitySnapshot<SForgeEntity> implemen
     public EntitySnapshot<SForgeEntity> createSnapshot() {
         return new SForgeEntitySnapshot(this);
     }
+
 }

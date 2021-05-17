@@ -1,5 +1,7 @@
 package org.ships.implementation.sponge.entity;
 
+import org.core.adventureText.AText;
+import org.core.adventureText.adventure.AdventureText;
 import org.core.entity.Entity;
 import org.core.entity.EntitySnapshot;
 import org.core.entity.LiveEntity;
@@ -8,6 +10,7 @@ import org.core.vector.type.Vector3;
 import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.core.world.position.impl.sync.SyncExactPosition;
 import org.core.world.position.impl.sync.SyncPosition;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -21,26 +24,26 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     protected SyncExactPosition position;
     protected boolean gravity;
     protected Vector3<Double> velocity;
-    protected Text customName;
+    protected AdventureText customName;
     protected boolean customNameVisible;
     protected boolean isOnGround;
     protected Collection<EntitySnapshot<? extends LiveEntity>> passengers = new HashSet<>();
     protected E createdFrom;
 
-    public SEntitySnapshot(EntitySnapshot<E> snapshot){
+    public SEntitySnapshot(EntitySnapshot<E> snapshot) {
         init(snapshot);
         this.passengers.addAll(snapshot.getPassengers());
         this.createdFrom = snapshot.getCreatedFrom().orElse(null);
     }
 
-    public SEntitySnapshot(E entity){
+    public SEntitySnapshot(E entity) {
         init(entity);
         entity.getPassengers().forEach(e -> this.passengers.add(e.createSnapshot()));
         this.createdFrom = entity;
     }
 
-    private void init(Entity<?> entity){
-        this.customName = entity.getCustomName().orElse(null);
+    private void init(Entity<?> entity) {
+        this.customName = (AdventureText) entity.getCustomName().orElse(null);
         this.customNameVisible = entity.isCustomNameVisible();
         this.gravity = entity.hasGravity();
         this.pitch = entity.getPitch();
@@ -51,7 +54,7 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
         this.isOnGround = entity.isOnGround();
     }
 
-    protected LiveEntity applyDefault(LiveEntity entity){
+    protected LiveEntity applyDefault(LiveEntity entity) {
         entity.setPosition(this.position);
         entity.setVelocity(this.velocity);
         entity.setCustomName(this.customName);
@@ -93,10 +96,10 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
 
     @Override
     public EntitySnapshot<? extends LiveEntity> setPosition(SyncPosition<? extends Number> position) {
-        if(position instanceof SyncExactPosition){
+        if (position instanceof SyncExactPosition) {
             this.position = (SyncExactPosition) position;
-        }else{
-            this.position = ((SyncBlockPosition)position).toExactPosition();
+        } else {
+            this.position = ((SyncBlockPosition) position).toExactPosition();
         }
         return null;
     }
@@ -116,7 +119,13 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     @Override
     @Deprecated
     public EntitySnapshot<? extends LiveEntity> setCustomName(Text text) {
-        this.customName = text;
+        this.customName = (AdventureText) text.toAdventure();
+        return this;
+    }
+
+    @Override
+    public org.core.entity.Entity<EntitySnapshot<? extends LiveEntity>> setCustomName(@Nullable AText text) {
+        this.customName = ((AdventureText) text);
         return this;
     }
 
@@ -153,7 +162,7 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
 
     @Override
     @Deprecated
-    public Optional<Text> getCustomName() {
+    public Optional<AText> getCustomName() {
         return Optional.ofNullable(this.customName);
     }
 
