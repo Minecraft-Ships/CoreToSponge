@@ -3,6 +3,7 @@ package org.ships.implementation.sponge.events;
 import net.kyori.adventure.text.Component;
 import org.array.utils.ArrayUtils;
 import org.core.CorePlugin;
+import org.core.adventureText.adventure.AdventureText;
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.event.Event;
 import org.core.event.HEvent;
@@ -14,7 +15,6 @@ import org.ships.implementation.sponge.entity.living.human.player.live.SLivePlay
 import org.ships.implementation.sponge.events.events.block.tileentity.SSignChangeEvent;
 import org.ships.implementation.sponge.events.events.entity.interact.SEntityInteractEvent;
 import org.ships.implementation.sponge.platform.SpongePlatform;
-import org.ships.implementation.sponge.text.SText;
 import org.ships.implementation.sponge.utils.DirectionUtils;
 import org.ships.implementation.sponge.world.position.block.entity.sign.SSignTileEntitySnapshot;
 import org.ships.implementation.sponge.world.position.synced.SBlockPosition;
@@ -34,67 +34,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SpongeListener {
 
-    @org.spongepowered.api.event.Listener
-    public void onSignChangeEvent(org.spongepowered.api.event.block.entity.ChangeSignEvent event) {
-        SSignChangeEvent sEvent;
-        Object rootCause = event.cause().root();
-        SyncBlockPosition bp = new SBlockPosition(event.sign().location());
-        SignTileEntitySnapshot from = new SSignTileEntitySnapshot(event.originalText());
-        SignTileEntitySnapshot to = new SSignTileEntitySnapshot(event.text());
-        if (rootCause instanceof org.spongepowered.api.entity.living.player.Player) {
-            LivePlayer player = (LivePlayer) ((SpongePlatform) CorePlugin.getPlatform()).createEntityInstance((org.spongepowered.api.entity.living.player.Player) rootCause);
-            sEvent = new SSignChangeEvent.SSignChangeEventByPlayer(bp, from, to, player);
-        } else {
-            sEvent = new SSignChangeEvent(bp, from, to);
-        }
-        call(sEvent);
-        if (sEvent.isCancelled()) {
-            event.setCancelled(true);
-        }
-        ListValue.Mutable<Component> data = event.text();
-        org.core.text.Text[] setToLines = sEvent.getTo().getLines();
-        for (int A = 0; A < setToLines.length; A++) {
-            data.add(A, ((SText<?>) setToLines[A]).toSponge());
-        }
-    }
-
-    @Listener
-    public void onPlayerPrimaryInteractWithBlock(InteractBlockEvent.Primary.Start event, @Root Player player) {
-        this.onPlayerInteractWithBlock(event, player);
-    }
-
-    @Listener
-    public void onPlayerSecondaryInteractWithBlock(InteractBlockEvent.Secondary event, @Root Player player) {
-        this.onPlayerInteractWithBlock(event, player);
-    }
-
-    private <E extends InteractBlockEvent & Cancellable> void onPlayerInteractWithBlock(org.spongepowered.api.event.block.InteractBlockEvent event, org.spongepowered.api.entity.living.player.Player player) {
-        LivePlayer player1 = new SLivePlayer(player);
-        BlockSnapshot snapshot = event.block();
-
-        SyncBlockPosition bp = player1.getPosition().getWorld().getPosition(snapshot.position().x(), snapshot.position().y(), snapshot.position().z());
-        Vector3i spongeVector = event.targetSide().asBlockOffset();
-        int action = -1;
-        if (event instanceof org.spongepowered.api.event.block.InteractBlockEvent.Primary) {
-            action = EntityInteractEvent.PRIMARY_CLICK_ACTION;
-        } else if (event instanceof org.spongepowered.api.event.block.InteractBlockEvent.Secondary) {
-            action = EntityInteractEvent.SECONDARY_CLICK_ACTION;
-        }
-        Direction direction = DirectionUtils.getCoreDirection(event.targetSide());
-        SEntityInteractEvent.SPlayerInteractWithBlockEvent event1 = new SEntityInteractEvent.SPlayerInteractWithBlockEvent(bp, action, direction, player1);
-        call(event1);
-        if (event1.isCancelled()) {
-            ((Cancellable)event).setCancelled(true);
-        }
-    }
-
     public static <E extends Event> E call(E event) {
-        List<SEventLaunch> methods = new ArrayList(getMethods(event.getClass()));
-        for (int A = 0; A < methods.size(); A++) {
-            methods.get(A).run(event);
+        List<SEventLaunch> methods = new ArrayList<>(getMethods(event.getClass()));
+        for (SEventLaunch method : methods) {
+            method.run(event);
         }
         return event;
     }
@@ -127,5 +74,57 @@ public class SpongeListener {
             }
         }));
         return methods;
+    }
+
+    @org.spongepowered.api.event.Listener
+    public void onSignChangeEvent(org.spongepowered.api.event.block.entity.ChangeSignEvent event) {
+        SSignChangeEvent sEvent;
+        Object rootCause = event.cause().root();
+        SyncBlockPosition bp = new SBlockPosition(event.sign().location());
+        SignTileEntitySnapshot from = new SSignTileEntitySnapshot(event.originalText());
+        SignTileEntitySnapshot to = new SSignTileEntitySnapshot(event.text());
+        if (rootCause instanceof org.spongepowered.api.entity.living.player.Player) {
+            LivePlayer player = (LivePlayer) ((SpongePlatform) CorePlugin.getPlatform()).createEntityInstance((org.spongepowered.api.entity.living.player.Player) rootCause);
+            sEvent = new SSignChangeEvent.SSignChangeEventByPlayer(bp, from, to, player);
+        } else {
+            sEvent = new SSignChangeEvent(bp, from, to);
+        }
+        call(sEvent);
+        if (sEvent.isCancelled()) {
+            event.setCancelled(true);
+        }
+        ListValue.Mutable<Component> data = event.text();
+        List<Component> text = sEvent.getTo().getText().stream().map(t -> ((AdventureText) t).getComponent()).collect(Collectors.toList());
+        data.set(text);
+    }
+
+    @Listener
+    public void onPlayerPrimaryInteractWithBlock(InteractBlockEvent.Primary.Start event, @Root Player player) {
+        this.onPlayerInteractWithBlock(event, player);
+    }
+
+    @Listener
+    public void onPlayerSecondaryInteractWithBlock(InteractBlockEvent.Secondary event, @Root Player player) {
+        this.onPlayerInteractWithBlock(event, player);
+    }
+
+    private <E extends InteractBlockEvent & Cancellable> void onPlayerInteractWithBlock(org.spongepowered.api.event.block.InteractBlockEvent event, org.spongepowered.api.entity.living.player.Player player) {
+        LivePlayer player1 = new SLivePlayer(player);
+        BlockSnapshot snapshot = event.block();
+
+        SyncBlockPosition bp = player1.getPosition().getWorld().getPosition(snapshot.position().x(), snapshot.position().y(), snapshot.position().z());
+        Vector3i spongeVector = event.targetSide().asBlockOffset();
+        int action = -1;
+        if (event instanceof org.spongepowered.api.event.block.InteractBlockEvent.Primary) {
+            action = EntityInteractEvent.PRIMARY_CLICK_ACTION;
+        } else if (event instanceof org.spongepowered.api.event.block.InteractBlockEvent.Secondary) {
+            action = EntityInteractEvent.SECONDARY_CLICK_ACTION;
+        }
+        Direction direction = DirectionUtils.getCoreDirection(event.targetSide());
+        SEntityInteractEvent.SPlayerInteractWithBlockEvent event1 = new SEntityInteractEvent.SPlayerInteractWithBlockEvent(bp, action, direction, player1);
+        call(event1);
+        if (event1.isCancelled()) {
+            ((Cancellable) event).setCancelled(true);
+        }
     }
 }
