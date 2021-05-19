@@ -5,7 +5,10 @@ import org.array.utils.ArrayUtils;
 import org.core.config.ConfigurationFormat;
 import org.core.config.parser.unspecific.UnspecificParser;
 import org.core.config.parser.unspecific.UnspecificParsers;
-import org.core.entity.*;
+import org.core.entity.EntitySnapshot;
+import org.core.entity.EntityType;
+import org.core.entity.EntityTypes;
+import org.core.entity.LiveEntity;
 import org.core.entity.living.animal.parrot.ParrotType;
 import org.core.entity.living.animal.parrot.ParrotTypes;
 import org.core.event.CustomEvent;
@@ -19,6 +22,7 @@ import org.core.platform.PlatformDetails;
 import org.core.platform.Plugin;
 import org.core.text.TextColour;
 import org.core.text.TextColours;
+import org.core.utils.Singleton;
 import org.core.world.boss.colour.BossColour;
 import org.core.world.boss.colour.BossColours;
 import org.core.world.position.block.BlockType;
@@ -32,6 +36,7 @@ import org.core.world.position.block.grouptype.BlockGroups;
 import org.core.world.position.flags.physics.ApplyPhysicsFlag;
 import org.core.world.position.flags.physics.ApplyPhysicsFlags;
 import org.core.world.position.impl.sync.SyncExactPosition;
+import org.jetbrains.annotations.NotNull;
 import org.ships.implementation.sponge.entity.SEntityType;
 import org.ships.implementation.sponge.entity.forge.live.SForgeEntity;
 import org.ships.implementation.sponge.entity.living.human.player.live.SLivePlayer;
@@ -50,6 +55,7 @@ import org.spongepowered.api.registry.RegistryTypes;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class SpongePlatform implements Platform {
@@ -59,6 +65,7 @@ public class SpongePlatform implements Platform {
     protected Map<Class<? extends org.spongepowered.api.block.entity.BlockEntity>, Class<? extends LiveTileEntity>> blockStateToTileEntity = new HashMap<>();
     protected Collection<TileEntitySnapshot<? extends TileEntity>> defaultTileEntities = new HashSet<>();
     protected Collection<UnspecificParser<? extends Object>> unspecificParsers = new HashSet<>();
+    protected Set<Permission> permissions = new HashSet<>();
 
     public SpongePlatform() {
         this.entityToEntityMap.put(org.spongepowered.api.entity.living.player.Player.class, SLivePlayer.class);
@@ -125,16 +132,16 @@ public class SpongePlatform implements Platform {
 
     @Override
     public int[] getMinecraftVersion() {
-        return new int[]{1, 12, 2};
+        return new int[]{1, 16, 5};
     }
 
     @Override
-    public PlatformDetails getDetails() {
-        return null;
+    public @NotNull PlatformDetails getDetails() {
+        throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public ConfigurationFormat getConfigFormat() {
+    public @NotNull ConfigurationFormat getConfigFormat() {
         return ConfigurationFormat.FORMAT_YAML;
     }
 
@@ -164,7 +171,6 @@ public class SpongePlatform implements Platform {
 
     @Override
     public Optional<BlockType> getBlockType(String id) {
-
         String[] splitId = id.split(":");
         Optional<RegistryEntry<org.spongepowered.api.block.BlockType>> opType = RegistryTypes.BLOCK_TYPE.get().findEntry(ResourceKey.of(splitId[0], splitId[1]));
         return opType.map(r -> new SBlockType(r.value()));
@@ -176,6 +182,7 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
+    @Deprecated
     public Optional<TextColour> getTextColour(String id) {
         return Optional.empty();
     }
@@ -206,7 +213,8 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
-    public Optional<UnspecificParser<? extends Object>> getUnspecifiedParser(String id) {
+    @Deprecated
+    public Optional<UnspecificParser<?>> getUnspecifiedParser(String id) {
         return this.unspecificParsers.stream().filter(f -> f.getId().equals(id)).findFirst();
     }
 
@@ -229,22 +237,23 @@ public class SpongePlatform implements Platform {
 
     @Override
     public Collection<ItemType> getItemTypes() {
-        return null;
+        throw new RuntimeException("Not implemented");
     }
 
     @Override
+    @Deprecated
     public Collection<TextColour> getTextColours() {
         return ArrayUtils.convert(STextColour::getInstance, NamedTextColor.NAMES.values());
     }
 
     @Override
     public Collection<DyeType> getDyeTypes() {
-        return null;
+        throw new RuntimeException("Not implemented");
     }
 
     @Override
     public Collection<PatternLayerType> getPatternLayerTypes() {
-        return null;
+        throw new RuntimeException("Not implemented");
     }
 
     @Override
@@ -254,32 +263,35 @@ public class SpongePlatform implements Platform {
 
     @Override
     public Collection<BossColour> getBossColours() {
-        return null;
+        throw new RuntimeException("Not implemented");
     }
 
     @Override
     public Collection<ParrotType> getParrotType() {
-        return null;
+        throw new RuntimeException("Not implemented");
     }
 
     @Override
     public Collection<ApplyPhysicsFlag> getApplyPhysics() {
-        return null;
+        throw new RuntimeException("Not implemented");
     }
 
     @Override
     public Collection<Permission> getPermissions() {
-        return null;
+        return this.permissions;
     }
 
     @Override
-    public Permission register(String permissionNode) {
-        return null;
+    public @NotNull Permission register(@NotNull String permissionNode) {
+        SPermission permission = new SPermission(permissionNode);
+        this.permissions.add(permission);
+        return permission;
     }
 
     @Override
-    public Collection<UnspecificParser<? extends Object>> getUnspecifiedParsers() {
-        return null;
+    @Deprecated
+    public Collection<UnspecificParser<?>> getUnspecifiedParsers() {
+        throw new RuntimeException("Not implemented");
     }
 
     @Override
@@ -288,58 +300,75 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
-    public BossColour get(BossColours colours) {
-        return null;
+    public @NotNull Singleton<BossColour> get(BossColours colours) {
+        return new Singleton<>(() -> {
+            throw new RuntimeException("Not implemented");
+        });
     }
 
     @Override
+    @Deprecated
     public <T> UnspecificParser<T> get(UnspecificParsers<T> parsers) {
         return (UnspecificParser<T>) this.getUnspecifiedParser(parsers.getId()).get();
     }
 
     @Override
-    public ApplyPhysicsFlag get(ApplyPhysicsFlags flags) {
+    public @NotNull Singleton<ApplyPhysicsFlag> get(ApplyPhysicsFlags flags) {
         switch (flags.getId()) {
             case "none":
-                return SApplyPhysicsFlag.NONE;
+                return new Singleton<>(() -> SApplyPhysicsFlag.NONE);
             case "default":
-                return SApplyPhysicsFlag.DEFAULT;
+                return new Singleton<>(() -> SApplyPhysicsFlag.DEFAULT);
             default:
-                System.err.println("Unknown Applied Physics Flag of: " + flags.getId());
+                throw new RuntimeException("Unknown Applied Physics Flag of: " + flags.getId());
         }
-
-        return null;
     }
 
     @Override
-    public ItemType get(ItemTypeCommon itemId) {
-        return RegistryTypes.ITEM_TYPE.get().stream().filter(i -> i.key(RegistryTypes.ITEM_TYPE).asString().equals(itemId.getId())).findAny().map(i -> new SItemType(i))
+    public @NotNull Singleton<ItemType> get(ItemTypeCommon itemId) {
+        Supplier<ItemType> supplier = () -> RegistryTypes.ITEM_TYPE.get()
+                .stream()
+                .filter(i -> i.key(RegistryTypes.ITEM_TYPE)
+                        .asString()
+                        .equals(itemId.getId()))
+                .findAny()
+                .map(SItemType::new)
                 .orElseThrow(() -> new IllegalStateException("Unknown item of " + itemId.getId()));
+        return new Singleton<>(supplier);
     }
 
     @Override
-    public ParrotType get(ParrotTypes parrotID) {
-        return null;
+    public @NotNull Singleton<ParrotType> get(ParrotTypes parrotID) {
+        return new Singleton<>(() -> {
+            throw new RuntimeException("Not implemented");
+        });
     }
 
     @Override
-    public TextColour get(TextColours id) {
+    @Deprecated
+    public @NotNull TextColour get(TextColours id) {
         return STextColour.getInstance(NamedTextColor.NAMES.value(id.getName()));
     }
 
     @Override
-    public DyeType get(DyeTypes id) {
-        return null;
+    public @NotNull Singleton<DyeType> get(DyeTypes id) {
+        return new Singleton<>(() -> {
+            throw new RuntimeException("Not implemented");
+        });
     }
 
     @Override
-    public PatternLayerType get(PatternLayerTypes id) {
-        return null;
+    public @NotNull Singleton<PatternLayerType> get(PatternLayerTypes id) {
+        return new Singleton<>(() -> {
+            throw new RuntimeException("Not implemented");
+        });
     }
 
     @Override
-    public <E extends LiveEntity, S extends EntitySnapshot<E>> EntityType<E, S> get(EntityTypes<E, S> entityId) {
-        return null;
+    public <E extends LiveEntity, S extends EntitySnapshot<E>> @NotNull Singleton<EntityType<E, S>> get(EntityTypes<E, S> entityId) {
+        return new Singleton<>(() -> {
+            throw new RuntimeException("Not implemented");
+        });
     }
 
 }

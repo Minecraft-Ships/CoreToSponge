@@ -9,22 +9,12 @@ import org.core.schedule.unit.TimeUnit;
 import org.ships.implementation.sponge.platform.SpongePlatformServer;
 import org.spongepowered.api.scheduler.ScheduledTask;
 import org.spongepowered.api.scheduler.Task;
+import org.spongepowered.plugin.PluginContainer;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 public class SScheduler implements Scheduler {
-
-    private class RunAfterScheduler implements Runnable {
-
-        @Override
-        public void run() {
-            SScheduler.this.taskToRun.run();
-            Scheduler scheduler = SScheduler.this.runAfter;
-            if (scheduler != null) {
-                scheduler.run();
-            }
-        }
-    }
 
     protected Runnable taskToRun;
     protected Scheduler runAfter;
@@ -63,7 +53,16 @@ public class SScheduler implements Scheduler {
 
     @Override
     public void run() {
-        Task.Builder builder = Task.builder().execute(new SScheduler.RunAfterScheduler());
+        Object spongePlugin = this.plugin.getLauncher();
+        PluginContainer container;
+        try {
+            container = (PluginContainer) spongePlugin.getClass().getMethod("getContainer").invoke(spongePlugin);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+
+        Task.Builder builder = Task.builder().plugin(container).execute(new SScheduler.RunAfterScheduler());
         if (this.delayCount != null) {
             if (this.delayTimeUnit == null || this.delayTimeUnit == TimeUnit.MINECRAFT_TICKS) {
                 builder = builder.delay(Ticks.duration(this.delayCount));
@@ -89,5 +88,17 @@ public class SScheduler implements Scheduler {
     @Override
     public Runnable getExecutor() {
         return this.taskToRun;
+    }
+
+    private class RunAfterScheduler implements Runnable {
+
+        @Override
+        public void run() {
+            SScheduler.this.taskToRun.run();
+            Scheduler scheduler = SScheduler.this.runAfter;
+            if (scheduler != null) {
+                scheduler.run();
+            }
+        }
     }
 }

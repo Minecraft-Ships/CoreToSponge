@@ -59,11 +59,11 @@ public class SBlockPosition extends SSyncedPosition<Integer> implements SyncBloc
             SBlockSnapshot<? extends Position<Integer>> snapshot = (SBlockSnapshot<? extends Position<Integer>>) details;
             BlockSnapshot snapshot1 = snapshot.getSnapshot();
             snapshot1 = snapshot1.withLocation(this.location.onServer().get());
-            SApplyPhysicsFlag physicsFlag = (SApplyPhysicsFlag) Stream.of(flags).filter(f -> f instanceof ApplyPhysicsFlag).findAny().orElse(ApplyPhysicsFlags.NONE);
+            SApplyPhysicsFlag physicsFlag = (SApplyPhysicsFlag) Stream.of(flags).filter(f -> f instanceof ApplyPhysicsFlag).findAny().orElse(ApplyPhysicsFlags.NONE.get());
             snapshot1.restore(true, physicsFlag.getFlag());
         } else {
             org.spongepowered.api.block.BlockState state = ((StateDetails) details).getState();
-            SApplyPhysicsFlag physicsFlag = (SApplyPhysicsFlag) Stream.of(flags).filter(f -> f instanceof ApplyPhysicsFlag).findAny().orElse(ApplyPhysicsFlags.NONE);
+            SApplyPhysicsFlag physicsFlag = (SApplyPhysicsFlag) Stream.of(flags).filter(f -> f instanceof ApplyPhysicsFlag).findAny().orElse(ApplyPhysicsFlags.NONE.get());
             this.location.setBlock(state, physicsFlag.getFlag());
             if (details.get(KeyedData.TILED_ENTITY).isPresent()) {
                 TileEntitySnapshot<? extends TileEntity> snapshot = details.get(KeyedData.TILED_ENTITY).get();
