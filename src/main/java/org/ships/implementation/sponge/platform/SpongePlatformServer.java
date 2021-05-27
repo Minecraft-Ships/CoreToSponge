@@ -11,7 +11,9 @@ import org.ships.implementation.sponge.entity.living.human.player.live.SUser;
 import org.ships.implementation.sponge.world.SWorldExtent;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Server;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
+import org.spongepowered.api.user.UserManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,14 +47,11 @@ public class SpongePlatformServer implements PlatformServer {
     @Deprecated
     public Optional<WorldExtent> getWorldByPlatformSpecific(String name) {
         Optional<ResourceKey> opKey = this.platform.worldManager().worldKey(UUID.fromString(name));
-        if (!opKey.isPresent()) {
-            return Optional.empty();
-        }
-        return this
+        return opKey.flatMap(resourceKey -> this
                 .platform
                 .worldManager()
-                .world(opKey.get())
-                .map(SWorldExtent::new);
+                .world(resourceKey)
+                .map(SWorldExtent::new));
     }
 
     @Override
@@ -74,6 +73,23 @@ public class SpongePlatformServer implements PlatformServer {
         }
         Optional<org.spongepowered.api.entity.living.player.User> opUser = this.platform.userManager().find(uuid);
         return opUser.map(SUser::new);
+    }
+
+    @Override
+    public Optional<User> getOfflineUser(String lastName) {
+        return Sponge.server().userManager().find(lastName).map(SUser::new);
+    }
+
+    @Override
+    public Collection<User> getOfflineUsers() {
+        UserManager userManager = Sponge.server().userManager();
+        return userManager
+                .streamAll()
+                .map(userManager::find)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(SUser::new)
+                .collect(Collectors.toSet());
     }
 
     @Override

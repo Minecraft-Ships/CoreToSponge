@@ -7,8 +7,8 @@ import org.core.adventureText.adventure.AdventureText;
 import org.core.entity.Entity;
 import org.core.entity.LiveEntity;
 import org.core.vector.type.Vector3;
+import org.core.world.position.impl.Position;
 import org.core.world.position.impl.sync.SyncExactPosition;
-import org.core.world.position.impl.sync.SyncPosition;
 import org.jetbrains.annotations.Nullable;
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.text.SText;
@@ -65,7 +65,7 @@ public abstract class SLiveEntity implements LiveEntity {
     }
 
     @Override
-    public LiveEntity setPosition(SyncPosition<? extends Number> position) {
+    public LiveEntity setPosition(Position<? extends Number> position) {
         SPosition<? extends Number> position1 = (SPosition<? extends Number>) position;
         Location<?, ?> loc = position1.getSpongeLocation();
         if (loc.world() instanceof ServerWorld) {
