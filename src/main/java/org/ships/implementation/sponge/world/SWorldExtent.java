@@ -80,12 +80,12 @@ public class SWorldExtent implements WorldExtent {
 
     @Override
     public Optional<ChunkExtent> getChunk(Vector3<Integer> vector) {
-        return Optional.empty();
+        throw new RuntimeException("Not implemented");
     }
 
     @Override
     public ChunkExtent loadChunk(Vector3<Integer> vector) {
-        return null;
+        return new SLoadedChunkExtent(this.world.loadChunk(vector.getX(), vector.getY(), vector.getZ(), true).orElseThrow(() -> new IllegalStateException("Could not load the chunk")));
     }
 
     @Override

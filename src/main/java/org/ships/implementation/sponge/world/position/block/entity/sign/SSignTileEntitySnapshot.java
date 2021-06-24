@@ -10,6 +10,7 @@ import org.core.world.position.block.entity.sign.SignTileEntity;
 import org.core.world.position.block.entity.sign.SignTileEntitySnapshot;
 import org.spongepowered.api.data.value.ListValue;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,16 +21,19 @@ public class SSignTileEntitySnapshot implements SignTileEntitySnapshot {
     protected List<AText> lines;
 
     public SSignTileEntitySnapshot(ListValue<Component> sign) {
-        this(sign.get());
-    }
-
-    public SSignTileEntitySnapshot(Collection<Component> lines) {
-        this.lines = lines.stream().map(AdventureText::new).collect(Collectors.toList());
-
+        this(sign.get().stream().map(AdventureText::new).collect(Collectors.toList()));
     }
 
     public SSignTileEntitySnapshot(SignTileEntity ste) {
-        this(ste.getLines());
+        this(ste.getText());
+    }
+
+    public SSignTileEntitySnapshot(Collection<AText> lines) {
+        this.lines = lines.stream().map(l -> (AdventureText) l).collect(Collectors.toList());
+    }
+
+    public SSignTileEntitySnapshot() {
+        this.lines = new ArrayList<>();
     }
 
     @Deprecated

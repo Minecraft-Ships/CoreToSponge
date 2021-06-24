@@ -53,7 +53,7 @@ public class SpongeListener {
                 if (method.getDeclaredAnnotationsByType(HEvent.class) == null) {
                     continue;
                 }
-                if (methods.stream().anyMatch(m -> method.getName().contains("$"))) {
+                if (methods.stream().anyMatch(m -> method.getName().contains("lambda") || method.getName().contains("$"))) {
                     continue;
                 }
                 Parameter[] parameters = method.getParameters();
@@ -81,7 +81,7 @@ public class SpongeListener {
         SSignChangeEvent sEvent;
         Object rootCause = event.cause().root();
         SyncBlockPosition bp = new SBlockPosition(event.sign().location());
-        SignTileEntitySnapshot from = new SSignTileEntitySnapshot(event.originalText());
+        SignTileEntitySnapshot from = new SSignTileEntitySnapshot(event.text().asImmutable());
         SignTileEntitySnapshot to = new SSignTileEntitySnapshot(event.text());
         if (rootCause instanceof org.spongepowered.api.entity.living.player.Player) {
             LivePlayer player = (LivePlayer) ((SpongePlatform) CorePlugin.getPlatform()).createEntityInstance((org.spongepowered.api.entity.living.player.Player) rootCause);

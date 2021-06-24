@@ -14,6 +14,7 @@ import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.user.UserManager;
+import org.spongepowered.api.world.server.ServerWorld;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -46,12 +47,9 @@ public class SpongePlatformServer implements PlatformServer {
     @Override
     @Deprecated
     public Optional<WorldExtent> getWorldByPlatformSpecific(String name) {
-        Optional<ResourceKey> opKey = this.platform.worldManager().worldKey(UUID.fromString(name));
-        return opKey.flatMap(resourceKey -> this
-                .platform
-                .worldManager()
-                .world(resourceKey)
-                .map(SWorldExtent::new));
+        Optional<ServerWorld> opWorld = this.platform.worldManager().world(ResourceKey.resolve(name));
+        return opWorld
+                .map(SWorldExtent::new);
     }
 
     @Override

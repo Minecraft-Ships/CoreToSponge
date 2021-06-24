@@ -1,5 +1,7 @@
 package org.ships.implementation.sponge;
 
+import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.text.Component;
 import org.core.CorePlugin;
 import org.core.config.ConfigurationFormat;
 import org.core.config.ConfigurationStream;
@@ -10,6 +12,7 @@ import org.core.schedule.SchedulerBuilder;
 import org.core.source.command.ConsoleSource;
 import org.core.text.Text;
 import org.core.world.boss.ServerBossBar;
+import org.ships.implementation.sponge.boss.SServerBossBar;
 import org.ships.implementation.sponge.configuration.YAMLConfigurationFile;
 import org.ships.implementation.sponge.events.SEventManager;
 import org.ships.implementation.sponge.platform.PlatformConsole;
@@ -85,6 +88,6 @@ public class CoreToSponge extends CorePlugin.CoreImplementation {
 
     @Override
     public ServerBossBar bossBuilder() {
-        return null;
+        return new SServerBossBar(BossBar.bossBar(Component.empty(), 0, BossBar.Color.PURPLE, BossBar.Overlay.PROGRESS));
     }
 }

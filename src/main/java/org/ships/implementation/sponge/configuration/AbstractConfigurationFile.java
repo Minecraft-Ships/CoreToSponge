@@ -71,7 +71,13 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
         List<T> list = node1
                 .childrenList()
                 .stream()
-                .map(v -> parser.parse(v.toString()))
+                .map(v -> {
+                    try {
+                        return parser.parse(v.getString());
+                    } catch (Throwable e) {
+                        throw new RuntimeException("Could not parse value at " + ArrayUtils.toString("->", Object::toString, v.path().array()) + ": Value: " + v.toString(), e);
+                    }
+                })
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
@@ -82,7 +88,7 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
     @Override
     public void set(org.core.config.ConfigurationNode node, int value) {
         try {
-            this.root.set(value);
+            this.root.node(node.getObjectPath()).set(value);
         } catch (SerializationException e) {
             throw new IllegalStateException(e);
         }
@@ -91,7 +97,7 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
     @Override
     public void set(org.core.config.ConfigurationNode node, double value) {
         try {
-            this.root.set(value);
+            this.root.node(node.getObjectPath()).set(value);
         } catch (SerializationException e) {
             throw new IllegalStateException(e);
         }
@@ -100,7 +106,7 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
     @Override
     public void set(org.core.config.ConfigurationNode node, boolean value) {
         try {
-            this.root.set(value);
+            this.root.node(node.getObjectPath()).set(value);
         } catch (SerializationException e) {
             throw new IllegalStateException(e);
         }
@@ -109,7 +115,7 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
     @Override
     public void set(org.core.config.ConfigurationNode node, String value) {
         try {
-            this.root.set(value);
+            this.root.node(node.getObjectPath()).set(value);
         } catch (SerializationException e) {
             throw new IllegalStateException(e);
         }

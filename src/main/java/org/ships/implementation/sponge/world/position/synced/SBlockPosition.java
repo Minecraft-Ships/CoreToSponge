@@ -35,12 +35,13 @@ public class SBlockPosition extends SSyncedPosition<Integer> implements SyncBloc
 
     @Override
     public SBlockPosition getRelative(Direction direction) {
-        return (SBlockPosition) super.getRelative(direction);
+        Vector3<Integer> vector = direction.getAsVector();
+        return new SBlockPosition(this.location.add(vector.getX(), vector.getY(), vector.getZ()));
     }
 
     @Override
     public SBlockPosition getRelative(Vector3<?> vector) {
-        return (SBlockPosition) super.getRelative(vector);
+        return new SBlockPosition(this.location.add(vector.getX().doubleValue(), vector.getY().doubleValue(), vector.getZ().doubleValue()));
     }
 
     @Override

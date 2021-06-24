@@ -5,14 +5,15 @@ import org.core.entity.EntitySnapshot;
 import org.core.entity.EntityType;
 import org.core.entity.LiveEntity;
 import org.core.entity.living.human.player.LivePlayer;
-import org.core.vector.type.Vector3;
-import org.core.world.direction.Direction;
 import org.core.world.position.block.details.BlockDetails;
 import org.core.world.position.block.entity.LiveTileEntity;
 import org.core.world.position.flags.PositionFlag;
 import org.core.world.position.impl.sync.SyncPosition;
+import org.ships.implementation.sponge.entity.living.human.player.live.SLivePlayer;
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.world.position.SPosition;
+import org.ships.implementation.sponge.world.position.block.details.blocks.details.SBlockDetails;
+import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.entity.BlockEntity;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -40,11 +41,19 @@ public abstract class SSyncedPosition<N extends Number> extends SPosition<N> imp
 
     @Override
     public SyncPosition<N> setBlock(BlockDetails details, PositionFlag.SetFlag... flags) {
-        return null;
+        BlockState state = ((SBlockDetails) details).getState();
+        this.location.setBlock(state);
+        return this;
     }
 
     @Override
-    public SyncPosition<N> setBlock(BlockDetails details, LivePlayer... player) {
+    public SyncPosition<N> setBlock(BlockDetails details, LivePlayer... players) {
+        BlockState state = ((SBlockDetails) details).getState();
+        for (LivePlayer player : players) {
+            ((SLivePlayer) player).getSpongeEntity().sendBlockChange(this.getX().intValue(), this.getY().intValue(), this.getZ().intValue(), state);
+        }
+
+
         return null;
     }
 
@@ -59,23 +68,7 @@ public abstract class SSyncedPosition<N extends Number> extends SPosition<N> imp
         if (!opSTileEntity.isPresent()) {
             return Optional.empty();
         }
-        LiveTileEntity lte = ((SpongePlatform) CorePlugin.getPlatform()).createTileEntityInstance(opSTileEntity.get()).get();
-        return Optional.of(lte);
-    }
-
-    @Override
-    public Vector3<N> getPosition() {
-        return null;
-    }
-
-    @Override
-    public SyncPosition<N> getRelative(Vector3<?> vector) {
-        return null;
-    }
-
-    @Override
-    public SyncPosition<N> getRelative(Direction direction) {
-        return null;
+        return ((SpongePlatform) CorePlugin.getPlatform()).createTileEntityInstance(opSTileEntity.get());
     }
 
     @Override

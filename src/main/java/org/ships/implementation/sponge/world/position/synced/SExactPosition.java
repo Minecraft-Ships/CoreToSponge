@@ -20,12 +20,12 @@ public class SExactPosition extends SSyncedPosition<Double> implements SyncExact
 
     @Override
     public SExactPosition getRelative(Vector3<?> vector) {
-        return (SExactPosition) super.getRelative(vector);
+        return new SExactPosition(this.location.add(vector.getRawX().doubleValue(), vector.getRawY().doubleValue(), vector.getRawZ().doubleValue()));
     }
 
     @Override
     public SExactPosition getRelative(Direction direction) {
-        return (SExactPosition) super.getRelative(direction);
+        return getRelative(direction.getAsVector());
     }
 
     @Override
