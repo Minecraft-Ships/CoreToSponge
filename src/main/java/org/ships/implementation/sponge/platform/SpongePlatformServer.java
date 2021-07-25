@@ -17,6 +17,7 @@ import org.spongepowered.api.user.UserManager;
 import org.spongepowered.api.world.server.ServerWorld;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class SpongePlatformServer implements PlatformServer {
@@ -64,29 +65,26 @@ public class SpongePlatformServer implements PlatformServer {
     }
 
     @Override
-    public Optional<User> getOfflineUser(UUID uuid) {
+    public CompletableFuture<Optional<User>> getOfflineUser(UUID uuid) {
         Optional<ServerPlayer> opPlayer = this.platform.player(uuid);
         if (opPlayer.isPresent()) {
-            return opPlayer.map(SLivePlayer::new);
+            return CompletableFuture.supplyAsync(() -> opPlayer.map(SLivePlayer::new));
         }
-        Optional<org.spongepowered.api.entity.living.player.User> opUser = this.platform.userManager().find(uuid);
-        return opUser.map(SUser::new);
+        CompletableFuture<Optional<org.spongepowered.api.entity.living.player.User>> compFutureOpUser = this.platform.userManager().load(uuid);
+        return compFutureOpUser.thenApply(opUser -> opUser.map(SUser::new));
     }
 
     @Override
-    public Optional<User> getOfflineUser(String lastName) {
-        return Sponge.server().userManager().find(lastName).map(SUser::new);
+    public CompletableFuture<Optional<User>> getOfflineUser(String lastName) {
+        return Sponge.server().userManager().load(lastName).thenApply(opUser -> opUser.map(SUser::new));
     }
 
     @Override
-    public Collection<User> getOfflineUsers() {
+    public Collection<CompletableFuture<User>> getOfflineUsers() {
         UserManager userManager = Sponge.server().userManager();
         return userManager
                 .streamAll()
-                .map(userManager::find)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(SUser::new)
+                .map(gp -> userManager.loadOrCreate(gp.uuid()).thenApply(u -> (User) new SUser(u)))
                 .collect(Collectors.toSet());
     }
 

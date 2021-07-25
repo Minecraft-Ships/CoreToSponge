@@ -63,7 +63,11 @@ public class SServerBossBar implements ServerBossBar {
 
     @Override
     public ServerBossBar setValue(int value) {
-        this.bossBar.progress(value / 10);
+        if (value > 100) {
+            throw new IllegalArgumentException("ServerBossBar.SetValue must be between 0 and 100 (" + value + ")");
+        }
+        double progress = value / 100.0;
+        this.bossBar.progress((float) progress);
         return this;
     }
 

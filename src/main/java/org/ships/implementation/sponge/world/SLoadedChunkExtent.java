@@ -9,11 +9,12 @@ import org.core.world.position.impl.async.ASyncBlockPosition;
 import org.core.world.position.impl.async.ASyncExactPosition;
 import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.core.world.position.impl.sync.SyncExactPosition;
+import org.jetbrains.annotations.NotNull;
 import org.ships.implementation.sponge.platform.SpongePlatform;
 import org.ships.implementation.sponge.world.position.synced.SBlockPosition;
 import org.ships.implementation.sponge.world.position.synced.SExactPosition;
 import org.spongepowered.api.util.AABB;
-import org.spongepowered.api.world.chunk.Chunk;
+import org.spongepowered.api.world.chunk.WorldChunk;
 
 import java.util.Optional;
 import java.util.Set;
@@ -21,9 +22,9 @@ import java.util.stream.Collectors;
 
 public class SLoadedChunkExtent implements ChunkExtent {
 
-    private Chunk chunk;
+    private final @NotNull WorldChunk chunk;
 
-    public SLoadedChunkExtent(Chunk chunk) {
+    public SLoadedChunkExtent(@NotNull WorldChunk chunk) {
         this.chunk = chunk;
     }
 
@@ -34,7 +35,7 @@ public class SLoadedChunkExtent implements ChunkExtent {
 
     @Override
     public SyncExactPosition getPosition(double x, double y, double z) {
-        return new SExactPosition(this.chunk.world().location(this.chunk.blockMin().add(x, y, z)));
+        return new SExactPosition(this.chunk.world().location(this.chunk.min().add(x, y, z)));
     }
 
     @Override
@@ -44,7 +45,7 @@ public class SLoadedChunkExtent implements ChunkExtent {
 
     @Override
     public SyncBlockPosition getPosition(int x, int y, int z) {
-        return new SBlockPosition(this.chunk.world().location(this.chunk.blockMin().add(x, y, z)));
+        return new SBlockPosition(this.chunk.world().location(this.chunk.min().add(x, y, z)));
     }
 
     @Override
@@ -60,7 +61,7 @@ public class SLoadedChunkExtent implements ChunkExtent {
     @Override
     public Set<LiveEntity> getEntities() {
         SpongePlatform platform = ((SpongePlatform) CorePlugin.getPlatform());
-        return this.chunk.entities(AABB.of(this.chunk.blockMin(), this.chunk.blockMax())).stream().map(platform::createEntityInstance).collect(Collectors.toSet());
+        return this.chunk.entities(AABB.of(this.chunk.min(), this.chunk.max())).stream().map(platform::createEntityInstance).collect(Collectors.toSet());
     }
 
     @Override

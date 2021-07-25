@@ -123,8 +123,8 @@ public class SWorldExtent implements WorldExtent {
             ServerWorld world = (ServerWorld) this.world;
             return world.entities().stream().map(platform::createEntityInstance).collect(Collectors.toSet());
         }
-        Vector3i min = this.getSpongeWorld().blockMin();
-        Vector3i max = this.getSpongeWorld().blockMax();
+        Vector3i min = this.getSpongeWorld().min();
+        Vector3i max = this.getSpongeWorld().max();
         AABB aabb = AABB.of(min, max);
         return this
                 .world
