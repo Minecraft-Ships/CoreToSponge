@@ -19,6 +19,7 @@ import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.server.ServerWorld;
 
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -52,14 +53,17 @@ public abstract class SSyncedPosition<N extends Number> extends SPosition<N> imp
         for (LivePlayer player : players) {
             ((SLivePlayer) player).getSpongeEntity().sendBlockChange(this.getX().intValue(), this.getY().intValue(), this.getZ().intValue(), state);
         }
-
-
-        return null;
+        return this;
     }
 
     @Override
-    public SyncPosition<N> resetBlock(LivePlayer... player) {
-        return null;
+    public SSyncedPosition<N> resetBlock(LivePlayer... player) {
+        Arrays
+                .stream(player)
+                .map(p -> ((SLivePlayer) p).getSpongeEntity())
+                .filter(p -> p.world().equals(this.location.world()))
+                .forEach(p -> p.resetBlockChange(this.location.blockPosition()));
+        return this;
     }
 
     @Override

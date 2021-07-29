@@ -5,6 +5,8 @@ import org.core.world.WorldExtent;
 import org.core.world.position.impl.Position;
 import org.core.world.position.impl.sync.SyncPosition;
 import org.ships.implementation.sponge.world.SWorldExtent;
+import org.ships.implementation.sponge.world.position.asynced.SAsyncedBlockPosition;
+import org.ships.implementation.sponge.world.position.asynced.SAsyncedExactPosition;
 import org.ships.implementation.sponge.world.position.synced.SBlockPosition;
 import org.ships.implementation.sponge.world.position.synced.SExactPosition;
 import org.spongepowered.api.world.Location;
@@ -17,7 +19,8 @@ public abstract class SPosition<N extends Number> implements Position<N> {
 
     public static final Function<? extends Location<? extends World<?, ?>, ?>, SBlockPosition> TO_SYNCED_BLOCK_POSITION = (SBlockPosition::new);
     public static final Function<? extends Location<? extends World<?, ?>, ?>, SExactPosition> TO_SYNCED_EXACT_POSITION = (SExactPosition::new);
-
+    public static final Function<? extends Location<? extends World<?, ?>, ?>, SAsyncedBlockPosition> TO_ASYNCED_BLOCK_POSITION = (SAsyncedBlockPosition::new);
+    public static final Function<? extends Location<? extends World<?, ?>, ?>, SAsyncedExactPosition> TO_ASYNCED_EXACT_POSITION = (SAsyncedExactPosition::new);
 
     protected Location<? extends World<?, ?>, ?> location;
     protected Function<? extends Location<? extends World<?, ?>, ?>, ? extends SPosition<N>> newInstance;

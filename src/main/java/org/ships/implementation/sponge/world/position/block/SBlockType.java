@@ -5,7 +5,7 @@ import org.core.inventory.item.ItemType;
 import org.core.world.position.block.BlockType;
 import org.core.world.position.block.details.BlockDetails;
 import org.core.world.position.block.grouptype.BlockGroup;
-import org.ships.implementation.sponge.world.position.block.details.blocks.details.SBlockDetails;
+import org.ships.implementation.sponge.world.position.block.details.blocks.details.SSyncedBlockDetails;
 import org.spongepowered.api.registry.RegistryTypes;
 
 import java.util.Arrays;
@@ -23,7 +23,7 @@ public class SBlockType implements BlockType {
 
     @Override
     public BlockDetails getDefaultBlockDetails() {
-        return new SBlockDetails(this.type.defaultState());
+        return new SSyncedBlockDetails(this.type.defaultState());
     }
 
     //THIS IS FOR 1.13

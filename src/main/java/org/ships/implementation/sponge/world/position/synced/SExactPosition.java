@@ -56,7 +56,7 @@ public class SExactPosition extends SSyncedPosition<Double> implements SyncExact
     }
 
     @Override
-    public SyncPosition<Double> resetBlock(LivePlayer... player) {
+    public SExactPosition resetBlock(LivePlayer... player) {
         toBlockPosition().resetBlock(player);
         return this;
     }

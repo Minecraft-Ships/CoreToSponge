@@ -11,6 +11,8 @@ import org.core.world.position.impl.async.ASyncExactPosition;
 import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.core.world.position.impl.sync.SyncExactPosition;
 import org.ships.implementation.sponge.platform.SpongePlatform;
+import org.ships.implementation.sponge.world.position.asynced.SAsyncedBlockPosition;
+import org.ships.implementation.sponge.world.position.asynced.SAsyncedExactPosition;
 import org.ships.implementation.sponge.world.position.synced.SBlockPosition;
 import org.ships.implementation.sponge.world.position.synced.SExactPosition;
 import org.spongepowered.api.registry.RegistryTypes;
@@ -95,7 +97,7 @@ public class SWorldExtent implements WorldExtent {
 
     @Override
     public ASyncExactPosition getAsyncPosition(double x, double y, double z) {
-        throw new IllegalStateException("ASync position not used in Sponge yet");
+        return new SAsyncedExactPosition(this.world.location(x, y, z));
     }
 
     @Override
@@ -105,7 +107,7 @@ public class SWorldExtent implements WorldExtent {
 
     @Override
     public ASyncBlockPosition getAsyncPosition(int x, int y, int z) {
-        throw new IllegalStateException("ASync position not used in Sponge yet");
+        return new SAsyncedBlockPosition(this.world.location(x, y, z));
     }
 
     @Override

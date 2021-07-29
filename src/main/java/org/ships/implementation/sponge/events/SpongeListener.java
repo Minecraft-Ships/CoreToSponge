@@ -53,7 +53,7 @@ public class SpongeListener {
                 if (method.getDeclaredAnnotationsByType(HEvent.class) == null) {
                     continue;
                 }
-                if (methods.stream().anyMatch(m -> method.getName().contains("lambda") || method.getName().contains("$"))) {
+                if (method.getName().contains("lambda") || method.getName().contains("$")) {
                     continue;
                 }
                 Parameter[] parameters = method.getParameters();

@@ -23,7 +23,9 @@ import org.ships.implementation.sponge.world.position.flags.SApplyPhysicsFlag;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
+import org.spongepowered.api.world.server.ServerLocation;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -56,10 +58,11 @@ public class SBlockPosition extends SSyncedPosition<Integer> implements SyncBloc
 
     @Override
     public SBlockPosition setBlock(BlockDetails details, PositionFlag.SetFlag... flags) {
-        if (details instanceof SBlockSnapshot) {
+        Optional<ServerLocation> opLocSer = this.location.onServer();
+        if (details instanceof SBlockSnapshot && opLocSer.isPresent()) {
             SBlockSnapshot<? extends Position<Integer>> snapshot = (SBlockSnapshot<? extends Position<Integer>>) details;
             BlockSnapshot snapshot1 = snapshot.getSnapshot();
-            snapshot1 = snapshot1.withLocation(this.location.onServer().get());
+            snapshot1 = snapshot1.withLocation(opLocSer.get());
             SApplyPhysicsFlag physicsFlag = (SApplyPhysicsFlag) Stream.of(flags).filter(f -> f instanceof ApplyPhysicsFlag).findAny().orElse(ApplyPhysicsFlags.NONE.get());
             snapshot1.restore(true, physicsFlag.getFlag());
         } else {
@@ -83,16 +86,6 @@ public class SBlockPosition extends SSyncedPosition<Integer> implements SyncBloc
         for (LivePlayer player : players) {
             if (player.getPosition().getWorld().equals(this.getWorld())) {
                 ((SLivePlayer) player).getSpongeEntity().sendBlockChange(this.location.blockPosition(), ((SBlockDetails) details).getState());
-            }
-        }
-        return this;
-    }
-
-    @Override
-    public SyncPosition<Integer> resetBlock(LivePlayer... players) {
-        for (LivePlayer player : players) {
-            if (player.getPosition().getWorld().equals(this.getWorld())) {
-                ((SLivePlayer) player).getSpongeEntity().resetBlockChange(this.location.blockPosition());
             }
         }
         return this;
