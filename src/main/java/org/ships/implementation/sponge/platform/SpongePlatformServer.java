@@ -4,8 +4,10 @@ import org.core.command.CommandLauncher;
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.entity.living.human.player.User;
 import org.core.platform.PlatformServer;
+import org.core.platform.Plugin;
 import org.core.platform.tps.TPSExecutor;
 import org.core.world.WorldExtent;
+import org.core.world.position.block.details.BlockSnapshot;
 import org.ships.implementation.sponge.entity.living.human.player.live.SLivePlayer;
 import org.ships.implementation.sponge.entity.living.human.player.live.SUser;
 import org.ships.implementation.sponge.world.SWorldExtent;
@@ -62,6 +64,11 @@ public class SpongePlatformServer implements PlatformServer {
                 .stream()
                 .map(SLivePlayer::new)
                 .collect(Collectors.toSet());
+    }
+
+    @Override
+    public void applyBlockSnapshots(Collection<BlockSnapshot.AsyncBlockSnapshot> collection, Plugin plugin, Runnable onComplete) {
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override

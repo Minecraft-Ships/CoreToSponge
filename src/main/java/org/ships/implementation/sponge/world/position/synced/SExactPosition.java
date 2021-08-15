@@ -29,7 +29,7 @@ public class SExactPosition extends SSyncedPosition<Double> implements SyncExact
     }
 
     @Override
-    public BlockSnapshot<SyncBlockPosition> getBlockDetails() {
+    public BlockSnapshot.SyncBlockSnapshot getBlockDetails() {
         return toBlockPosition().getBlockDetails();
     }
 

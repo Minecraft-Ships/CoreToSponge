@@ -4,8 +4,13 @@ import org.core.world.position.block.BlockType;
 import org.core.world.position.block.details.BlockDetails;
 import org.core.world.position.block.details.BlockSnapshot;
 import org.core.world.position.block.details.data.DirectionalData;
-import org.core.world.position.block.details.data.keyed.*;
+import org.core.world.position.block.details.data.keyed.AttachableKeyedData;
+import org.core.world.position.block.details.data.keyed.KeyedData;
+import org.core.world.position.block.details.data.keyed.MultiDirectionalKeyedData;
+import org.core.world.position.block.details.data.keyed.OpenableKeyedData;
 import org.core.world.position.impl.BlockPosition;
+import org.core.world.position.impl.async.ASyncBlockPosition;
+import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.ships.implementation.sponge.world.position.block.SBlockType;
 import org.ships.implementation.sponge.world.position.block.details.blocks.StateDetails;
 import org.ships.implementation.sponge.world.position.block.details.blocks.snapshot.SBlockSnapshot;
@@ -32,8 +37,9 @@ public abstract class SBlockDetails implements BlockDetails, StateDetails {
     }
 
     @Override
+    @Deprecated
     public <P extends BlockPosition> BlockSnapshot<P> createSnapshot(P position) {
-        org.spongepowered.api.world.Location<? extends World<?, ?>, ?> loc = ((SBlockPosition) position).getSpongeLocation();
+        /*org.spongepowered.api.world.Location<? extends World<?, ?>, ?> loc = ((SBlockPosition) position).getSpongeLocation();
         if (loc.world() instanceof ServerWorld) {
             org.spongepowered.api.block.BlockSnapshot blockSnapshot = org.spongepowered.api.block.BlockSnapshot.builder()
                     .blockState(this.blockstate)
@@ -46,7 +52,11 @@ public abstract class SBlockDetails implements BlockDetails, StateDetails {
                 .blockState(this.blockstate)
                 .position(loc.blockPosition())
                 .build();
-        return new SBlockSnapshot<>(blockSnapshot);
+        return new SBlockSnapshot<>(blockSnapshot);*/
+        if(position instanceof SyncBlockPosition){
+            return (BlockSnapshot<P>) createSnapshot((SyncBlockPosition) position);
+        }
+        return (BlockSnapshot<P>) createSnapshot((ASyncBlockPosition) position);
     }
 
     @Override

@@ -2,7 +2,6 @@ package org.ships.implementation.sponge.world.position.asynced;
 
 import org.core.vector.type.Vector3;
 import org.core.world.position.block.details.BlockSnapshot;
-import org.core.world.position.impl.BlockPosition;
 import org.core.world.position.impl.async.ASyncBlockPosition;
 import org.core.world.position.impl.async.ASyncExactPosition;
 import org.ships.implementation.sponge.world.position.synced.SExactPosition;
@@ -16,7 +15,7 @@ public class SAsyncedExactPosition extends SAsyncedPosition<Double> implements A
     }
 
     @Override
-    public BlockSnapshot<? extends BlockPosition> getBlockDetails() {
+    public BlockSnapshot.AsyncBlockSnapshot getBlockDetails() {
         return this.toBlockPosition().getBlockDetails();
     }
 

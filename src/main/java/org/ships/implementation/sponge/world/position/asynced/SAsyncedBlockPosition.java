@@ -1,8 +1,6 @@
 package org.ships.implementation.sponge.world.position.asynced;
 
 import org.core.vector.type.Vector3;
-import org.core.world.position.block.details.BlockSnapshot;
-import org.core.world.position.impl.BlockPosition;
 import org.core.world.position.impl.async.ASyncBlockPosition;
 import org.core.world.position.impl.async.ASyncExactPosition;
 import org.ships.implementation.sponge.world.position.block.details.blocks.details.SAsyncedBlockDetails;
@@ -18,8 +16,8 @@ public class SAsyncedBlockPosition extends SAsyncedPosition<Integer> implements 
     }
 
     @Override
-    public BlockSnapshot<? extends BlockPosition> getBlockDetails() {
-        return new SFakeBlockSnapshot<>(this, new SAsyncedBlockDetails(this.location.block()));
+    public SFakeBlockSnapshot.SFakeAsyncedBlockSnapshot getBlockDetails() {
+        return new SFakeBlockSnapshot.SFakeAsyncedBlockSnapshot(this, new SAsyncedBlockDetails(this.location.block()));
     }
 
     @Override

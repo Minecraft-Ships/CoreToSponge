@@ -2,7 +2,8 @@ package org.ships.implementation.sponge.world.position.block.details.blocks.snap
 
 import net.kyori.adventure.text.Component;
 import org.core.CorePlugin;
-import org.core.text.Text;
+import org.core.adventureText.AText;
+import org.core.adventureText.adventure.AdventureText;
 import org.core.world.position.block.BlockType;
 import org.core.world.position.block.details.BlockDetails;
 import org.core.world.position.block.details.BlockSnapshot;
@@ -13,8 +14,10 @@ import org.core.world.position.block.entity.TileEntity;
 import org.core.world.position.block.entity.TileEntitySnapshot;
 import org.core.world.position.block.entity.sign.SignTileEntitySnapshot;
 import org.core.world.position.impl.BlockPosition;
+import org.core.world.position.impl.Position;
+import org.core.world.position.impl.async.ASyncBlockPosition;
+import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.ships.implementation.sponge.platform.SpongePlatform;
-import org.ships.implementation.sponge.text.SText;
 import org.ships.implementation.sponge.world.position.SPosition;
 import org.ships.implementation.sponge.world.position.block.SBlockType;
 import org.ships.implementation.sponge.world.position.block.details.blocks.StateDetails;
@@ -32,7 +35,62 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class SBlockSnapshot<P extends BlockPosition> implements BlockSnapshot<P>, StateDetails {
+public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSnapshot<P>, StateDetails {
+
+    public static class SAsyncedBlockSnapshot extends SBlockSnapshot<ASyncBlockPosition> implements BlockSnapshot.AsyncBlockSnapshot {
+
+        public SAsyncedBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot) {
+            super(snapshot);
+        }
+
+        public SAsyncedBlockSnapshot(ServerLocation location, Function<Location<? extends World<?, ?>, ?>, ASyncBlockPosition> newInstance) {
+            super(location, newInstance);
+        }
+
+        public SAsyncedBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot, TileEntitySnapshot<? extends LiveTileEntity> tileEntity) {
+            super(snapshot, tileEntity);
+        }
+
+        @Override
+        protected SBlockSnapshot<ASyncBlockPosition> createCopyOf(org.spongepowered.api.block.BlockSnapshot snapshot, TileEntitySnapshot<? extends LiveTileEntity> tileEntity) {
+            return new SAsyncedBlockSnapshot(snapshot, tileEntity);
+        }
+
+        @Override
+        public AsyncBlockSnapshot createCopyOf() {
+            return new SAsyncedBlockSnapshot(this.snapshot.copy(), this.tileEntitySnapshot.getSnapshot());
+        }
+    }
+
+    public static class SSyncedBlockSnapshot extends SBlockSnapshot<SyncBlockPosition> implements BlockSnapshot.SyncBlockSnapshot {
+
+        public SSyncedBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot) {
+            super(snapshot);
+        }
+
+        public SSyncedBlockSnapshot(ServerLocation location, Function<Location<? extends World<?, ?>, ?>, SyncBlockPosition> newInstance) {
+            super(location, newInstance);
+        }
+
+        public SSyncedBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot, TileEntitySnapshot<? extends LiveTileEntity> tileEntity) {
+            super(snapshot, tileEntity);
+        }
+
+        @Override
+        protected SSyncedBlockSnapshot createCopyOf(org.spongepowered.api.block.BlockSnapshot snapshot, TileEntitySnapshot<? extends LiveTileEntity> tileEntity) {
+            return new SSyncedBlockSnapshot(snapshot, tileEntity);
+        }
+
+        @Override
+        public AsyncBlockSnapshot asAsynced() {
+            return createSnapshot(Position.toASync(this.getPosition()));
+        }
+
+        @Override
+        public BlockSnapshot.SyncBlockSnapshot createCopyOf() {
+            return new SSyncedBlockSnapshot(this.snapshot.copy(), this.tileEntitySnapshot.getSnapshot());
+        }
+    }
 
     public class STileEntityKeyedData implements TileEntityKeyedData {
 
@@ -59,11 +117,14 @@ public class SBlockSnapshot<P extends BlockPosition> implements BlockSnapshot<P>
             if (opLines.isPresent()) {
                 List<Component> lines = opLines.get();
                 for (int A = 0; A < lines.size(); A++) {
-                    ((SignTileEntitySnapshot) this.tileEntitySnapshot).setLine(A, SText.of(lines.get(A)));
+                    SignTileEntitySnapshot sign = (SignTileEntitySnapshot) this.tileEntitySnapshot;
+                    sign.setTextAt(A, new AdventureText(lines.get(A)));
                 }
             }
         }
     }
+
+    protected abstract SBlockSnapshot<P> createCopyOf(org.spongepowered.api.block.BlockSnapshot snapshot, TileEntitySnapshot<? extends LiveTileEntity> tileEntity);
 
     public SBlockSnapshot(ServerLocation location, Function<Location<? extends World<?, ?>, ?>, P> newInstance) {
         this.snapshot = location.world().createSnapshot(location.blockPosition());
@@ -80,6 +141,57 @@ public class SBlockSnapshot<P extends BlockPosition> implements BlockSnapshot<P>
 
     public org.spongepowered.api.block.BlockSnapshot getSnapshot() {
         return this.snapshot;
+    }
+
+    @Override
+    public AsyncBlockSnapshot createSnapshot(ASyncBlockPosition position) {
+        SBlockPosition position1 = (SBlockPosition) position;
+        org.spongepowered.api.block.BlockSnapshot snapshot;
+        if (position1.getSpongeLocation().world() instanceof ServerWorld) {
+            snapshot = org.spongepowered.api.block.BlockSnapshot.builder()
+                    .from(this.snapshot)
+                    .world(((ServerWorld) position1.getSpongeLocation().world()).properties())
+                    .position(position1.getSpongeLocation().blockPosition()).build();
+        } else {
+            snapshot = org.spongepowered.api.block.BlockSnapshot.builder()
+                    .from(this.snapshot)
+                    .position(position1.getSpongeLocation().blockPosition())
+                    .build();
+        }
+        if (this.tileEntitySnapshot != null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot) {
+            List<Component> lines = new ArrayList<>();
+            for (AText text : ((SignTileEntitySnapshot) this.tileEntitySnapshot).getText()) {
+                AdventureText aText = (AdventureText) text;
+                lines.add(aText.getComponent());
+            }
+            snapshot = snapshot.with(Keys.SIGN_LINES, lines).get();
+        }
+        return new SAsyncedBlockSnapshot(snapshot, this.tileEntitySnapshot);
+    }
+
+    @Override
+    public SyncBlockSnapshot createSnapshot(SyncBlockPosition position) {
+        SBlockPosition position1 = (SBlockPosition) position;
+        org.spongepowered.api.block.BlockSnapshot snapshot;
+        if (position1.getSpongeLocation().world() instanceof ServerWorld) {
+            snapshot = org.spongepowered.api.block.BlockSnapshot.builder()
+                    .from(this.snapshot)
+                    .world(((ServerWorld) position1.getSpongeLocation().world()).properties())
+                    .position(position1.getSpongeLocation().blockPosition()).build();
+        } else {
+            snapshot = org.spongepowered.api.block.BlockSnapshot.builder()
+                    .from(this.snapshot)
+                    .position(position1.getSpongeLocation().blockPosition())
+                    .build();
+        }
+        if (this.tileEntitySnapshot != null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot) {
+            List<Component> lines = new ArrayList<>();
+            for (AText text : ((SignTileEntitySnapshot) this.tileEntitySnapshot).getText()) {
+                lines.add(((AdventureText) text).getComponent());
+            }
+            snapshot = snapshot.with(Keys.SIGN_LINES, lines).get();
+        }
+        return new SSyncedBlockSnapshot(snapshot, this.tileEntitySnapshot);
     }
 
     @Override
@@ -113,28 +225,12 @@ public class SBlockSnapshot<P extends BlockPosition> implements BlockSnapshot<P>
     }
 
     @Override
+    @Deprecated
     public <BP extends BlockPosition> BlockSnapshot<BP> createSnapshot(BP position) {
-        SBlockPosition position1 = (SBlockPosition) position;
-        org.spongepowered.api.block.BlockSnapshot snapshot = null;
-        if (position1.getSpongeLocation().world() instanceof ServerWorld) {
-            snapshot = org.spongepowered.api.block.BlockSnapshot.builder()
-                    .from(this.snapshot)
-                    .world(((ServerWorld) position1.getSpongeLocation().world()).properties())
-                    .position(position1.getSpongeLocation().blockPosition()).build();
-        } else {
-            snapshot = org.spongepowered.api.block.BlockSnapshot.builder()
-                    .from(this.snapshot)
-                    .position(position1.getSpongeLocation().blockPosition())
-                    .build();
+        if (position instanceof SyncBlockPosition) {
+            return (BlockSnapshot<BP>) createSnapshot((SyncBlockPosition) position);
         }
-        if (this.tileEntitySnapshot != null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot) {
-            List<Component> lines = new ArrayList<>();
-            for (Text text : ((SignTileEntitySnapshot) this.tileEntitySnapshot).getLines()) {
-                lines.add(((SText<? extends Component>) text).toSponge());
-            }
-            snapshot = snapshot.with(Keys.SIGN_LINES, lines).get();
-        }
-        return new SBlockSnapshot<>(snapshot, this.tileEntitySnapshot);
+        return (BlockSnapshot<BP>) createSnapshot((ASyncBlockPosition) position);
     }
 
     @Override
@@ -148,11 +244,6 @@ public class SBlockSnapshot<P extends BlockPosition> implements BlockSnapshot<P>
     @Override
     public P getPosition() {
         return this.newPosition.apply(this.snapshot.location().get());
-    }
-
-    @Override
-    public BlockSnapshot<P> createCopyOf() {
-        return new SBlockSnapshot<>(this.snapshot.copy(), this.tileEntitySnapshot.getSnapshot());
     }
 
     @Override

@@ -47,8 +47,8 @@ public class SBlockPosition extends SSyncedPosition<Integer> implements SyncBloc
     }
 
     @Override
-    public SBlockSnapshot<SyncBlockPosition> getBlockDetails() {
-        return new SBlockSnapshot<>(this.location.onServer().orElseThrow(() -> new IllegalStateException("Client isn't supported yet")), (Function<Location<? extends World<?, ?>, ?>, SyncBlockPosition>) (Object) this.newInstance);
+    public SBlockSnapshot.SSyncedBlockSnapshot getBlockDetails() {
+        return new SBlockSnapshot.SSyncedBlockSnapshot(this.location.onServer().orElseThrow(() -> new IllegalStateException("Client isn't supported yet")), (Function<Location<? extends World<?, ?>, ?>, SyncBlockPosition>) (Object) this.newInstance);
     }
 
     @Override

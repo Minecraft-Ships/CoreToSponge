@@ -6,13 +6,77 @@ import org.core.world.position.block.details.BlockSnapshot;
 import org.core.world.position.block.details.data.DirectionalData;
 import org.core.world.position.block.details.data.keyed.KeyedData;
 import org.core.world.position.impl.BlockPosition;
+import org.core.world.position.impl.Position;
+import org.core.world.position.impl.async.ASyncBlockPosition;
+import org.core.world.position.impl.sync.SyncBlockPosition;
 
 import java.util.Optional;
 
-public class SFakeBlockSnapshot<P extends BlockPosition> implements BlockSnapshot<P> {
+public abstract class SFakeBlockSnapshot<P extends BlockPosition> implements BlockSnapshot<P> {
 
-    private BlockDetails details;
-    private P position;
+    public static class SFakeAsyncedBlockSnapshot extends SFakeBlockSnapshot<ASyncBlockPosition> implements BlockSnapshot.AsyncBlockSnapshot {
+
+        public SFakeAsyncedBlockSnapshot(ASyncBlockPosition position, BlockDetails details) {
+            super(position, details);
+        }
+
+        @Override
+        @Deprecated
+        public <T extends BlockPosition> BlockSnapshot<T> createSnapshot(T position) {
+            throw new RuntimeException("Remove this method");
+        }
+
+        @Override
+        public AsyncBlockSnapshot createSnapshot(ASyncBlockPosition position) {
+            return new SFakeAsyncedBlockSnapshot(position, this.details.createCopyOf());
+        }
+
+        @Override
+        public SyncBlockSnapshot createSnapshot(SyncBlockPosition position) {
+            return new SFakeSyncedBlockSnapshot(position, this.details.createCopyOf());
+        }
+
+        @Override
+        public AsyncBlockSnapshot createCopyOf() {
+            return this.createSnapshot(this.position);
+        }
+    }
+
+    public static class SFakeSyncedBlockSnapshot extends SFakeBlockSnapshot<SyncBlockPosition> implements BlockSnapshot.SyncBlockSnapshot {
+
+        public SFakeSyncedBlockSnapshot(SyncBlockPosition position, BlockDetails details) {
+            super(position, details);
+        }
+
+        @Override
+        @Deprecated
+        public <T extends BlockPosition> BlockSnapshot<T> createSnapshot(T position) {
+            throw new RuntimeException("Remove this method");
+        }
+
+        @Override
+        public AsyncBlockSnapshot createSnapshot(ASyncBlockPosition position) {
+            return new SFakeAsyncedBlockSnapshot(position, this.details.createCopyOf());
+        }
+
+        @Override
+        public SyncBlockSnapshot createSnapshot(SyncBlockPosition position) {
+            return new SFakeSyncedBlockSnapshot(position, this.details.createCopyOf());
+        }
+
+        @Override
+        public AsyncBlockSnapshot asAsynced() {
+            return createSnapshot(Position.toASync(this.position));
+        }
+
+        @Override
+        public SyncBlockSnapshot createCopyOf() {
+            return createSnapshot(this.position);
+        }
+    }
+
+    protected final BlockDetails details;
+    protected final P position;
 
     public SFakeBlockSnapshot(P position, BlockDetails details) {
         this.position = position;
@@ -29,10 +93,10 @@ public class SFakeBlockSnapshot<P extends BlockPosition> implements BlockSnapsho
         return this.details.getType();
     }
 
-    @Override
-    public <T extends BlockPosition> BlockSnapshot<T> createSnapshot(T position) {
+    /*@Override
+    public <T extends BlockPosition> SFakeBlockSnapshot<T> createSnapshot(T position) {
         return new SFakeBlockSnapshot<T>(position, this.details.createCopyOf());
-    }
+    }*/
 
     @Override
     public Optional<DirectionalData> getDirectionalData() {
@@ -49,8 +113,8 @@ public class SFakeBlockSnapshot<P extends BlockPosition> implements BlockSnapsho
         return this.details.set(data, value);
     }
 
-    @Override
+    /*@Override
     public BlockSnapshot<P> createCopyOf() {
         return new SFakeBlockSnapshot<>(this.position, this.details.createCopyOf());
-    }
+    }*/
 }
