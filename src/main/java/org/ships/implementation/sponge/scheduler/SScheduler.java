@@ -1,8 +1,8 @@
 package org.ships.implementation.sponge.scheduler;
 
 import net.kyori.adventure.util.Ticks;
-import org.core.CorePlugin;
-import org.core.platform.Plugin;
+import org.core.TranslateCore;
+import org.core.platform.plugin.Plugin;
 import org.core.schedule.Scheduler;
 import org.core.schedule.SchedulerBuilder;
 import org.core.schedule.unit.TimeUnit;
@@ -53,7 +53,7 @@ public class SScheduler implements Scheduler {
 
     @Override
     public void run() {
-        Object spongePlugin = this.plugin.getLauncher();
+        Object spongePlugin = this.plugin.getPlatformLauncher();
         PluginContainer container;
         try {
             container = (PluginContainer) spongePlugin.getClass().getMethod("getContainer").invoke(spongePlugin);
@@ -77,7 +77,7 @@ public class SScheduler implements Scheduler {
                 builder = builder.interval(this.iteration, to(this.iterationTimeUnit));
             }
         }
-        this.task = ((SpongePlatformServer) CorePlugin.getServer()).getServer().scheduler().submit(builder.build());
+        this.task = ((SpongePlatformServer) TranslateCore.getServer()).getServer().scheduler().submit(builder.build());
     }
 
     @Override

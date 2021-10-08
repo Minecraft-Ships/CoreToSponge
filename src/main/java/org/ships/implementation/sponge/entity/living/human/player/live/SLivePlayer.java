@@ -1,7 +1,7 @@
 package org.ships.implementation.sponge.entity.living.human.player.live;
 
 import net.kyori.adventure.identity.Identity;
-import org.core.CorePlugin;
+import org.core.TranslateCore;
 import org.core.adventureText.AText;
 import org.core.adventureText.adventure.AdventureText;
 import org.core.entity.EntityType;
@@ -179,7 +179,7 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     @Override
     public boolean sudo(String wholeCommand) {
         CommandResult result;
-        Server server = ((SpongePlatformServer) CorePlugin.getServer()).getServer();
+        Server server = ((SpongePlatformServer) TranslateCore.getServer()).getServer();
         try {
             result = server.commandManager().process((ServerPlayer) this.getSpongeEntity(), server.broadcastAudience(), wholeCommand);
         } catch (CommandException e) {

@@ -1,18 +1,14 @@
 package org.ships.implementation.sponge.world.position.asynced;
 
 import org.core.entity.living.human.player.LivePlayer;
-import org.core.platform.Plugin;
+import org.core.platform.plugin.Plugin;
 import org.core.threadsafe.FutureResult;
 import org.core.world.position.block.details.BlockDetails;
-import org.core.world.position.block.details.BlockSnapshot;
 import org.core.world.position.block.entity.LiveTileEntity;
 import org.core.world.position.flags.PositionFlag;
-import org.core.world.position.impl.BlockPosition;
 import org.core.world.position.impl.async.ASyncPosition;
 import org.core.world.position.impl.sync.SyncPosition;
 import org.ships.implementation.sponge.world.position.SPosition;
-import org.ships.implementation.sponge.world.position.block.details.blocks.details.SAsyncedBlockDetails;
-import org.ships.implementation.sponge.world.position.block.details.blocks.snapshot.SFakeBlockSnapshot;
 import org.ships.implementation.sponge.world.position.synced.SBlockPosition;
 import org.ships.implementation.sponge.world.position.synced.SSyncedPosition;
 import org.spongepowered.api.Sponge;
@@ -40,7 +36,7 @@ public abstract class SAsyncedPosition<N extends Number> extends SPosition<N> im
                 .execute(() ->
                         fr.run(this.toSynced().setBlock(details, flags)))
                 .delay(Ticks.of(0))
-                .plugin((PluginContainer) plugin.getLauncher())
+                .plugin((PluginContainer) plugin.getPlatformLauncher())
                 .build();
         Sponge.server().scheduler().submit(task);
         return fr;
@@ -54,7 +50,7 @@ public abstract class SAsyncedPosition<N extends Number> extends SPosition<N> im
                 .execute(() ->
                         fr.run(this.toSynced().setBlock(details, player)))
                 .delay(Ticks.of(0))
-                .plugin((PluginContainer) plugin.getLauncher())
+                .plugin((PluginContainer) plugin.getPlatformLauncher())
                 .build();
         Sponge.server().scheduler().submit(task);
         return fr;
@@ -68,7 +64,7 @@ public abstract class SAsyncedPosition<N extends Number> extends SPosition<N> im
                 .execute(() ->
                         fr.run(this.toSynced().resetBlock(player)))
                 .delay(Ticks.of(0))
-                .plugin((PluginContainer) plugin.getLauncher())
+                .plugin((PluginContainer) plugin.getPlatformLauncher())
                 .build();
         Sponge.server().scheduler().submit(task);
         return fr;
@@ -84,7 +80,7 @@ public abstract class SAsyncedPosition<N extends Number> extends SPosition<N> im
                                 .getTileEntity()
                                 .ifPresent(fr::run))
                 .delay(Ticks.of(0))
-                .plugin((PluginContainer) plugin.getLauncher())
+                .plugin((PluginContainer) plugin.getPlatformLauncher())
                 .build();
         Sponge.server().scheduler().submit(task);
         return fr;

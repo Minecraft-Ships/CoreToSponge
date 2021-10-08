@@ -1,7 +1,7 @@
 package org.ships.implementation.sponge.inventory.inventories.item;
 
 import net.kyori.adventure.text.Component;
-import org.core.CorePlugin;
+import org.core.TranslateCore;
 import org.core.adventureText.AText;
 import org.core.adventureText.adventure.AdventureText;
 import org.core.inventory.item.ItemType;
@@ -36,7 +36,7 @@ public class SItemStackSnapshot implements org.core.inventory.item.stack.ItemSta
 
     @Override
     public ItemType getType() {
-        SpongePlatform platform = ((SpongePlatform) CorePlugin.getPlatform());
+        SpongePlatform platform = ((SpongePlatform) TranslateCore.getPlatform());
         return platform.getItemType(this.item.type().key(RegistryTypes.ITEM_TYPE).asString()).get();
     }
 

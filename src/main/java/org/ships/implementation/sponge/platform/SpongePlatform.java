@@ -19,7 +19,7 @@ import org.core.inventory.item.type.ItemTypeCommon;
 import org.core.permission.Permission;
 import org.core.platform.Platform;
 import org.core.platform.PlatformDetails;
-import org.core.platform.Plugin;
+import org.core.platform.plugin.Plugin;
 import org.core.text.TextColour;
 import org.core.text.TextColours;
 import org.core.utils.Singleton;

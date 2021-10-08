@@ -1,6 +1,6 @@
 package org.ships.implementation.sponge.world.position.synced;
 
-import org.core.CorePlugin;
+import org.core.TranslateCore;
 import org.core.entity.EntitySnapshot;
 import org.core.entity.EntityType;
 import org.core.entity.LiveEntity;
@@ -72,7 +72,7 @@ public abstract class SSyncedPosition<N extends Number> extends SPosition<N> imp
         if (!opSTileEntity.isPresent()) {
             return Optional.empty();
         }
-        return ((SpongePlatform) CorePlugin.getPlatform()).createTileEntityInstance(opSTileEntity.get());
+        return ((SpongePlatform) TranslateCore.getPlatform()).createTileEntityInstance(opSTileEntity.get());
     }
 
     @Override

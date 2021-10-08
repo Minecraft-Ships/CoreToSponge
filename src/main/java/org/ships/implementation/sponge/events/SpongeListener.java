@@ -2,7 +2,7 @@ package org.ships.implementation.sponge.events;
 
 import net.kyori.adventure.text.Component;
 import org.array.utils.ArrayUtils;
-import org.core.CorePlugin;
+import org.core.TranslateCore;
 import org.core.adventureText.adventure.AdventureText;
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.event.Event;
@@ -48,7 +48,7 @@ public class SpongeListener {
 
     private static Set<SEventLaunch> getMethods(Class<? extends Event> classEvent) {
         Set<SEventLaunch> methods = new HashSet<>();
-        CorePlugin.getEventManager().getEventListeners().forEach((key, value) -> value.forEach(el -> {
+        TranslateCore.getEventManager().getEventListeners().forEach((key, value) -> value.forEach(el -> {
             for (Method method : el.getClass().getDeclaredMethods()) {
                 if (method.getDeclaredAnnotationsByType(HEvent.class) == null) {
                     continue;
@@ -84,7 +84,7 @@ public class SpongeListener {
         SignTileEntitySnapshot from = new SSignTileEntitySnapshot(event.text().asImmutable());
         SignTileEntitySnapshot to = new SSignTileEntitySnapshot(event.text());
         if (rootCause instanceof org.spongepowered.api.entity.living.player.Player) {
-            LivePlayer player = (LivePlayer) ((SpongePlatform) CorePlugin.getPlatform()).createEntityInstance((org.spongepowered.api.entity.living.player.Player) rootCause);
+            LivePlayer player = (LivePlayer) ((SpongePlatform) TranslateCore.getPlatform()).createEntityInstance((org.spongepowered.api.entity.living.player.Player) rootCause);
             sEvent = new SSignChangeEvent.SSignChangeEventByPlayer(bp, from, to, player);
         } else {
             sEvent = new SSignChangeEvent(bp, from, to);

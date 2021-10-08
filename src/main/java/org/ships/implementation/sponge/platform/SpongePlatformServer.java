@@ -4,7 +4,7 @@ import org.core.command.CommandLauncher;
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.entity.living.human.player.User;
 import org.core.platform.PlatformServer;
-import org.core.platform.Plugin;
+import org.core.platform.plugin.Plugin;
 import org.core.platform.tps.TPSExecutor;
 import org.core.world.WorldExtent;
 import org.core.world.position.block.details.BlockSnapshot;

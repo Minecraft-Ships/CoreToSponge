@@ -1,6 +1,6 @@
 package org.ships.implementation.sponge.world;
 
-import org.core.CorePlugin;
+import org.core.TranslateCore;
 import org.core.entity.LiveEntity;
 import org.core.vector.type.Vector3;
 import org.core.world.ChunkExtent;
@@ -118,7 +118,7 @@ public class SWorldExtent implements WorldExtent {
     @Override
     public Set<LiveEntity> getEntities() {
         Set<LiveEntity> set = new HashSet<>();
-        SpongePlatform platform = ((SpongePlatform) CorePlugin.getPlatform());
+        SpongePlatform platform = ((SpongePlatform) TranslateCore.getPlatform());
 
 
         if (this.world instanceof ServerWorld) {
@@ -132,7 +132,7 @@ public class SWorldExtent implements WorldExtent {
                 .world
                 .entities(aabb)
                 .stream()
-                .map(e -> ((SpongePlatform) CorePlugin.getPlatform()).createEntityInstance(e))
+                .map(e -> ((SpongePlatform) TranslateCore.getPlatform()).createEntityInstance(e))
                 .collect(Collectors.toSet());
     }
 
@@ -142,7 +142,7 @@ public class SWorldExtent implements WorldExtent {
                 .world
                 .blockEntities()
                 .stream()
-                .map(te -> ((SpongePlatform) CorePlugin.getPlatform()).createTileEntityInstance(te))
+                .map(te -> ((SpongePlatform) TranslateCore.getPlatform()).createTileEntityInstance(te))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());

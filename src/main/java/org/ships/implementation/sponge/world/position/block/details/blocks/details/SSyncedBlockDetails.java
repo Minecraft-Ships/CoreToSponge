@@ -1,6 +1,6 @@
 package org.ships.implementation.sponge.world.position.block.details.blocks.details;
 
-import org.core.CorePlugin;
+import org.core.TranslateCore;
 import org.core.world.position.block.details.BlockDetails;
 import org.core.world.position.block.details.BlockSnapshot;
 import org.core.world.position.block.details.data.keyed.KeyedData;
@@ -37,7 +37,7 @@ public class SSyncedBlockDetails extends SBlockDetails {
 
     public SSyncedBlockDetails(org.spongepowered.api.block.BlockState state) {
         super(state);
-        CorePlugin.getPlatform().getDefaultTileEntity(getType()).ifPresent(t -> tileEntitySnapshot = t);
+        TranslateCore.getPlatform().getDefaultTileEntity(getType()).ifPresent(t -> tileEntitySnapshot = t);
     }
 
     public SSyncedBlockDetails(SBlockPosition position) {

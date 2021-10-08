@@ -1,7 +1,7 @@
 package org.ships.implementation.sponge.entity;
 
 import net.kyori.adventure.text.Component;
-import org.core.CorePlugin;
+import org.core.TranslateCore;
 import org.core.adventureText.AText;
 import org.core.adventureText.adventure.AdventureText;
 import org.core.entity.Entity;
@@ -106,7 +106,7 @@ public abstract class SLiveEntity implements LiveEntity {
         return this.entity.get(Keys.PASSENGERS)
                 .map(list -> list
                         .stream()
-                        .map(entity -> ((SpongePlatform) CorePlugin.getPlatform()).createEntityInstance(entity))
+                        .map(entity -> ((SpongePlatform) TranslateCore.getPlatform()).createEntityInstance(entity))
                         .collect(Collectors.toSet())).orElse(Collections.emptySet());
     }
 

@@ -1,6 +1,6 @@
 package org.ships.implementation.sponge.scheduler;
 
-import org.core.platform.Plugin;
+import org.core.platform.plugin.Plugin;
 import org.core.schedule.Scheduler;
 import org.core.schedule.SchedulerBuilder;
 import org.core.schedule.unit.TimeUnit;

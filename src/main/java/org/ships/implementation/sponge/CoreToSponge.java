@@ -2,7 +2,7 @@ package org.ships.implementation.sponge;
 
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
-import org.core.CorePlugin;
+import org.core.TranslateCore;
 import org.core.config.ConfigurationFormat;
 import org.core.config.ConfigurationStream;
 import org.core.event.EventManager;
@@ -25,7 +25,7 @@ import org.spongepowered.plugin.PluginContainer;
 import java.io.File;
 import java.io.IOException;
 
-public class CoreToSponge extends CorePlugin.CoreImplementation {
+public class CoreToSponge extends TranslateCore.CoreImplementation {
 
     protected SpongePlatform platform = new SpongePlatform();
     protected SEventManager eventManager = new SEventManager();

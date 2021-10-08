@@ -1,6 +1,6 @@
 package org.ships.implementation.sponge.world;
 
-import org.core.CorePlugin;
+import org.core.TranslateCore;
 import org.core.entity.LiveEntity;
 import org.core.world.ChunkExtent;
 import org.core.world.WorldExtent;
@@ -60,13 +60,13 @@ public class SLoadedChunkExtent implements ChunkExtent {
 
     @Override
     public Set<LiveEntity> getEntities() {
-        SpongePlatform platform = ((SpongePlatform) CorePlugin.getPlatform());
+        SpongePlatform platform = ((SpongePlatform) TranslateCore.getPlatform());
         return this.chunk.entities(AABB.of(this.chunk.min(), this.chunk.max())).stream().map(platform::createEntityInstance).collect(Collectors.toSet());
     }
 
     @Override
     public Set<LiveTileEntity> getTileEntities() {
-        SpongePlatform platform = ((SpongePlatform) CorePlugin.getPlatform());
+        SpongePlatform platform = ((SpongePlatform) TranslateCore.getPlatform());
         return this.chunk
                 .blockEntities()
                 .stream()

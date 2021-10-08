@@ -1,6 +1,6 @@
 package org.ships.implementation.sponge.world.position.block;
 
-import org.core.CorePlugin;
+import org.core.TranslateCore;
 import org.core.inventory.item.ItemType;
 import org.core.world.position.block.BlockType;
 import org.core.world.position.block.details.BlockDetails;
@@ -29,7 +29,7 @@ public class SBlockType implements BlockType {
     //THIS IS FOR 1.13
     @Override
     public Set<BlockGroup> getGroups() {
-        return CorePlugin
+        return TranslateCore
                 .getPlatform()
                 .getBlockGroups()
                 .stream()

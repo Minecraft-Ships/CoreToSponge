@@ -1,7 +1,7 @@
 package org.ships.implementation.sponge.world.position.block.details.blocks.snapshot;
 
 import net.kyori.adventure.text.Component;
-import org.core.CorePlugin;
+import org.core.TranslateCore;
 import org.core.adventureText.AText;
 import org.core.adventureText.adventure.AdventureText;
 import org.core.world.position.block.BlockType;
@@ -130,7 +130,7 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
         this.snapshot = location.world().createSnapshot(location.blockPosition());
         this.newPosition = newInstance;
         Optional<? extends org.spongepowered.api.block.entity.BlockEntity> opTileEntity = location.blockEntity();
-        opTileEntity.flatMap(blockEntity -> ((SpongePlatform) CorePlugin.getPlatform()).createTileEntityInstance(blockEntity)).ifPresent(te -> this.tileEntitySnapshot = te.getSnapshot());
+        opTileEntity.flatMap(blockEntity -> ((SpongePlatform) TranslateCore.getPlatform()).createTileEntityInstance(blockEntity)).ifPresent(te -> this.tileEntitySnapshot = te.getSnapshot());
     }
 
     public SBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot, TileEntitySnapshot<? extends LiveTileEntity> tileEntity) {
