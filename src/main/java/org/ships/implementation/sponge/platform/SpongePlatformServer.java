@@ -5,7 +5,6 @@ import org.core.entity.living.human.player.LivePlayer;
 import org.core.entity.living.human.player.User;
 import org.core.platform.PlatformServer;
 import org.core.platform.plugin.Plugin;
-import org.core.platform.tps.TPSExecutor;
 import org.core.world.WorldExtent;
 import org.core.world.position.block.details.BlockSnapshot;
 import org.ships.implementation.sponge.entity.living.human.player.live.SLivePlayer;
@@ -26,7 +25,6 @@ public class SpongePlatformServer implements PlatformServer {
 
     private final Server platform;
     private final Set<CommandLauncher> commands = new HashSet<>();
-    private final TPSExecutor tpsExecutor = new TPSExecutor();
 
     public SpongePlatformServer(Server platform) {
         this.platform = platform;
@@ -93,11 +91,6 @@ public class SpongePlatformServer implements PlatformServer {
                 .streamAll()
                 .map(gp -> userManager.loadOrCreate(gp.uuid()).thenApply(u -> (User) new SUser(u)))
                 .collect(Collectors.toSet());
-    }
-
-    @Override
-    public TPSExecutor getTPSExecutor() {
-        return this.tpsExecutor;
     }
 
     /*@Override

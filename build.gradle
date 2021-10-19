@@ -28,7 +28,7 @@ tasks.withType(Javadoc) {
 }
 
 dependencies {
-    api project(":ShipsCore")
+    api project(":TranslateCore")
     compileOnly 'org.spongepowered:configurate-core:4.0.0'
     compileOnly 'org.spongepowered:configurate-yaml:4.0.0'
     compileOnly 'net.kyori:adventure-text-serializer-plain:4.0.0-SNAPSHOT'

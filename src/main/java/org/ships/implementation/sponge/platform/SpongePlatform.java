@@ -52,6 +52,7 @@ import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.registry.RegistryEntry;
 import org.spongepowered.api.registry.RegistryTypes;
 
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -148,6 +149,11 @@ public class SpongePlatform implements Platform {
     @Override
     public Set<Plugin> getPlugins() {
         return null;
+    }
+
+    @Override
+    public File getPluginsFolder() {
+        return new File("mods");
     }
 
     @Override
