@@ -20,6 +20,7 @@ import org.core.permission.Permission;
 import org.core.platform.Platform;
 import org.core.platform.PlatformDetails;
 import org.core.platform.plugin.Plugin;
+import org.core.platform.plugin.details.CorePluginVersion;
 import org.core.text.TextColour;
 import org.core.text.TextColours;
 import org.core.utils.Singleton;
@@ -132,8 +133,8 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
-    public int[] getMinecraftVersion() {
-        return new int[]{1, 16, 5};
+    public CorePluginVersion getMinecraftVersion() {
+        return new CorePluginVersion(1, 16, 5);
     }
 
     @Override
@@ -152,8 +153,13 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
-    public File getPluginsFolder() {
+    public File getPlatformPluginsFolder() {
         return new File("mods");
+    }
+    
+    @Override
+    public File getPlatformConfigFolder() {
+        return new File("configuration");
     }
 
     @Override
