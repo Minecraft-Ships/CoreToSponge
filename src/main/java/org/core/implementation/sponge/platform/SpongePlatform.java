@@ -13,8 +13,16 @@ import org.core.entity.living.animal.parrot.ParrotType;
 import org.core.entity.living.animal.parrot.ParrotTypes;
 import org.core.event.CustomEvent;
 import org.core.implementation.sponge.entity.SEntityType;
+import org.core.implementation.sponge.entity.forge.live.SForgeEntity;
+import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
 import org.core.implementation.sponge.events.SpongeListener;
+import org.core.implementation.sponge.inventory.SItemType;
 import org.core.implementation.sponge.text.STextColour;
+import org.core.implementation.sponge.world.position.block.SBlockType;
+import org.core.implementation.sponge.world.position.block.entity.furnace.SLiveFurnaceEntity;
+import org.core.implementation.sponge.world.position.block.entity.sign.SLiveSignEntity;
+import org.core.implementation.sponge.world.position.block.entity.sign.SSignTileEntitySnapshot;
+import org.core.implementation.sponge.world.position.flags.SApplyPhysicsFlag;
 import org.core.inventory.item.ItemType;
 import org.core.inventory.item.data.dye.DyeType;
 import org.core.inventory.item.data.dye.DyeTypes;
@@ -40,15 +48,8 @@ import org.core.world.position.block.grouptype.BlockGroups;
 import org.core.world.position.flags.physics.ApplyPhysicsFlag;
 import org.core.world.position.flags.physics.ApplyPhysicsFlags;
 import org.core.world.position.impl.sync.SyncExactPosition;
+import org.core.world.structure.Structure;
 import org.jetbrains.annotations.NotNull;
-import org.core.implementation.sponge.entity.forge.live.SForgeEntity;
-import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
-import org.core.implementation.sponge.inventory.SItemType;
-import org.core.implementation.sponge.world.position.block.SBlockType;
-import org.core.implementation.sponge.world.position.block.entity.furnace.SLiveFurnaceEntity;
-import org.core.implementation.sponge.world.position.block.entity.sign.SLiveSignEntity;
-import org.core.implementation.sponge.world.position.block.entity.sign.SSignTileEntitySnapshot;
-import org.core.implementation.sponge.world.position.flags.SApplyPhysicsFlag;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.registry.RegistryEntry;
 import org.spongepowered.api.registry.RegistryTypes;
@@ -156,7 +157,7 @@ public class SpongePlatform implements Platform {
     public File getPlatformPluginsFolder() {
         return new File("mods");
     }
-    
+
     @Override
     public File getPlatformConfigFolder() {
         return new File("configuration");
@@ -291,6 +292,11 @@ public class SpongePlatform implements Platform {
     @Override
     public Collection<Permission> getPermissions() {
         return this.permissions;
+    }
+
+    @Override
+    public Collection<Structure> getStructures() {
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
