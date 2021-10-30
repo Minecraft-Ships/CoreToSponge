@@ -14,13 +14,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class SSignTileEntitySnapshot implements SignTileEntitySnapshot {
 
     protected List<AText> lines;
 
-    public SSignTileEntitySnapshot(ListValue<Component> sign) {
+    public SSignTileEntitySnapshot(ListValue<? extends Component> sign) {
         this(sign.get().stream().map(AdventureText::new).collect(Collectors.toList()));
     }
 
@@ -34,11 +33,6 @@ public class SSignTileEntitySnapshot implements SignTileEntitySnapshot {
 
     public SSignTileEntitySnapshot() {
         this.lines = new ArrayList<>();
-    }
-
-    @Deprecated
-    public SSignTileEntitySnapshot(org.core.text.Text... lines) {
-        this.lines = Stream.of(lines).map(l -> (AdventureText) l.toAdventure()).collect(Collectors.toList());
     }
 
     @Override
@@ -58,24 +52,12 @@ public class SSignTileEntitySnapshot implements SignTileEntitySnapshot {
     }
 
     @Override
-    @Deprecated
-    public org.core.text.Text[] getLines() {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    @Override
-    @Deprecated
-    public SignTileEntity setLines(org.core.text.Text... lines) throws IndexOutOfBoundsException {
-        throw new IllegalStateException("Not implemented");
-    }
-
-    @Override
     public List<AText> getText() {
         return this.lines;
     }
 
     @Override
-    public SignTileEntity setText(Collection<AText> text) {
+    public SignTileEntity setText(Collection<? extends AText> text) {
         this.lines.clear();
         this.lines.addAll(text);
         return this;

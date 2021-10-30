@@ -9,13 +9,11 @@ import org.core.entity.living.human.player.LivePlayer;
 import org.core.entity.living.human.player.PlayerSnapshot;
 import org.core.implementation.sponge.entity.SEntityType;
 import org.core.implementation.sponge.entity.SLiveEntity;
+import org.core.implementation.sponge.entity.living.human.player.snapshot.SPlayerSnapshot;
 import org.core.implementation.sponge.platform.SpongePlatformServer;
-import org.core.implementation.sponge.text.SText;
 import org.core.inventory.inventories.general.entity.PlayerInventory;
 import org.core.source.viewer.CommandViewer;
-import org.core.text.Text;
 import org.core.world.position.impl.BlockPosition;
-import org.core.implementation.sponge.entity.living.human.player.snapshot.SPlayerSnapshot;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -25,6 +23,7 @@ import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.service.ServiceRegistration;
 import org.spongepowered.api.service.economy.EconomyService;
 import org.spongepowered.api.service.economy.account.UniqueAccount;
+import org.spongepowered.api.service.permission.Subject;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -54,54 +53,54 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
 
     @Override
     public PlayerInventory getInventory() {
-        return null;
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
     public int getFoodLevel() {
-        return getSpongeEntity().get(Keys.FOOD_LEVEL).get();
+        return this.getSpongeEntity().get(Keys.FOOD_LEVEL).get();
     }
 
     @Override
     public double getExhaustionLevel() {
-        return getSpongeEntity().get(Keys.EXHAUSTION).get();
+        return this.getSpongeEntity().get(Keys.EXHAUSTION).get();
     }
 
     @Override
     public double getSaturationLevel() {
-        return getSpongeEntity().get(Keys.SATURATION).get();
+        return this.getSpongeEntity().get(Keys.SATURATION).get();
     }
 
     @Override
     public String getName() {
-        return getSpongeEntity().name();
+        return this.getSpongeEntity().name();
     }
 
     @Override
     public UUID getUniqueId() {
-        return getSpongeEntity().uniqueId();
+        return this.getSpongeEntity().uniqueId();
     }
 
     @Override
     public boolean isSneaking() {
-        return getSpongeEntity().get(Keys.IS_SNEAKING).get();
+        return this.getSpongeEntity().get(Keys.IS_SNEAKING).get();
     }
 
     @Override
     public SLivePlayer setFood(int value) throws IndexOutOfBoundsException {
-        getSpongeEntity().offer(Keys.FOOD_LEVEL, value);
+        this.getSpongeEntity().offer(Keys.FOOD_LEVEL, value);
         return this;
     }
 
     @Override
     public SLivePlayer setExhaustionLevel(double value) throws IndexOutOfBoundsException {
-        getSpongeEntity().offer(Keys.EXHAUSTION, value);
+        this.getSpongeEntity().offer(Keys.EXHAUSTION, value);
         return this;
     }
 
     @Override
     public SLivePlayer setSaturationLevel(double value) throws IndexOutOfBoundsException {
-        getSpongeEntity().offer(Keys.SATURATION, value);
+        this.getSpongeEntity().offer(Keys.SATURATION, value);
         return this;
     }
 
@@ -121,7 +120,7 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
         if (!(this.entity instanceof ServerPlayer)) {
             return true;
         }
-        return ((ServerPlayer) getSpongeEntity()).hasPermission(permission);
+        return ((Subject) this.getSpongeEntity()).hasPermission(permission);
     }
 
     @Override
@@ -140,39 +139,14 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     }
 
     @Override
-    @Deprecated
-    public CommandViewer sendMessage(Text message, UUID uuid) {
-        if (uuid == null) {
-            return sendMessage(message);
-        }
-        this.getSpongeEntity().sendMessage(Identity.identity(uuid), ((SText<?>) message).toSponge());
-        return this;
-    }
-
-    @Override
-    @Deprecated
-    public CommandViewer sendMessage(org.core.text.Text message) {
-        getSpongeEntity().sendMessage(((SText<?>) message).toSponge());
-        return this;
-    }
-
-    @Override
-    @Deprecated
-    public CommandViewer sendMessagePlain(String message) {
-        /*TODO getSpongeEntity().sendMessage(Text.of(TextSerializers.FORMATTING_CODE.stripCodes(message)));*/
-        return this;
-    }
-
-    @Override
     public CommandViewer sendMessage(AText message, UUID uuid) {
-        getSpongeEntity().sendMessage(Identity.identity(uuid), ((AdventureText) message).getComponent());
+        this.getSpongeEntity().sendMessage(Identity.identity(uuid), ((AdventureText) message).getComponent());
         return this;
     }
 
     @Override
     public CommandViewer sendMessage(AText message) {
-        getSpongeEntity().sendMessage(((AdventureText) message).getComponent());
-
+        this.getSpongeEntity().sendMessage(((AdventureText) message).getComponent());
         return this;
     }
 
@@ -181,7 +155,7 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
         CommandResult result;
         Server server = ((SpongePlatformServer) TranslateCore.getServer()).getServer();
         try {
-            result = server.commandManager().process((ServerPlayer) this.getSpongeEntity(), server.broadcastAudience(), wholeCommand);
+            result = server.commandManager().process((Subject) this.getSpongeEntity(), server.broadcastAudience(), wholeCommand);
         } catch (CommandException e) {
             throw new IllegalStateException(e);
         }
@@ -190,7 +164,7 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
 
     @Override
     public BigDecimal getBalance() {
-        Optional<UniqueAccount> opAccount = getAccount();
+        Optional<UniqueAccount> opAccount = this.getAccount();
         if (!opAccount.isPresent()) {
             return new BigDecimal(0);
         }
@@ -199,7 +173,7 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
 
     @Override
     public void setBalance(BigDecimal decimal) {
-        Optional<UniqueAccount> opAccount = getAccount();
+        Optional<UniqueAccount> opAccount = this.getAccount();
         if (!opAccount.isPresent()) {
             return;
         }

@@ -6,14 +6,13 @@ import org.core.adventureText.AText;
 import org.core.adventureText.adventure.AdventureText;
 import org.core.entity.Entity;
 import org.core.entity.LiveEntity;
-import org.core.implementation.sponge.text.SText;
+import org.core.implementation.sponge.platform.SpongePlatform;
+import org.core.implementation.sponge.world.position.SPosition;
+import org.core.implementation.sponge.world.position.synced.SExactPosition;
 import org.core.vector.type.Vector3;
 import org.core.world.position.impl.Position;
 import org.core.world.position.impl.sync.SyncExactPosition;
 import org.jetbrains.annotations.Nullable;
-import org.core.implementation.sponge.platform.SpongePlatform;
-import org.core.implementation.sponge.world.position.SPosition;
-import org.core.implementation.sponge.world.position.synced.SExactPosition;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.server.ServerWorld;
@@ -111,7 +110,7 @@ public abstract class SLiveEntity implements LiveEntity {
     }
 
     @Override
-    public LiveEntity addPassengers(Collection<LiveEntity> entities) {
+    public LiveEntity addPassengers(Collection<? extends LiveEntity> entities) {
         entities.forEach(e -> this.entity.passengers().add(((SLiveEntity) e).getSpongeEntity()));
         return this;
     }
@@ -130,16 +129,8 @@ public abstract class SLiveEntity implements LiveEntity {
     }
 
     @Override
-    @Deprecated
-    public LiveEntity setCustomName(org.core.text.Text text) {
-        SText<?> sText = (SText<?>) text;
-        this.entity.offer(Keys.CUSTOM_NAME, sText.toSponge());
-        return this;
-    }
-
-    @Override
     public Entity<LiveEntity> setCustomName(@Nullable AText text) {
-        if (text == null) {
+        if (text==null) {
             this.entity.remove(Keys.CUSTOM_NAME);
             return this;
         }
@@ -155,7 +146,7 @@ public abstract class SLiveEntity implements LiveEntity {
 
     @Override
     public Vector3<Double> getVelocity() {
-        Vector3d vector3d = entity.get(Keys.VELOCITY).get();
+        Vector3d vector3d = this.entity.get(Keys.VELOCITY).get();
         return Vector3.valueOf(vector3d.x(), vector3d.y(), vector3d.z());
     }
 

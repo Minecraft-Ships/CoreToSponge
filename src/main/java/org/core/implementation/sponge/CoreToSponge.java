@@ -6,12 +6,6 @@ import org.core.TranslateCore;
 import org.core.config.ConfigurationFormat;
 import org.core.config.ConfigurationStream;
 import org.core.event.EventManager;
-import org.core.platform.Platform;
-import org.core.platform.PlatformServer;
-import org.core.schedule.SchedulerBuilder;
-import org.core.source.command.ConsoleSource;
-import org.core.text.Text;
-import org.core.world.boss.ServerBossBar;
 import org.core.implementation.sponge.boss.SServerBossBar;
 import org.core.implementation.sponge.configuration.YAMLConfigurationFile;
 import org.core.implementation.sponge.events.SEventManager;
@@ -19,11 +13,14 @@ import org.core.implementation.sponge.platform.PlatformConsole;
 import org.core.implementation.sponge.platform.SpongePlatform;
 import org.core.implementation.sponge.platform.SpongePlatformServer;
 import org.core.implementation.sponge.scheduler.SSchedulerBuilder;
-import org.core.implementation.sponge.text.SText;
+import org.core.platform.Platform;
+import org.core.platform.PlatformServer;
+import org.core.schedule.SchedulerBuilder;
+import org.core.source.command.ConsoleSource;
+import org.core.world.boss.ServerBossBar;
 import org.spongepowered.plugin.PluginContainer;
 
 import java.io.File;
-import java.io.IOException;
 
 public class CoreToSponge extends TranslateCore.CoreImplementation {
 
@@ -61,13 +58,11 @@ public class CoreToSponge extends TranslateCore.CoreImplementation {
 
     @Override
     public ConfigurationStream.ConfigurationFile createRawConfigurationFile(File file, ConfigurationFormat type) {
-        if (file == null) {
-            new IOException("Unknown file").printStackTrace();
-            return null;
+        if (file==null) {
+            throw new IllegalArgumentException("Unknown file");
         }
-        if (type == null) {
-            new IOException("Unknown Configuration Loader Format").printStackTrace();
-            return null;
+        if (type==null) {
+            throw new IllegalArgumentException("Unknown Configuration Loader Format");
         }
         if (type.equals(ConfigurationFormat.FORMAT_YAML)) {
             return new YAMLConfigurationFile(file);
@@ -78,12 +73,6 @@ public class CoreToSponge extends TranslateCore.CoreImplementation {
     @Override
     public PlatformServer getRawServer() {
         return this.server;
-    }
-
-    @Override
-    @Deprecated
-    public Text textBuilder(String chars) {
-        return SText.sign(chars);
     }
 
     @Override

@@ -1,7 +1,5 @@
 package org.core.implementation.sponge.platform;
 
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.array.utils.ArrayUtils;
 import org.core.config.ConfigurationFormat;
 import org.core.config.parser.unspecific.UnspecificParser;
 import org.core.config.parser.unspecific.UnspecificParsers;
@@ -17,7 +15,6 @@ import org.core.implementation.sponge.entity.forge.live.SForgeEntity;
 import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
 import org.core.implementation.sponge.events.SpongeListener;
 import org.core.implementation.sponge.inventory.SItemType;
-import org.core.implementation.sponge.text.STextColour;
 import org.core.implementation.sponge.world.position.block.SBlockType;
 import org.core.implementation.sponge.world.position.block.entity.furnace.SLiveFurnaceEntity;
 import org.core.implementation.sponge.world.position.block.entity.sign.SLiveSignEntity;
@@ -32,8 +29,6 @@ import org.core.platform.Platform;
 import org.core.platform.PlatformDetails;
 import org.core.platform.plugin.Plugin;
 import org.core.platform.plugin.details.CorePluginVersion;
-import org.core.text.TextColour;
-import org.core.text.TextColours;
 import org.core.utils.Singleton;
 import org.core.world.boss.colour.BossColour;
 import org.core.world.boss.colour.BossColours;
@@ -114,9 +109,8 @@ public class SpongePlatform implements Platform {
             Constructor<? extends LiveEntity> constructor = bdclass.getConstructor(org.spongepowered.api.entity.Entity.class);
             return constructor.newInstance(entity);
         } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     public Optional<LiveTileEntity> createTileEntityInstance(org.spongepowered.api.block.entity.BlockEntity tileEntity) {
@@ -150,7 +144,7 @@ public class SpongePlatform implements Platform {
 
     @Override
     public Set<Plugin> getPlugins() {
-        return null;
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
@@ -195,12 +189,6 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
-    @Deprecated
-    public Optional<TextColour> getTextColour(String id) {
-        return Optional.empty();
-    }
-
-    @Override
     public Optional<DyeType> getDyeType(String id) {
         return Optional.empty();
     }
@@ -237,7 +225,7 @@ public class SpongePlatform implements Platform {
                 .ENTITY_TYPE
                 .get()
                 .stream()
-                .map(e -> getEntityType(e.key(RegistryTypes.ENTITY_TYPE).asString()))
+                .map(e -> this.getEntityType(e.key(RegistryTypes.ENTITY_TYPE).asString()))
                 .filter(e -> !e.isPresent())
                 .map(Optional::get)
                 .collect(Collectors.toSet());
@@ -251,12 +239,6 @@ public class SpongePlatform implements Platform {
     @Override
     public Collection<ItemType> getItemTypes() {
         throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    @Deprecated
-    public Collection<TextColour> getTextColours() {
-        return ArrayUtils.convert(STextColour::getInstance, NamedTextColor.NAMES.values());
     }
 
     @Override
@@ -301,7 +283,7 @@ public class SpongePlatform implements Platform {
 
     @Override
     public @NotNull Permission register(@NotNull String permissionNode) {
-        SPermission permission = new SPermission(permissionNode);
+        Permission permission = new SPermission(permissionNode);
         this.permissions.add(permission);
         return permission;
     }
@@ -360,12 +342,6 @@ public class SpongePlatform implements Platform {
         return new Singleton<>(() -> {
             throw new RuntimeException("Not implemented");
         });
-    }
-
-    @Override
-    @Deprecated
-    public @NotNull TextColour get(TextColours id) {
-        return STextColour.getInstance(NamedTextColor.NAMES.value(id.getName()));
     }
 
     @Override

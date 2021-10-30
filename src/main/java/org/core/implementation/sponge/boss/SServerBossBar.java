@@ -4,10 +4,9 @@ import net.kyori.adventure.bossbar.BossBar;
 import org.core.adventureText.AText;
 import org.core.adventureText.adventure.AdventureText;
 import org.core.entity.living.human.player.LivePlayer;
-import org.core.text.Text;
+import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
 import org.core.world.boss.ServerBossBar;
 import org.core.world.boss.colour.BossColour;
-import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -20,18 +19,6 @@ public class SServerBossBar implements ServerBossBar {
 
     public SServerBossBar(BossBar bar) {
         this.bossBar = bar;
-    }
-
-    @Deprecated
-    @Override
-    public Text getMessage() {
-        throw new RuntimeException("Use getTitle()");
-    }
-
-    @Deprecated
-    @Override
-    public ServerBossBar setMessage(Text text) {
-        throw new RuntimeException("use setTitle(AText)");
     }
 
     @Override
@@ -47,13 +34,13 @@ public class SServerBossBar implements ServerBossBar {
 
     @Override
     public BossColour getColour() {
-        return null;
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
     public ServerBossBar setColour(BossColour colour) {
+        throw new RuntimeException("Not implemented yet");
 
-        return null;
     }
 
     @Override
