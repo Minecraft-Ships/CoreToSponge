@@ -17,6 +17,7 @@ import org.core.world.position.block.details.data.keyed.*;
 import org.core.world.position.block.entity.LiveTileEntity;
 import org.core.world.position.block.entity.TileEntity;
 import org.core.world.position.block.entity.TileEntitySnapshot;
+import org.core.world.position.block.entity.sign.SignTileEntity;
 import org.core.world.position.block.entity.sign.SignTileEntitySnapshot;
 import org.core.world.position.impl.BlockPosition;
 import org.core.world.position.impl.Position;
@@ -83,7 +84,7 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
 
         @Override
         public AsyncBlockSnapshot asAsynced() {
-            return createSnapshot(Position.toASync(this.getPosition()));
+            return this.createSnapshot(Position.toASync(this.getPosition()));
         }
 
         @Override
@@ -112,12 +113,12 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
     public SBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot) {
         this.snapshot = snapshot;
         this.newPosition = (Function<Location<? extends World<?, ?>, ?>, P>) SPosition.TO_SYNCED_BLOCK_POSITION;
-        if (this.tileEntitySnapshot != null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot) {
+        if (this.tileEntitySnapshot!=null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot) {
             Optional<List<Component>> opLines = this.snapshot.get(Keys.SIGN_LINES);
             if (opLines.isPresent()) {
                 List<Component> lines = opLines.get();
                 for (int A = 0; A < lines.size(); A++) {
-                    SignTileEntitySnapshot sign = (SignTileEntitySnapshot) this.tileEntitySnapshot;
+                    SignTileEntity sign = (SignTileEntity) this.tileEntitySnapshot;
                     sign.setTextAt(A, new AdventureText(lines.get(A)));
                 }
             }
@@ -158,13 +159,14 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
                     .position(position1.getSpongeLocation().blockPosition())
                     .build();
         }
-        if (this.tileEntitySnapshot != null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot) {
+        if (this.tileEntitySnapshot!=null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot) {
             List<Component> lines = new ArrayList<>();
-            for (AText text : ((SignTileEntitySnapshot) this.tileEntitySnapshot).getText()) {
+            for (AText text : ((SignTileEntity) this.tileEntitySnapshot).getText()) {
                 AdventureText aText = (AdventureText) text;
                 lines.add(aText.getComponent());
             }
-            snapshot = snapshot.with(Keys.SIGN_LINES, lines).get();
+            snapshot = snapshot.with(Keys.SIGN_LINES, lines).orElseThrow(() -> new IllegalStateException("Cannot get " +
+                    "blocksnapshot with sign lines"));
         }
         return new SAsyncedBlockSnapshot(snapshot, this.tileEntitySnapshot);
     }
@@ -184,12 +186,13 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
                     .position(position1.getSpongeLocation().blockPosition())
                     .build();
         }
-        if (this.tileEntitySnapshot != null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot) {
+        if (this.tileEntitySnapshot!=null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot) {
             List<Component> lines = new ArrayList<>();
-            for (AText text : ((SignTileEntitySnapshot) this.tileEntitySnapshot).getText()) {
+            for (AText text : ((SignTileEntity) this.tileEntitySnapshot).getText()) {
                 lines.add(((AdventureText) text).getComponent());
             }
-            snapshot = snapshot.with(Keys.SIGN_LINES, lines).get();
+            snapshot = snapshot.with(Keys.SIGN_LINES, lines).orElseThrow(() -> new IllegalStateException("Cannot get " +
+                    "blocksnapshot with sign lines"));
         }
         return new SSyncedBlockSnapshot(snapshot, this.tileEntitySnapshot);
     }
@@ -202,10 +205,13 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
     private <T> Optional<KeyedData<T>> getKey(Class<? extends KeyedData<T>> data) {
         KeyedData<T> key = null;
         if (data.isAssignableFrom(TileEntityKeyedData.class)) {
-            key = (KeyedData<T>) new SBlockSnapshot.STileEntityKeyedData();
+            key = (KeyedData<T>) new SBlockSnapshot<?>.STileEntityKeyedData();
         } else if (data.isAssignableFrom(OpenableKeyedData.class) && (this.snapshot.supports(Keys.IS_OPEN))) {
+            //TODO
         } else if (data.isAssignableFrom(AttachableKeyedData.class) && this.snapshot.supports(Keys.IS_ATTACHED)) {
+            //TODO
         } else if (data.isAssignableFrom(MultiDirectionalKeyedData.class) && this.snapshot.supports(Keys.CONNECTED_DIRECTIONS)) {
+            //TODO
         }
         return Optional.ofNullable(key);
     }
@@ -228,9 +234,9 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
     @Deprecated
     public <BP extends BlockPosition> BlockSnapshot<BP> createSnapshot(BP position) {
         if (position instanceof SyncBlockPosition) {
-            return (BlockSnapshot<BP>) createSnapshot((SyncBlockPosition) position);
+            return (BlockSnapshot<BP>) this.createSnapshot((SyncBlockPosition) position);
         }
-        return (BlockSnapshot<BP>) createSnapshot((ASyncBlockPosition) position);
+        return (BlockSnapshot<BP>) this.createSnapshot((ASyncBlockPosition) position);
     }
 
     @Override
@@ -243,12 +249,13 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
 
     @Override
     public P getPosition() {
-        return this.newPosition.apply(this.snapshot.location().get());
+        return this.newPosition.apply(this.snapshot.location().orElseThrow(() -> new IllegalStateException("Cannot " +
+                "get location from snapshot")));
     }
 
     @Override
     public <T> Optional<T> get(Class<? extends KeyedData<T>> data) {
-        Optional<KeyedData<T>> opKey = getKey(data);
+        Optional<KeyedData<T>> opKey = this.getKey(data);
         if (opKey.isPresent()) {
             return opKey.get().getData();
         }
@@ -257,7 +264,7 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
 
     @Override
     public <T> BlockDetails set(Class<? extends KeyedData<T>> data, T value) {
-        Optional<KeyedData<T>> opKey = getKey(data);
+        Optional<KeyedData<T>> opKey = this.getKey(data);
         opKey.ifPresent(k -> k.setData(value));
         return this;
     }

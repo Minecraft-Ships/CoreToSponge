@@ -2,6 +2,11 @@ package org.core.implementation.sponge.world;
 
 import org.core.TranslateCore;
 import org.core.entity.LiveEntity;
+import org.core.implementation.sponge.platform.SpongePlatform;
+import org.core.implementation.sponge.world.position.asynced.SAsyncedBlockPosition;
+import org.core.implementation.sponge.world.position.asynced.SAsyncedExactPosition;
+import org.core.implementation.sponge.world.position.synced.SBlockPosition;
+import org.core.implementation.sponge.world.position.synced.SExactPosition;
 import org.core.vector.type.Vector3;
 import org.core.world.ChunkExtent;
 import org.core.world.WorldExtent;
@@ -10,19 +15,14 @@ import org.core.world.position.impl.async.ASyncBlockPosition;
 import org.core.world.position.impl.async.ASyncExactPosition;
 import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.core.world.position.impl.sync.SyncExactPosition;
-import org.core.implementation.sponge.platform.SpongePlatform;
-import org.core.implementation.sponge.world.position.asynced.SAsyncedBlockPosition;
-import org.core.implementation.sponge.world.position.asynced.SAsyncedExactPosition;
-import org.core.implementation.sponge.world.position.synced.SBlockPosition;
-import org.core.implementation.sponge.world.position.synced.SExactPosition;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.util.AABB;
+import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.world.WorldType;
 import org.spongepowered.api.world.WorldTypes;
 import org.spongepowered.api.world.server.ServerWorld;
 import org.spongepowered.math.vector.Vector3i;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -62,7 +62,7 @@ public class SWorldExtent implements WorldExtent {
     @Deprecated
     public UUID getUniqueId() {
         if (this.world instanceof ServerWorld) {
-            return ((ServerWorld) this.world).uniqueId();
+            return ((Identifiable) this.world).uniqueId();
         }
         throw new IllegalStateException("UUID not accessible via client");
     }
@@ -72,12 +72,12 @@ public class SWorldExtent implements WorldExtent {
         if (this.world instanceof ServerWorld) {
             return ((ServerWorld) this.world).key().asString();
         }
-        return getName();
+        return this.getName();
     }
 
     @Override
     public Set<ChunkExtent> getChunks() {
-        return null;
+        throw new RuntimeException("Not implemented");
     }
 
     @Override
@@ -117,10 +117,7 @@ public class SWorldExtent implements WorldExtent {
 
     @Override
     public Set<LiveEntity> getEntities() {
-        Set<LiveEntity> set = new HashSet<>();
         SpongePlatform platform = ((SpongePlatform) TranslateCore.getPlatform());
-
-
         if (this.world instanceof ServerWorld) {
             ServerWorld world = (ServerWorld) this.world;
             return world.entities().stream().map(platform::createEntityInstance).collect(Collectors.toSet());

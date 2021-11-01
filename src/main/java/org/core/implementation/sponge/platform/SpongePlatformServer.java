@@ -65,7 +65,7 @@ public class SpongePlatformServer implements PlatformServer {
     }
 
     @Override
-    public void applyBlockSnapshots(Collection<BlockSnapshot.AsyncBlockSnapshot> collection, Plugin plugin, Runnable onComplete) {
+    public void applyBlockSnapshots(Collection<? extends BlockSnapshot.AsyncBlockSnapshot> collection, Plugin plugin, Runnable onComplete) {
         throw new RuntimeException("Not implemented yet");
     }
 

@@ -2,6 +2,10 @@ package org.core.implementation.sponge.world.position.synced;
 
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.exceptions.BlockNotSupported;
+import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
+import org.core.implementation.sponge.world.position.block.details.blocks.StateDetails;
+import org.core.implementation.sponge.world.position.block.details.blocks.snapshot.SBlockSnapshot;
+import org.core.implementation.sponge.world.position.flags.SApplyPhysicsFlag;
 import org.core.vector.type.Vector3;
 import org.core.world.direction.Direction;
 import org.core.world.position.block.details.BlockDetails;
@@ -15,11 +19,6 @@ import org.core.world.position.impl.Position;
 import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.core.world.position.impl.sync.SyncExactPosition;
 import org.core.world.position.impl.sync.SyncPosition;
-import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
-import org.core.implementation.sponge.world.position.block.details.blocks.StateDetails;
-import org.core.implementation.sponge.world.position.block.details.blocks.details.SBlockDetails;
-import org.core.implementation.sponge.world.position.block.details.blocks.snapshot.SBlockSnapshot;
-import org.core.implementation.sponge.world.position.flags.SApplyPhysicsFlag;
 import org.spongepowered.api.block.BlockSnapshot;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -85,7 +84,7 @@ public class SBlockPosition extends SSyncedPosition<Integer> implements SyncBloc
     public SyncPosition<Integer> setBlock(BlockDetails details, LivePlayer... players) {
         for (LivePlayer player : players) {
             if (player.getPosition().getWorld().equals(this.getWorld())) {
-                ((SLivePlayer) player).getSpongeEntity().sendBlockChange(this.location.blockPosition(), ((SBlockDetails) details).getState());
+                ((SLivePlayer) player).getSpongeEntity().sendBlockChange(this.location.blockPosition(), ((StateDetails) details).getState());
             }
         }
         return this;

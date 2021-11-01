@@ -1,11 +1,11 @@
 package org.core.implementation.sponge.world.position.block.details.blocks.details;
 
-import org.core.implementation.sponge.world.position.synced.SSyncedPosition;
+import org.core.implementation.sponge.world.position.SPosition;
+import org.core.implementation.sponge.world.position.block.details.blocks.snapshot.SBlockSnapshot;
 import org.core.world.position.block.details.BlockDetails;
 import org.core.world.position.block.details.BlockSnapshot;
 import org.core.world.position.impl.async.ASyncBlockPosition;
 import org.core.world.position.impl.sync.SyncBlockPosition;
-import org.core.implementation.sponge.world.position.block.details.blocks.snapshot.SBlockSnapshot;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.server.ServerWorld;
@@ -18,12 +18,12 @@ public class SAsyncedBlockDetails extends SBlockDetails {
 
     @Override
     public BlockSnapshot.AsyncBlockSnapshot createSnapshot(ASyncBlockPosition position) {
-        return new SBlockSnapshot.SAsyncedBlockSnapshot(t(((SSyncedPosition<Integer>) position).getSpongeLocation()));
+        return new SBlockSnapshot.SAsyncedBlockSnapshot(this.t(((SPosition<Integer>) position).getSpongeLocation()));
     }
 
     @Override
     public BlockSnapshot.SyncBlockSnapshot createSnapshot(SyncBlockPosition position) {
-        return new SBlockSnapshot.SSyncedBlockSnapshot(t(((SSyncedPosition<Integer>) position).getSpongeLocation()));
+        return new SBlockSnapshot.SSyncedBlockSnapshot(this.t(((SPosition<Integer>) position).getSpongeLocation()));
     }
 
     @Override

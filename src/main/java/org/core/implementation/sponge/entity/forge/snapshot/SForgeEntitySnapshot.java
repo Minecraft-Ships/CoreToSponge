@@ -5,7 +5,7 @@ import org.core.entity.EntityType;
 import org.core.implementation.sponge.entity.SEntitySnapshot;
 import org.core.implementation.sponge.entity.SEntityType;
 import org.core.implementation.sponge.entity.forge.live.SForgeEntity;
-import org.core.implementation.sponge.world.position.synced.SExactPosition;
+import org.core.implementation.sponge.world.position.SPosition;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -24,10 +24,10 @@ public class SForgeEntitySnapshot extends SEntitySnapshot<SForgeEntity> implemen
 
     @Override
     public SForgeEntity spawnEntity() {
-        Location<? extends World<?, ?>, ?> location = ((SExactPosition)this.position).getSpongeLocation();
+        Location<? extends World<?, ?>, ?> location = ((SPosition<Double>) this.position).getSpongeLocation();
         Entity entity = location.world().createEntity(this.spongeType, location.position());
         SForgeEntity sEntity = new SForgeEntity(entity);
-        applyDefault(sEntity);
+        this.applyDefault(sEntity);
         return sEntity;
     }
 

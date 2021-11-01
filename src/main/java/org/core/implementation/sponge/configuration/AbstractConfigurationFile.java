@@ -31,7 +31,7 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
         return this.file;
     }
 
-    private <T> Optional<T> get(org.core.config.ConfigurationNode node, Function<ConfigurationNode, T> value) {
+    private <T> Optional<T> get(org.core.config.ConfigurationNode node, Function<? super ConfigurationNode, ? extends T> value) {
         @NonNull ConfigurationNode node1 = this.root.node(node.getObjectPath());
         if (node1.empty()) {
             return Optional.empty();
@@ -41,26 +41,26 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
 
     @Override
     public Optional<Double> getDouble(org.core.config.ConfigurationNode node) {
-        return get(node, ConfigurationNode::getDouble);
+        return this.get(node, ConfigurationNode::getDouble);
     }
 
     @Override
     public Optional<Integer> getInteger(org.core.config.ConfigurationNode node) {
-        return get(node, ConfigurationNode::getInt);
+        return this.get(node, ConfigurationNode::getInt);
     }
 
     @Override
     public Optional<Boolean> getBoolean(org.core.config.ConfigurationNode node) {
-        return get(node, ConfigurationNode::getBoolean);
+        return this.get(node, ConfigurationNode::getBoolean);
     }
 
     @Override
     public Optional<String> getString(org.core.config.ConfigurationNode node) {
-        return get(node, ConfigurationNode::getString);
+        return this.get(node, ConfigurationNode::getString);
     }
 
     @Override
-    public <T, C extends Collection<T>> C parseCollection(org.core.config.ConfigurationNode node, Parser<String, T> parser, C collection) {
+    public <T, C extends Collection<T>> C parseCollection(org.core.config.ConfigurationNode node, Parser<? super String, T> parser, C collection) {
         @NonNull ConfigurationNode node1 = this.root.node(node.getObjectPath());
         if (node1.empty()) {
             return collection;
@@ -75,7 +75,12 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
                     try {
                         return parser.parse(v.getString());
                     } catch (Throwable e) {
-                        throw new RuntimeException("Could not parse value at " + ArrayUtils.toString("->", Object::toString, v.path().array()) + ": Value: " + v.toString(), e);
+                        throw new RuntimeException(
+                                "Could not parse value at "
+                                        + Arrays
+                                        .stream(v.path().array())
+                                        .map(Object::toString)
+                                        .collect(Collectors.joining("->")));
                     }
                 })
                 .filter(Optional::isPresent)
@@ -122,7 +127,7 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
     }
 
     @Override
-    public <T> void set(org.core.config.ConfigurationNode node, Parser<String, T> parser, Collection<T> collection) {
+    public <T> void set(org.core.config.ConfigurationNode node, Parser<String, ? super T> parser, Collection<T> collection) {
         List<String> list = new ArrayList<>();
         collection.forEach(v -> list.add(parser.unparse(v)));
         try {
@@ -136,7 +141,7 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
     public Set<org.core.config.ConfigurationNode> getChildren(org.core.config.ConfigurationNode node) {
         Collection<? extends ConfigurationNode> values = this.root.node(node.getObjectPath()).childrenList();
         Set<org.core.config.ConfigurationNode> set = new HashSet<>();
-        values.stream().filter(n -> n.path().size() == (node.getPath().length + 1)).filter(n -> {
+        values.stream().filter(n -> n.path().size()==(node.getPath().length + 1)).filter(n -> {
             for (int A = 0; A < node.getPath().length; A++) {
                 if (!node.getPath()[A].equals(n.path().get(A).toString())) {
                     return false;

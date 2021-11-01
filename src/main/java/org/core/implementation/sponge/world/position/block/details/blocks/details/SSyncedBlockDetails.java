@@ -1,8 +1,9 @@
 package org.core.implementation.sponge.world.position.block.details.blocks.details;
 
 import org.core.TranslateCore;
+import org.core.implementation.sponge.world.position.SPosition;
+import org.core.implementation.sponge.world.position.block.details.blocks.snapshot.SBlockSnapshot;
 import org.core.implementation.sponge.world.position.synced.SBlockPosition;
-import org.core.implementation.sponge.world.position.synced.SSyncedPosition;
 import org.core.world.position.block.details.BlockDetails;
 import org.core.world.position.block.details.BlockSnapshot;
 import org.core.world.position.block.details.data.keyed.KeyedData;
@@ -11,7 +12,6 @@ import org.core.world.position.block.entity.TileEntity;
 import org.core.world.position.block.entity.TileEntitySnapshot;
 import org.core.world.position.impl.async.ASyncBlockPosition;
 import org.core.world.position.impl.sync.SyncBlockPosition;
-import org.core.implementation.sponge.world.position.block.details.blocks.snapshot.SBlockSnapshot;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.server.ServerWorld;
@@ -49,7 +49,7 @@ public class SSyncedBlockDetails extends SBlockDetails {
 
     @Override
     public BlockSnapshot.AsyncBlockSnapshot createSnapshot(ASyncBlockPosition position) {
-        Location<? extends World<?, ?>, ?> location = (((SSyncedPosition<Integer>) position).getSpongeLocation());
+        Location<? extends World<?, ?>, ?> location = (((SPosition<Integer>) position).getSpongeLocation());
         return new SBlockSnapshot.SAsyncedBlockSnapshot(org.spongepowered.api.block.BlockSnapshot
                 .builder()
                 .blockState(this.blockstate)
@@ -60,7 +60,7 @@ public class SSyncedBlockDetails extends SBlockDetails {
 
     @Override
     public BlockSnapshot.SyncBlockSnapshot createSnapshot(SyncBlockPosition position) {
-        Location<? extends World<?, ?>, ?> location = (((SSyncedPosition<Integer>) position).getSpongeLocation());
+        Location<? extends World<?, ?>, ?> location = (((SPosition<Integer>) position).getSpongeLocation());
         return new SBlockSnapshot.SSyncedBlockSnapshot(org.spongepowered.api.block.BlockSnapshot
                 .builder()
                 .blockState(this.blockstate)
