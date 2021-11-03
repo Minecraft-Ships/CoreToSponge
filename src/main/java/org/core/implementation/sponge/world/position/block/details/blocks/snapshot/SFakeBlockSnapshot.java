@@ -66,12 +66,12 @@ public abstract class SFakeBlockSnapshot<P extends BlockPosition> implements Blo
 
         @Override
         public AsyncBlockSnapshot asAsynced() {
-            return createSnapshot(Position.toASync(this.position));
+            return this.createSnapshot(Position.toASync(this.position));
         }
 
         @Override
         public SyncBlockSnapshot createCopyOf() {
-            return createSnapshot(this.position);
+            return this.createSnapshot(this.position);
         }
     }
 

@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 public abstract class SLiveEntity implements LiveEntity {
 
-    protected org.spongepowered.api.entity.Entity entity;
+    protected final org.spongepowered.api.entity.Entity entity;
 
     public SLiveEntity(org.spongepowered.api.entity.Entity entity) {
         this.entity = entity;

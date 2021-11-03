@@ -23,6 +23,7 @@ import org.core.world.position.impl.BlockPosition;
 import org.core.world.position.impl.Position;
 import org.core.world.position.impl.async.ASyncBlockPosition;
 import org.core.world.position.impl.sync.SyncBlockPosition;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.data.Key;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.data.value.Value;
@@ -108,21 +109,11 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
 
     protected TileEntitySnapshot<? extends TileEntity> tileEntitySnapshot;
     protected org.spongepowered.api.block.BlockSnapshot snapshot;
-    protected Function<Location<? extends World<?, ?>, ?>, P> newPosition;
+    protected final Function<Location<? extends World<?, ?>, ?>, P> newPosition;
 
-    public SBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot) {
+    public SBlockSnapshot(@NotNull org.spongepowered.api.block.BlockSnapshot snapshot) {
         this.snapshot = snapshot;
         this.newPosition = (Function<Location<? extends World<?, ?>, ?>, P>) SPosition.TO_SYNCED_BLOCK_POSITION;
-        if (this.tileEntitySnapshot!=null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot) {
-            Optional<List<Component>> opLines = this.snapshot.get(Keys.SIGN_LINES);
-            if (opLines.isPresent()) {
-                List<Component> lines = opLines.get();
-                for (int A = 0; A < lines.size(); A++) {
-                    SignTileEntity sign = (SignTileEntity) this.tileEntitySnapshot;
-                    sign.setTextAt(A, new AdventureText(lines.get(A)));
-                }
-            }
-        }
     }
 
     protected abstract SBlockSnapshot<P> createCopyOf(org.spongepowered.api.block.BlockSnapshot snapshot, TileEntitySnapshot<? extends LiveTileEntity> tileEntity);

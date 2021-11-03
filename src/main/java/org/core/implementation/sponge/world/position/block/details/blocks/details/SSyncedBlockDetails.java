@@ -37,7 +37,7 @@ public class SSyncedBlockDetails extends SBlockDetails {
 
     public SSyncedBlockDetails(org.spongepowered.api.block.BlockState state) {
         super(state);
-        TranslateCore.getPlatform().getDefaultTileEntity(getType()).ifPresent(t -> tileEntitySnapshot = t);
+        TranslateCore.getPlatform().getDefaultTileEntity(this.getType()).ifPresent(t -> this.tileEntitySnapshot = t);
     }
 
     public SSyncedBlockDetails(SBlockPosition position) {

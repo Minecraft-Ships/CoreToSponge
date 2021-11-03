@@ -25,12 +25,12 @@ public class SExactPosition extends SSyncedPosition<Double> implements SyncExact
 
     @Override
     public SExactPosition getRelative(Direction direction) {
-        return getRelative(direction.getAsVector());
+        return this.getRelative(direction.getAsVector());
     }
 
     @Override
     public BlockSnapshot.SyncBlockSnapshot getBlockDetails() {
-        return toBlockPosition().getBlockDetails();
+        return this.toBlockPosition().getBlockDetails();
     }
 
     @Override
@@ -45,19 +45,19 @@ public class SExactPosition extends SSyncedPosition<Double> implements SyncExact
 
     @Override
     public SExactPosition setBlock(BlockDetails details, PositionFlag.SetFlag... flags) {
-        toBlockPosition().setBlock(details, flags);
+        this.toBlockPosition().setBlock(details, flags);
         return this;
     }
 
     @Override
     public SyncPosition<Double> setBlock(BlockDetails details, LivePlayer... player) {
-        toBlockPosition().setBlock(details, player);
+        this.toBlockPosition().setBlock(details, player);
         return this;
     }
 
     @Override
     public SExactPosition resetBlock(LivePlayer... player) {
-        toBlockPosition().resetBlock(player);
+        this.toBlockPosition().resetBlock(player);
         return this;
     }
 }

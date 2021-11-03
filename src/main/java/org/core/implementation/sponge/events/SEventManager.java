@@ -9,8 +9,8 @@ import java.util.*;
 
 public class SEventManager implements EventManager {
 
-    Map<Plugin, Set<EventListener>> eventListeners = new HashMap<>();
-    SpongeListener listener = new SpongeListener();
+    final Map<Plugin, Set<EventListener>> eventListeners = new HashMap<>();
+    final SpongeListener listener = new SpongeListener();
 
     public SpongeListener getRawListener(){
         return this.listener;

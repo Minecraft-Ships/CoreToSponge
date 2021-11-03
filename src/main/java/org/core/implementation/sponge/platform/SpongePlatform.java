@@ -58,12 +58,13 @@ import java.util.stream.Collectors;
 
 public class SpongePlatform implements Platform {
 
-    protected Set<? extends EntityType<? extends LiveEntity, ? extends EntitySnapshot<? extends LiveEntity>>> entityTypes = new HashSet<>();
-    protected Map<Class<? extends org.spongepowered.api.entity.Entity>, Class<? extends LiveEntity>> entityToEntityMap = new HashMap<>();
-    protected Map<Class<? extends org.spongepowered.api.block.entity.BlockEntity>, Class<? extends LiveTileEntity>> blockStateToTileEntity = new HashMap<>();
-    protected Collection<TileEntitySnapshot<? extends TileEntity>> defaultTileEntities = new HashSet<>();
-    protected Collection<UnspecificParser<? extends Object>> unspecificParsers = new HashSet<>();
-    protected Set<Permission> permissions = new HashSet<>();
+    protected final Set<? extends EntityType<? extends LiveEntity, ? extends EntitySnapshot<? extends LiveEntity>>> entityTypes = new HashSet<>();
+    protected final Map<Class<? extends org.spongepowered.api.entity.Entity>, Class<? extends LiveEntity>> entityToEntityMap = new HashMap<>();
+    protected final Map<Class<? extends org.spongepowered.api.block.entity.BlockEntity>,
+            Class<? extends LiveTileEntity>> blockStateToTileEntity = new HashMap<>();
+    protected final Collection<TileEntitySnapshot<? extends TileEntity>> defaultTileEntities = new HashSet<>();
+    protected final Collection<UnspecificParser<? extends Object>> unspecificParsers = new HashSet<>();
+    protected final Set<Permission> permissions = new HashSet<>();
 
     public SpongePlatform() {
         this.entityToEntityMap.put(org.spongepowered.api.entity.living.player.Player.class, SLivePlayer.class);
@@ -88,7 +89,7 @@ public class SpongePlatform implements Platform {
         return null;
     }*/
 
-    public <E extends LiveEntity, S extends EntitySnapshot<E>> Optional<S> createSnapshot(EntityType<E, S> type, SyncExactPosition pos) {
+    public <E extends LiveEntity, S extends EntitySnapshot<E>> Optional<S> createSnapshot(EntityType<E, ? extends S> type, SyncExactPosition pos) {
         try {
             S snapshot = type.getSnapshotClass().getConstructor(SyncExactPosition.class).newInstance(pos);
             return Optional.of(snapshot);
@@ -114,7 +115,7 @@ public class SpongePlatform implements Platform {
     }
 
     public Optional<LiveTileEntity> createTileEntityInstance(org.spongepowered.api.block.entity.BlockEntity tileEntity) {
-        Optional<Map.Entry<Class<? extends org.spongepowered.api.block.entity.BlockEntity>, Class<? extends LiveTileEntity>>> opEntry = blockStateToTileEntity.entrySet().stream().filter(e -> e.getKey().isInstance(tileEntity)).findAny();
+        Optional<Map.Entry<Class<? extends org.spongepowered.api.block.entity.BlockEntity>, Class<? extends LiveTileEntity>>> opEntry = this.blockStateToTileEntity.entrySet().stream().filter(e -> e.getKey().isInstance(tileEntity)).findAny();
         if (!opEntry.isPresent()) {
             return Optional.empty();
         }

@@ -13,7 +13,7 @@ import org.spongepowered.api.registry.RegistryTypes;
 
 public abstract class SEntityType<T extends LiveEntity, S extends EntitySnapshot<T>> implements EntityType<T, S> {
 
-    protected org.spongepowered.api.entity.EntityType<?> type;
+    protected final org.spongepowered.api.entity.EntityType<?> type;
 
     public SEntityType(org.spongepowered.api.entity.EntityType<?> type) {
         this.type = type;

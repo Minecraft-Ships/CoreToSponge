@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 public class SWorldExtent implements WorldExtent {
 
-    protected org.spongepowered.api.world.World<?, ?> world;
+    protected final org.spongepowered.api.world.World<?, ?> world;
 
     public SWorldExtent(org.spongepowered.api.world.World<?, ?> world) {
         this.world = world;

@@ -10,9 +10,9 @@ import org.core.world.position.impl.sync.SyncPosition;
 public class SEntityInteractEvent<T extends Entity<?>> implements EntityInteractEvent<T> {
 
     protected boolean cancelled;
-    protected SyncPosition<? extends Number> interactPoint;
-    protected T entity;
-    protected int click;
+    protected final SyncPosition<? extends Number> interactPoint;
+    protected final T entity;
+    protected final int click;
 
     public SEntityInteractEvent(SyncPosition<? extends Number> position, int click, T entity) {
         this.entity = entity;
@@ -47,7 +47,7 @@ public class SEntityInteractEvent<T extends Entity<?>> implements EntityInteract
 
     public static class SPlayerInteractWithBlockEvent extends SEntityInteractEvent<LivePlayer> implements EntityInteractEvent.WithBlock.AsPlayer {
 
-        protected Direction clickedSide;
+        protected final Direction clickedSide;
 
         public SPlayerInteractWithBlockEvent(SyncPosition<Integer> position, int click, Direction clickedSide, LivePlayer entity) {
             super(position, click, entity);

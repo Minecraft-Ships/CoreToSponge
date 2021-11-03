@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 public class SItemStackSnapshot implements org.core.inventory.item.stack.ItemStackSnapshot {
 
-    protected ItemStackSnapshot item;
+    protected final ItemStackSnapshot item;
 
     public SItemStackSnapshot(ItemStackSnapshot item) {
         this.item = item;

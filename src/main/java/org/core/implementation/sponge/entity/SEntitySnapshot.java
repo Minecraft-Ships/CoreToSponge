@@ -26,8 +26,8 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     protected AdventureText customName;
     protected boolean customNameVisible;
     protected boolean isOnGround;
-    protected Collection<EntitySnapshot<? extends LiveEntity>> passengers = new HashSet<>();
-    protected E createdFrom;
+    protected final Collection<EntitySnapshot<? extends LiveEntity>> passengers = new HashSet<>();
+    protected final E createdFrom;
 
     public SEntitySnapshot(EntitySnapshot<E> snapshot) {
         this.init(snapshot);

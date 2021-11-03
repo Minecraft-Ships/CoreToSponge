@@ -1,10 +1,10 @@
 package org.core.implementation.sponge.inventory.inventories.live;
 
 import org.core.entity.living.human.player.LivePlayer;
+import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
 import org.core.inventory.inventories.live.entity.LivePlayerInventory;
 import org.core.inventory.inventories.snapshots.entity.PlayerInventorySnapshot;
 import org.core.inventory.parts.*;
-import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
 
 import java.util.Optional;
 import java.util.Set;
@@ -25,7 +25,7 @@ public class SLivePlayerInventory implements LivePlayerInventory {
     }
 
     protected SLivePlayer player;
-    protected PlayerHotbar hotbar = new PlayerHotbar();
+    protected final PlayerHotbar hotbar = new PlayerHotbar();
 
     @Override
     public Hotbar getHotbar() {
@@ -34,17 +34,19 @@ public class SLivePlayerInventory implements LivePlayerInventory {
 
     @Override
     public Grid2x2 getCraftingGrid() {
-        return null;
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
     public MainPlayerInventory getMainInventory() {
-        return null;
+        throw new RuntimeException("Not implemented yet");
+
     }
 
     @Override
     public PlayerInventorySnapshot createSnapshot() {
-        return null;
+        throw new RuntimeException("Not implemented yet");
+
     }
 
     @Override
@@ -54,11 +56,13 @@ public class SLivePlayerInventory implements LivePlayerInventory {
 
     @Override
     public ArmorPart getArmor() {
-        return null;
+        throw new RuntimeException("Not implemented yet");
+
     }
 
     @Override
     public Slot getOffHoldingItem() {
-        return null;
+        throw new RuntimeException("Not implemented yet");
+
     }
 }

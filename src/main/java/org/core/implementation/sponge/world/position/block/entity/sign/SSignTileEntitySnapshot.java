@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class SSignTileEntitySnapshot implements SignTileEntitySnapshot {
 
-    protected List<AText> lines;
+    protected final List<AText> lines;
 
     public SSignTileEntitySnapshot(ListValue<? extends Component> sign) {
         this(sign.get().stream().map(AdventureText::new).collect(Collectors.toList()));

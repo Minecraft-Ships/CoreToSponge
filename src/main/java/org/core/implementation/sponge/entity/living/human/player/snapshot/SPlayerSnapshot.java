@@ -78,7 +78,7 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
 
     @Override
     public UUID getUniqueId() {
-        return getCreatedFrom().get().getUniqueId();
+        return this.getCreatedFrom().get().getUniqueId();
     }
 
     @Override
@@ -112,7 +112,7 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
 
     @Override
     public LivePlayer spawnEntity() {
-        applyDefault(this.createdFrom);
+        this.applyDefault(this.createdFrom);
         this.createdFrom.setExhaustionLevel(this.exhaustionLevel);
         this.createdFrom.setFood(this.foodLevel);
         this.createdFrom.setSaturationLevel(this.saturationLevel);
@@ -122,13 +122,13 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
 
     @Override
     public BigDecimal getBalance() {
-        Optional<UniqueAccount> opAccount = getAccount();
+        Optional<UniqueAccount> opAccount = this.getAccount();
         return opAccount.map(uniqueAccount -> uniqueAccount.balance(Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency())).orElseGet(() -> new BigDecimal(0));
     }
 
     @Override
     public void setBalance(BigDecimal decimal) {
-        Optional<UniqueAccount> opAccount = getAccount();
+        Optional<UniqueAccount> opAccount = this.getAccount();
         if (!opAccount.isPresent()) {
             return;
         }

@@ -24,14 +24,14 @@ import java.io.File;
 
 public class CoreToSponge extends TranslateCore.CoreImplementation {
 
-    protected SpongePlatform platform = new SpongePlatform();
-    protected SEventManager eventManager = new SEventManager();
-    protected PlatformConsole console = new PlatformConsole();
-    protected SpongePlatformServer server = new SpongePlatformServer(org.spongepowered.api.Sponge.server());
+    protected final SpongePlatform platform = new SpongePlatform();
+    protected final SEventManager eventManager = new SEventManager();
+    protected final PlatformConsole console = new PlatformConsole();
+    protected final SpongePlatformServer server = new SpongePlatformServer(org.spongepowered.api.Sponge.server());
 
     public CoreToSponge(PluginContainer plugin) {
         CoreImplementation.IMPLEMENTATION = this;
-        org.spongepowered.api.Sponge.eventManager().registerListeners(plugin, eventManager.getRawListener());
+        org.spongepowered.api.Sponge.eventManager().registerListeners(plugin, this.eventManager.getRawListener());
         //TODO CHECK IF CORRECT
         //Task.builder().delayTicks(1).intervalTicks(1).name("tps").execute(getRawServer().getTPSExecutor()).build();
     }

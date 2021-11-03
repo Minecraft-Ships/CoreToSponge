@@ -14,7 +14,7 @@ import java.util.Collections;
 
 public class SFurnaceEntitySnapshot implements FurnaceTileEntitySnapshot {
 
-    protected FurnaceInventorySnapshot inventory;
+    protected final FurnaceInventorySnapshot inventory;
 
     public SFurnaceEntitySnapshot() {
         this.inventory = new SSnapshotFurnaceInventory();

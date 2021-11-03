@@ -16,6 +16,7 @@ import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.Key;
 import org.spongepowered.api.data.Keys;
+import org.spongepowered.api.data.value.Value;
 
 import java.util.Optional;
 
@@ -49,10 +50,10 @@ public abstract class SBlockDetails implements BlockDetails, StateDetails {
                 .position(loc.blockPosition())
                 .build();
         return new SBlockSnapshot<>(blockSnapshot);*/
-        if(position instanceof SyncBlockPosition){
-            return (BlockSnapshot<P>) createSnapshot((SyncBlockPosition) position);
+        if (position instanceof SyncBlockPosition) {
+            return (BlockSnapshot<P>) this.createSnapshot((SyncBlockPosition) position);
         }
-        return (BlockSnapshot<P>) createSnapshot((ASyncBlockPosition) position);
+        return (BlockSnapshot<P>) this.createSnapshot((ASyncBlockPosition) position);
     }
 
     @Override
@@ -65,7 +66,7 @@ public abstract class SBlockDetails implements BlockDetails, StateDetails {
 
     @Override
     public <T> Optional<T> get(Class<? extends KeyedData<T>> data) {
-        Optional<KeyedData<T>> opKey = getKey(data);
+        Optional<KeyedData<T>> opKey = this.getKey(data);
         if (opKey.isPresent()) {
             return opKey.get().getData();
         }
@@ -74,7 +75,7 @@ public abstract class SBlockDetails implements BlockDetails, StateDetails {
 
     @Override
     public <T> BlockDetails set(Class<? extends KeyedData<T>> data, T value) {
-        Optional<KeyedData<T>> opKey = getKey(data);
+        Optional<KeyedData<T>> opKey = this.getKey(data);
         opKey.ifPresent(k -> k.setData(value));
         return this;
     }
@@ -83,7 +84,7 @@ public abstract class SBlockDetails implements BlockDetails, StateDetails {
         return this.blockstate;
     }
 
-    public <T> boolean setKey(Key key, T value) {
+    public <T> boolean setKey(Key<? extends Value<T>> key, T value) {
         Optional<BlockState> opState = this.blockstate.with(key, value);
         if (opState.isPresent()) {
             this.blockstate = opState.get();

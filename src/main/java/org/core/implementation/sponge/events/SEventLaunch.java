@@ -10,19 +10,19 @@ import java.lang.reflect.Method;
 
 public class SEventLaunch {
 
-    protected Plugin plugin;
-    protected EventListener listener;
-    protected Method method;
+    protected final Plugin plugin;
+    protected final EventListener listener;
+    protected final Method method;
 
-    public SEventLaunch(Plugin plugin, EventListener listener, Method method){
+    public SEventLaunch(Plugin plugin, EventListener listener, Method method) {
         this.plugin = plugin;
         this.listener = listener;
         this.method = method;
     }
 
-    public void run(Event event){
+    public void run(Event event) {
         try {
-            this.method.invoke(listener, event);
+            this.method.invoke(this.listener, event);
         } catch (IllegalAccessException e) {
             System.err.println("Failed to know what to do: HEvent found on method, but method is not public on " + this.listener.getClass().getName() + "." + this.method.getName() + "(" + ArrayUtils.toString(", ", p -> p.getType().getSimpleName() + " " + p.getName(), this.method.getParameters()) + ")");
             e.printStackTrace();
@@ -32,8 +32,8 @@ public class SEventLaunch {
         } catch (InvocationTargetException e) {
             System.err.println("Failed to know what to do: EventListener caused exception from " + this.listener.getClass().getName() + "." + this.method.getName() + "(" + ArrayUtils.toString(", ", p -> p.getType().getSimpleName() + " " + p.getName(), this.method.getParameters()) + ")");
             e.getTargetException().printStackTrace();
-        } catch (Throwable e){
-            System.err.println("Failed to know what to do: HEvent found on method, but exception found when running " + this.listener.getClass().getName() + "." + this.method.getName() + "("+ ArrayUtils.toString(", ", p -> p.getType().getSimpleName() + " " + p.getName(), this.method.getParameters()) + ") found in plugin: " + this.plugin.getPluginName());
+        } catch (Throwable e) {
+            System.err.println("Failed to know what to do: HEvent found on method, but exception found when running " + this.listener.getClass().getName() + "." + this.method.getName() + "(" + ArrayUtils.toString(", ", p -> p.getType().getSimpleName() + " " + p.getName(), this.method.getParameters()) + ") found in plugin: " + this.plugin.getPluginName());
             e.printStackTrace();
         }
     }

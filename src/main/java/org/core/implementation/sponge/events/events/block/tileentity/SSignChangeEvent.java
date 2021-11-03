@@ -2,17 +2,17 @@ package org.core.implementation.sponge.events.events.block.tileentity;
 
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.event.events.block.tileentity.SignChangeEvent;
-import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.core.world.position.block.entity.sign.SignTileEntitySnapshot;
+import org.core.world.position.impl.sync.SyncBlockPosition;
 
 public class SSignChangeEvent implements SignChangeEvent {
 
-    protected SignTileEntitySnapshot to;
+    protected final SignTileEntitySnapshot to;
     protected SignTileEntitySnapshot from;
-    protected SyncBlockPosition bp;
+    protected final SyncBlockPosition bp;
     protected boolean cancelled;
 
-    public SSignChangeEvent(SyncBlockPosition position, SignTileEntitySnapshot from, SignTileEntitySnapshot to){
+    public SSignChangeEvent(SyncBlockPosition position, SignTileEntitySnapshot from, SignTileEntitySnapshot to) {
         this.to = to;
         this.from = from;
         this.bp = position;
@@ -49,7 +49,7 @@ public class SSignChangeEvent implements SignChangeEvent {
         return this.bp;
     }
 
-    public static class SSignChangeEventByPlayer extends SSignChangeEvent implements SignChangeEvent.ByPlayer{
+    public static class SSignChangeEventByPlayer extends SSignChangeEvent implements SignChangeEvent.ByPlayer {
 
         protected LivePlayer player;
 

@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 
 public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L extends ConfigurationLoader<N>> implements ConfigurationStream.ConfigurationFile {
 
-    protected File file;
-    protected L loader;
+    protected final File file;
+    protected final L loader;
     protected N root;
 
     public AbstractConfigurationFile(File file, L loader) {

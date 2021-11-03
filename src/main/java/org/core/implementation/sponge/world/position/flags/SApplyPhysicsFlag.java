@@ -10,17 +10,17 @@ public class SApplyPhysicsFlag implements ApplyPhysicsFlag {
     public static final SApplyPhysicsFlag NONE = new SApplyPhysicsFlag("sponge:none", "None", BlockChangeFlags.NONE);
 
 
-    protected String id;
-    protected String name;
-    protected BlockChangeFlag flag;
+    protected final String id;
+    protected final String name;
+    protected final BlockChangeFlag flag;
 
-    public SApplyPhysicsFlag(String id, String name, BlockChangeFlag flag){
+    public SApplyPhysicsFlag(String id, String name, BlockChangeFlag flag) {
         this.flag = flag;
         this.name = name;
         this.id = id;
     }
 
-    public BlockChangeFlag getFlag(){
+    public BlockChangeFlag getFlag() {
         return this.flag;
     }
 

@@ -16,13 +16,13 @@ import java.util.Optional;
 
 public class SScheduler implements Scheduler {
 
-    protected Runnable taskToRun;
+    protected final Runnable taskToRun;
     protected Scheduler runAfter;
-    protected Integer delayCount;
-    protected TimeUnit delayTimeUnit;
-    protected Integer iteration;
-    protected TimeUnit iterationTimeUnit;
-    protected Plugin plugin;
+    protected final Integer delayCount;
+    protected final TimeUnit delayTimeUnit;
+    protected final Integer iteration;
+    protected final TimeUnit iterationTimeUnit;
+    protected final Plugin plugin;
     protected ScheduledTask task;
 
     public SScheduler(SchedulerBuilder builder, Plugin plugin) {

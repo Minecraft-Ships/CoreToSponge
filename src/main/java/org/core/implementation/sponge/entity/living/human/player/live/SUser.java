@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class SUser implements User {
 
-    protected org.spongepowered.api.entity.living.player.User user;
+    protected final org.spongepowered.api.entity.living.player.User user;
 
     public SUser(org.spongepowered.api.entity.living.player.User user) {
         this.user = user;
@@ -34,7 +34,7 @@ public class SUser implements User {
 
     @Override
     public BigDecimal getBalance() {
-        Optional<UniqueAccount> opAccount = getAccount();
+        Optional<UniqueAccount> opAccount = this.getAccount();
         if (!opAccount.isPresent()) {
             return new BigDecimal(0);
         }
@@ -43,7 +43,7 @@ public class SUser implements User {
 
     @Override
     public void setBalance(BigDecimal decimal) {
-        Optional<UniqueAccount> opAccount = getAccount();
+        Optional<UniqueAccount> opAccount = this.getAccount();
         if (!opAccount.isPresent()) {
             return;
         }

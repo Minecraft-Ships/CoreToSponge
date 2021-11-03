@@ -2,13 +2,13 @@ package org.core.implementation.sponge.inventory.inventories.live;
 
 import org.core.implementation.sponge.inventory.inventories.item.SItemStackSnapshot;
 import org.core.implementation.sponge.inventory.inventories.item.SLiveItemStack;
+import org.core.implementation.sponge.inventory.inventories.snapshot.SSnapshotFurnaceInventory;
 import org.core.implementation.sponge.world.position.synced.SBlockPosition;
 import org.core.inventory.inventories.general.block.FurnaceInventory;
 import org.core.inventory.inventories.snapshots.block.FurnaceInventorySnapshot;
 import org.core.inventory.item.stack.ItemStack;
 import org.core.inventory.parts.Slot;
 import org.core.world.position.impl.sync.SyncBlockPosition;
-import org.core.implementation.sponge.inventory.inventories.snapshot.SSnapshotFurnaceInventory;
 import org.spongepowered.api.block.entity.carrier.CarrierBlockEntity;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.slot.FuelSlot;
@@ -22,9 +22,9 @@ public class SLiveFurnaceInventory implements FurnaceInventory {
 
     private static class FurnaceSlot implements Slot {
 
-        protected org.spongepowered.api.item.inventory.Slot slot;
+        protected final org.spongepowered.api.item.inventory.Slot slot;
 
-        public FurnaceSlot(org.spongepowered.api.item.inventory.Slot slot) {
+        private FurnaceSlot(org.spongepowered.api.item.inventory.Slot slot) {
             this.slot = slot;
         }
 
@@ -44,7 +44,7 @@ public class SLiveFurnaceInventory implements FurnaceInventory {
 
         @Override
         public Slot setItem(ItemStack stack) {
-            if (stack == null) {
+            if (stack==null) {
                 this.slot.set(org.spongepowered.api.item.inventory.ItemStack.empty());
                 return this;
             }
@@ -59,10 +59,10 @@ public class SLiveFurnaceInventory implements FurnaceInventory {
         }
     }
 
-    protected org.spongepowered.api.block.entity.carrier.furnace.Furnace furnace;
-    protected SLiveFurnaceInventory.FurnaceSlot fuel;
-    protected SLiveFurnaceInventory.FurnaceSlot output;
-    protected SLiveFurnaceInventory.FurnaceSlot input;
+    protected final org.spongepowered.api.block.entity.carrier.furnace.Furnace furnace;
+    protected final SLiveFurnaceInventory.FurnaceSlot fuel;
+    protected final SLiveFurnaceInventory.FurnaceSlot output;
+    protected final SLiveFurnaceInventory.FurnaceSlot input;
 
     public SLiveFurnaceInventory(org.spongepowered.api.block.entity.carrier.furnace.Furnace furnace) {
         this.furnace = furnace;
@@ -99,10 +99,9 @@ public class SLiveFurnaceInventory implements FurnaceInventory {
         return new SBlockPosition(location);
     }
 
-    private static SLiveFurnaceInventory.FurnaceSlot[] getSlots(BlockEntityInventory<CarrierBlockEntity> inv) {
+    private static SLiveFurnaceInventory.FurnaceSlot[] getSlots(Inventory inv) {
         SLiveFurnaceInventory.FurnaceSlot[] slots = new SLiveFurnaceInventory.FurnaceSlot[3];
-        for (Inventory inv1 : inv.slots()) {
-            org.spongepowered.api.item.inventory.Slot slot = (org.spongepowered.api.item.inventory.Slot) inv1;
+        for (org.spongepowered.api.item.inventory.Slot slot : inv.slots()) {
             if (slot instanceof OutputSlot) {
                 slots[2] = new SLiveFurnaceInventory.FurnaceSlot(slot);
                 continue;

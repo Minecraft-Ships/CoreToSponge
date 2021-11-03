@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class SLiveItemStack implements LiveItemStack {
 
-    protected org.spongepowered.api.item.inventory.ItemStack stack;
+    protected final org.spongepowered.api.item.inventory.ItemStack stack;
 
     public SLiveItemStack(org.spongepowered.api.item.inventory.ItemStack stack) {
         this.stack = stack;
