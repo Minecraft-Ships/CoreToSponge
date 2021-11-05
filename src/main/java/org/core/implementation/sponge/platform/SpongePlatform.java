@@ -24,6 +24,7 @@ import org.core.inventory.item.ItemType;
 import org.core.inventory.item.data.dye.DyeType;
 import org.core.inventory.item.data.dye.DyeTypes;
 import org.core.inventory.item.type.ItemTypeCommon;
+import org.core.permission.CorePermission;
 import org.core.permission.Permission;
 import org.core.platform.Platform;
 import org.core.platform.PlatformDetails;
@@ -284,9 +285,13 @@ public class SpongePlatform implements Platform {
 
     @Override
     public @NotNull Permission register(@NotNull String permissionNode) {
-        Permission permission = new SPermission(permissionNode);
-        this.permissions.add(permission);
-        return permission;
+        return this.register(new CorePermission(false, permissionNode.split("\\.")));
+    }
+
+    @Override
+    public @NotNull CorePermission register(CorePermission permissionNode) {
+        this.permissions.add(permissionNode);
+        return permissionNode;
     }
 
     @Override
