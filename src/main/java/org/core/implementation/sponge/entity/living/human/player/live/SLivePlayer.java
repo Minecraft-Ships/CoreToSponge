@@ -12,6 +12,7 @@ import org.core.implementation.sponge.entity.SLiveEntity;
 import org.core.implementation.sponge.entity.living.human.player.snapshot.SPlayerSnapshot;
 import org.core.implementation.sponge.platform.SpongePlatformServer;
 import org.core.inventory.inventories.general.entity.PlayerInventory;
+import org.core.permission.Permission;
 import org.core.source.viewer.CommandViewer;
 import org.core.world.position.impl.BlockPosition;
 import org.spongepowered.api.Server;
@@ -113,6 +114,14 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     @Override
     public EntityType<LivePlayer, PlayerSnapshot> getType() {
         return new SEntityType.SPlayerType();
+    }
+
+    @Override
+    public boolean hasPermission(Permission permission) {
+        if (!(this.entity instanceof ServerPlayer)) {
+            return true;
+        }
+        return ((Subject) this.getSpongeEntity()).hasPermission(permission.getPermissionValue());
     }
 
     @Override
