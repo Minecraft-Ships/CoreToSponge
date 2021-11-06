@@ -8,11 +8,13 @@ import org.core.inventory.item.ItemType;
 import org.core.inventory.item.stack.ItemStack;
 import org.core.inventory.item.stack.ItemStackSnapshot;
 import org.core.inventory.item.stack.LiveItemStack;
+import org.core.inventory.item.stack.data.ItemStackData;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.registry.RegistryTypes;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class SLiveItemStack implements LiveItemStack {
@@ -61,6 +63,18 @@ public class SLiveItemStack implements LiveItemStack {
     @Override
     public ItemStack copyWithQuantity(int quantity) {
         return new SLiveItemStack(org.spongepowered.api.item.inventory.ItemStack.builder().from(this.stack).quantity(quantity).build());
+    }
+
+    @Override
+    public Optional<ItemStackData> getStackData() {
+        throw new RuntimeException("Not implemented yet");
+
+    }
+
+    @Override
+    public void setStackData(ItemStackData data) {
+        throw new RuntimeException("Not implemented yet");
+
     }
 
     @Override
