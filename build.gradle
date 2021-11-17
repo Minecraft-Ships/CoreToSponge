@@ -38,5 +38,5 @@ dependencies {
 group = 'org.ships'
 version = '1.0-SNAPSHOT'
 description = 'CoreToSponge'
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+java.sourceCompatibility = JavaVersion.VERSION_16
 
