@@ -9,6 +9,7 @@ import org.core.inventory.item.stack.ItemStack;
 import org.core.inventory.item.stack.ItemStackSnapshot;
 import org.core.inventory.item.stack.LiveItemStack;
 import org.core.inventory.item.stack.data.ItemStackData;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.registry.RegistryTypes;
 
@@ -34,7 +35,7 @@ public class SLiveItemStack implements LiveItemStack {
     }
 
     @Override
-    public ItemType getType() {
+    public @NotNull ItemType getType() {
         SpongePlatform platform = ((SpongePlatform) TranslateCore.getPlatform());
         return platform.getItemType(this.stack.type().key(RegistryTypes.ITEM_TYPE).asString()).get();
     }

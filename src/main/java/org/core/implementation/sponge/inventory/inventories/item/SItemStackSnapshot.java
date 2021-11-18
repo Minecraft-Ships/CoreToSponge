@@ -7,6 +7,7 @@ import org.core.implementation.sponge.platform.SpongePlatform;
 import org.core.inventory.item.ItemType;
 import org.core.inventory.item.stack.ItemStack;
 import org.core.inventory.item.stack.data.ItemStackData;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.item.inventory.ItemStackSnapshot;
 import org.spongepowered.api.registry.RegistryTypes;
@@ -33,7 +34,7 @@ public class SItemStackSnapshot implements org.core.inventory.item.stack.ItemSta
     }
 
     @Override
-    public ItemType getType() {
+    public @NotNull ItemType getType() {
         SpongePlatform platform = ((SpongePlatform) TranslateCore.getPlatform());
         return platform.getItemType(this.item.type().key(RegistryTypes.ITEM_TYPE).asString()).get();
     }

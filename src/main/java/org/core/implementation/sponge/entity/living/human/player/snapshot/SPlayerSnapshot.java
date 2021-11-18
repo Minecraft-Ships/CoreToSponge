@@ -43,7 +43,7 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
 
     @Override
     public PlayerInventory getInventory() {
-        return null;
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
@@ -149,6 +149,6 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
 
     @Override
     public LivePlayer teleportEntity(boolean keepInventory) {
-        return null;
+        throw new RuntimeException("Not implemented");
     }
 }
