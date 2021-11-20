@@ -45,12 +45,15 @@ import org.core.world.position.flags.physics.ApplyPhysicsFlag;
 import org.core.world.position.flags.physics.ApplyPhysicsFlags;
 import org.core.world.position.impl.sync.SyncExactPosition;
 import org.core.world.structure.Structure;
+import org.core.world.structure.StructureBuilder;
+import org.core.world.structure.StructureFileBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.registry.RegistryEntry;
 import org.spongepowered.api.registry.RegistryTypes;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -280,6 +283,16 @@ public class SpongePlatform implements Platform {
 
     @Override
     public Collection<Structure> getStructures() {
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    @Override
+    public @NotNull Structure register(StructureBuilder builder) {
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    @Override
+    public @NotNull Structure register(StructureFileBuilder builder) throws IOException {
         throw new RuntimeException("Not implemented yet");
     }
 
