@@ -91,6 +91,11 @@ public class SWorldExtent implements WorldExtent {
     }
 
     @Override
+    public int getMinimumBlockHeight() {
+        return this.world.min().y();
+    }
+
+    @Override
     public SyncExactPosition getPosition(double x, double y, double z) {
         return new SExactPosition(this.world.location(x, y, z));
     }
