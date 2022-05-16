@@ -5,8 +5,8 @@ import org.core.schedule.Scheduler;
 import org.core.schedule.SchedulerBuilder;
 import org.core.schedule.unit.TimeUnit;
 
-import java.io.IOException;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class SSchedulerBuilder implements SchedulerBuilder {
 
@@ -14,7 +14,7 @@ public class SSchedulerBuilder implements SchedulerBuilder {
     protected TimeUnit delayUnit;
     protected Integer iteration;
     protected TimeUnit iterationUnit;
-    protected Runnable executor;
+    protected Consumer<Scheduler> executor;
     protected String displayName;
     protected Scheduler runAfter;
     protected boolean async;
@@ -64,13 +64,13 @@ public class SSchedulerBuilder implements SchedulerBuilder {
     }
 
     @Override
-    public SchedulerBuilder setExecutor(Runnable runnable) {
+    public SchedulerBuilder setRunner(Consumer<Scheduler> runnable) {
         this.executor = runnable;
         return this;
     }
 
     @Override
-    public Runnable getExecutor() {
+    public Consumer<Scheduler> getRunner() {
         return this.executor;
     }
 
@@ -109,9 +109,9 @@ public class SSchedulerBuilder implements SchedulerBuilder {
 
     @Override
     public Scheduler build(Plugin plugin) {
-        if(this.executor == null){
+        if (this.executor==null) {
             System.err.println("SchedulerBuilder was attempted to be built but no executor was set");
-            new IOException("No Executor in build").printStackTrace();
+            throw new RuntimeException("No runner in schedule");
         }
         return new SScheduler(this, plugin);
     }

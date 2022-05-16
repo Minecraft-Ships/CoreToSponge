@@ -7,6 +7,8 @@ import org.core.platform.plugin.Plugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class SEventLaunch {
 
@@ -24,7 +26,7 @@ public class SEventLaunch {
         try {
             this.method.invoke(this.listener, event);
         } catch (IllegalAccessException e) {
-            System.err.println("Failed to know what to do: HEvent found on method, but method is not public on " + this.listener.getClass().getName() + "." + this.method.getName() + "(" + ArrayUtils.toString(", ", p -> p.getType().getSimpleName() + " " + p.getName(), this.method.getParameters()) + ")");
+            System.err.println("Failed to know what to do: HEvent found on method, but method is not public on " + this.listener.getClass().getName() + "." + this.method.getName() + "(" + Arrays.stream(this.method.getParameters()).map(p -> p.getType().getSimpleName()).collect(Collectors.joining(", ")) + ")");
             e.printStackTrace();
         } catch (ExceptionInInitializerError e) {
             System.err.println("Failed to know what to do: EventListener caused exception from " + this.listener.getClass().getName() + "." + this.method.getName() + "(" + ArrayUtils.toString(", ", p -> p.getType().getSimpleName() + " " + p.getName(), this.method.getParameters()) + ")");

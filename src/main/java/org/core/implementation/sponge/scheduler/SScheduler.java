@@ -13,10 +13,11 @@ import org.spongepowered.plugin.PluginContainer;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class SScheduler implements Scheduler {
 
-    protected final Runnable taskToRun;
+    protected final Consumer<Scheduler> taskToRun;
     protected Scheduler runAfter;
     protected final Integer delayCount;
     protected final TimeUnit delayTimeUnit;
@@ -26,7 +27,7 @@ public class SScheduler implements Scheduler {
     protected ScheduledTask task;
 
     public SScheduler(SchedulerBuilder builder, Plugin plugin) {
-        this.taskToRun = builder.getExecutor();
+        this.taskToRun = builder.getRunner();
         this.iteration = builder.getIteration().orElse(null);
         this.iterationTimeUnit = builder.getIterationUnit().orElse(null);
         this.delayCount = builder.getDelay().orElse(0);
@@ -86,7 +87,7 @@ public class SScheduler implements Scheduler {
     }
 
     @Override
-    public Runnable getExecutor() {
+    public Consumer<Scheduler> getRunner() {
         return this.taskToRun;
     }
 
@@ -94,7 +95,7 @@ public class SScheduler implements Scheduler {
 
         @Override
         public void run() {
-            SScheduler.this.taskToRun.run();
+            SScheduler.this.taskToRun.accept(SScheduler.this);
             Scheduler scheduler = SScheduler.this.runAfter;
             if (scheduler!=null) {
                 scheduler.run();
