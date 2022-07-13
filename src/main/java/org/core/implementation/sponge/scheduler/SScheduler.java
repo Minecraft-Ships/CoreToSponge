@@ -15,7 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class SScheduler implements Scheduler {
+public class SScheduler implements Scheduler.Native {
 
     protected final Consumer<Scheduler> taskToRun;
     protected Scheduler runAfter;
@@ -25,6 +25,7 @@ public class SScheduler implements Scheduler {
     protected final TimeUnit iterationTimeUnit;
     protected final Plugin plugin;
     protected ScheduledTask task;
+    protected String displayName;
 
     public SScheduler(SchedulerBuilder builder, Plugin plugin) {
         this.taskToRun = builder.getRunner();
@@ -33,6 +34,7 @@ public class SScheduler implements Scheduler {
         this.delayCount = builder.getDelay().orElse(0);
         this.delayTimeUnit = builder.getDelayUnit().orElse(null);
         this.plugin = plugin;
+        this.displayName = builder.getDisplayName().orElseThrow(() -> new IllegalStateException("No display name set"));
         builder.getToRunAfter().ifPresent(s -> this.runAfter = s);
     }
 
@@ -42,14 +44,24 @@ public class SScheduler implements Scheduler {
 
     private java.util.concurrent.TimeUnit to(TimeUnit unit1) {
         java.util.concurrent.TimeUnit unit;
-        if (unit1==TimeUnit.SECONDS) {
+        if (unit1 == TimeUnit.SECONDS) {
             unit = java.util.concurrent.TimeUnit.SECONDS;
-        } else if (unit1==TimeUnit.MINUTES) {
+        } else if (unit1 == TimeUnit.MINUTES) {
             unit = java.util.concurrent.TimeUnit.MINUTES;
         } else {
             throw new IllegalStateException("Unknown unit");
         }
         return unit;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return this.displayName;
+    }
+
+    @Override
+    public Plugin getPlugin() {
+        return this.plugin;
     }
 
     @Override
@@ -64,15 +76,15 @@ public class SScheduler implements Scheduler {
 
 
         Task.Builder builder = Task.builder().plugin(container).execute(new SScheduler.RunAfterScheduler());
-        if (this.delayCount!=null) {
-            if (this.delayTimeUnit==null || this.delayTimeUnit==TimeUnit.MINECRAFT_TICKS) {
+        if (this.delayCount != null) {
+            if (this.delayTimeUnit == null || this.delayTimeUnit == TimeUnit.MINECRAFT_TICKS) {
                 builder = builder.delay(Ticks.duration(this.delayCount));
             } else {
                 builder = builder.delay(this.delayCount, this.to(this.delayTimeUnit));
             }
         }
-        if (this.iteration!=null) {
-            if (this.iterationTimeUnit==null || this.iterationTimeUnit==TimeUnit.MINECRAFT_TICKS) {
+        if (this.iteration != null) {
+            if (this.iterationTimeUnit == null || this.iterationTimeUnit == TimeUnit.MINECRAFT_TICKS) {
                 builder = builder.interval(Ticks.duration(this.iteration));
             } else {
                 builder = builder.interval(this.iteration, this.to(this.iterationTimeUnit));
@@ -97,7 +109,7 @@ public class SScheduler implements Scheduler {
         public void run() {
             SScheduler.this.taskToRun.accept(SScheduler.this);
             Scheduler scheduler = SScheduler.this.runAfter;
-            if (scheduler!=null) {
+            if (scheduler != null) {
                 scheduler.run();
             }
         }

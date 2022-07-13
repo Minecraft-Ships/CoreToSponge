@@ -12,9 +12,11 @@ import org.core.implementation.sponge.events.SEventManager;
 import org.core.implementation.sponge.platform.PlatformConsole;
 import org.core.implementation.sponge.platform.SpongePlatform;
 import org.core.implementation.sponge.platform.SpongePlatformServer;
+import org.core.implementation.sponge.scheduler.SScheduleManager;
 import org.core.implementation.sponge.scheduler.SSchedulerBuilder;
 import org.core.platform.Platform;
 import org.core.platform.PlatformServer;
+import org.core.schedule.ScheduleManager;
 import org.core.schedule.SchedulerBuilder;
 import org.core.source.command.ConsoleSource;
 import org.core.world.boss.ServerBossBar;
@@ -26,6 +28,7 @@ public class CoreToSponge extends TranslateCore.CoreImplementation {
 
     protected final SpongePlatform platform = new SpongePlatform();
     protected final SEventManager eventManager = new SEventManager();
+    protected final SScheduleManager scheduleManager = new SScheduleManager();
     protected final PlatformConsole console = new PlatformConsole();
     protected final SpongePlatformServer server = new SpongePlatformServer(org.spongepowered.api.Sponge.server());
 
@@ -42,6 +45,11 @@ public class CoreToSponge extends TranslateCore.CoreImplementation {
     }
 
     @Override
+    public ScheduleManager getRawScheduleManager() {
+        return this.scheduleManager;
+    }
+
+    @Override
     public EventManager getRawEventManager() {
         return this.eventManager;
     }
@@ -52,16 +60,11 @@ public class CoreToSponge extends TranslateCore.CoreImplementation {
     }
 
     @Override
-    public SchedulerBuilder createRawSchedulerBuilder() {
-        return new SSchedulerBuilder();
-    }
-
-    @Override
     public ConfigurationStream.ConfigurationFile createRawConfigurationFile(File file, ConfigurationFormat type) {
-        if (file==null) {
+        if (file == null) {
             throw new IllegalArgumentException("Unknown file");
         }
-        if (type==null) {
+        if (type == null) {
             throw new IllegalArgumentException("Unknown Configuration Loader Format");
         }
         if (type.equals(ConfigurationFormat.FORMAT_YAML)) {
