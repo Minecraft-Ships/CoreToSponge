@@ -12,6 +12,7 @@ import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.plugin.PluginContainer;
 
 import java.lang.reflect.InvocationTargetException;
+import java.time.LocalTime;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -52,6 +53,26 @@ public class SScheduler implements Scheduler.Native {
             throw new IllegalStateException("Unknown unit");
         }
         return unit;
+    }
+
+    @Override
+    public Optional<LocalTime> getStartScheduleTime() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<LocalTime> getStartRunnerTime() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<LocalTime> getEndTime() {
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean isAsync() {
+        return false;
     }
 
     @Override
