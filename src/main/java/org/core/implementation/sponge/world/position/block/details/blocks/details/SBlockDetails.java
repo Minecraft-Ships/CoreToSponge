@@ -34,7 +34,7 @@ public abstract class SBlockDetails implements BlockDetails, StateDetails {
     }
 
     @Override
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public <P extends BlockPosition> BlockSnapshot<P> createSnapshot(P position) {
         /*org.spongepowered.api.world.Location<? extends World<?, ?>, ?> loc = ((SBlockPosition) position).getSpongeLocation();
         if (loc.world() instanceof ServerWorld) {

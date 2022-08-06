@@ -150,7 +150,7 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
                     .position(position1.getSpongeLocation().blockPosition())
                     .build();
         }
-        if (this.tileEntitySnapshot!=null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot) {
+        if (this.tileEntitySnapshot != null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot) {
             List<Component> lines = new ArrayList<>();
             for (AText text : ((SignTileEntity) this.tileEntitySnapshot).getText()) {
                 AdventureText aText = (AdventureText) text;
@@ -177,7 +177,7 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
                     .position(position1.getSpongeLocation().blockPosition())
                     .build();
         }
-        if (this.tileEntitySnapshot!=null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot) {
+        if (this.tileEntitySnapshot != null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot) {
             List<Component> lines = new ArrayList<>();
             for (AText text : ((SignTileEntity) this.tileEntitySnapshot).getText()) {
                 lines.add(((AdventureText) text).getComponent());
@@ -222,7 +222,7 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
     }
 
     @Override
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public <BP extends BlockPosition> BlockSnapshot<BP> createSnapshot(BP position) {
         if (position instanceof SyncBlockPosition) {
             return (BlockSnapshot<BP>) this.createSnapshot((SyncBlockPosition) position);

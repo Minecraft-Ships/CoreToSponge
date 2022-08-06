@@ -125,6 +125,7 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     public boolean hasPermission(String permission) {
         if (!(this.entity instanceof ServerPlayer)) {
             return true;

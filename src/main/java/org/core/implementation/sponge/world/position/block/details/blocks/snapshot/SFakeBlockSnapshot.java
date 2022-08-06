@@ -21,7 +21,7 @@ public abstract class SFakeBlockSnapshot<P extends BlockPosition> implements Blo
         }
 
         @Override
-        @Deprecated
+        @Deprecated(forRemoval = true)
         public <T extends BlockPosition> BlockSnapshot<T> createSnapshot(T position) {
             throw new RuntimeException("Remove this method");
         }
@@ -49,7 +49,7 @@ public abstract class SFakeBlockSnapshot<P extends BlockPosition> implements Blo
         }
 
         @Override
-        @Deprecated
+        @Deprecated(forRemoval = true)
         public <T extends BlockPosition> BlockSnapshot<T> createSnapshot(T position) {
             throw new RuntimeException("Remove this method");
         }
