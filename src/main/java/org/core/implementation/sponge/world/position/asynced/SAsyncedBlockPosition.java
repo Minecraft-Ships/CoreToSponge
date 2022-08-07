@@ -1,11 +1,11 @@
 package org.core.implementation.sponge.world.position.asynced;
 
+import org.core.implementation.sponge.world.position.block.details.blocks.details.SAsyncedBlockDetails;
+import org.core.implementation.sponge.world.position.block.details.blocks.snapshot.SFakeBlockSnapshot;
 import org.core.implementation.sponge.world.position.synced.SBlockPosition;
 import org.core.vector.type.Vector3;
 import org.core.world.position.impl.async.ASyncBlockPosition;
 import org.core.world.position.impl.async.ASyncExactPosition;
-import org.core.implementation.sponge.world.position.block.details.blocks.details.SAsyncedBlockDetails;
-import org.core.implementation.sponge.world.position.block.details.blocks.snapshot.SFakeBlockSnapshot;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 

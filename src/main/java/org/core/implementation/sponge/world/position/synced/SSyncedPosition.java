@@ -24,7 +24,8 @@ import java.util.function.Function;
 
 public abstract class SSyncedPosition<N extends Number> extends SPosition<N> implements SyncPosition<N> {
 
-    public SSyncedPosition(Location<? extends World<?, ?>, ?> location, Function<? extends Location<? extends World<?, ?>, ?>, ? extends SPosition<N>> newInstance) {
+    public SSyncedPosition(Location<? extends World<?, ?>, ?> location,
+            Function<? extends Location<? extends World<?, ?>, ?>, ? extends SPosition<N>> newInstance) {
         super(location, newInstance);
     }
 
@@ -46,7 +47,9 @@ public abstract class SSyncedPosition<N extends Number> extends SPosition<N> imp
     public SyncPosition<N> setBlock(BlockDetails details, LivePlayer... players) {
         BlockState state = ((StateDetails) details).getState();
         for (LivePlayer player : players) {
-            ((SLivePlayer) player).getSpongeEntity().sendBlockChange(this.getX().intValue(), this.getY().intValue(), this.getZ().intValue(), state);
+            ((SLivePlayer) player)
+                    .getSpongeEntity()
+                    .sendBlockChange(this.getX().intValue(), this.getY().intValue(), this.getZ().intValue(), state);
         }
         return this;
     }
@@ -71,7 +74,8 @@ public abstract class SSyncedPosition<N extends Number> extends SPosition<N> imp
     }
 
     @Override
-    public <E extends LiveEntity, S extends EntitySnapshot<E>> Optional<S> createEntity(EntityType<E, ? extends S> type) {
+    public <E extends LiveEntity, S extends EntitySnapshot<E>> Optional<S> createEntity(
+            EntityType<E, ? extends S> type) {
         return Optional.empty();
     }
 }

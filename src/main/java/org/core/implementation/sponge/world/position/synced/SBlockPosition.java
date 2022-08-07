@@ -42,12 +42,15 @@ public class SBlockPosition extends SSyncedPosition<Integer> implements SyncBloc
 
     @Override
     public SBlockPosition getRelative(Vector3<?> vector) {
-        return new SBlockPosition(this.location.add(vector.getX().doubleValue(), vector.getY().doubleValue(), vector.getZ().doubleValue()));
+        return new SBlockPosition(this.location.add(vector.getX().doubleValue(), vector.getY().doubleValue(),
+                vector.getZ().doubleValue()));
     }
 
     @Override
     public SBlockSnapshot.SSyncedBlockSnapshot getBlockDetails() {
-        return new SBlockSnapshot.SSyncedBlockSnapshot(this.location.onServer().orElseThrow(() -> new IllegalStateException("Client isn't supported yet")), (Function<Location<? extends World<?, ?>, ?>, SyncBlockPosition>) (Object) this.newInstance);
+        return new SBlockSnapshot.SSyncedBlockSnapshot(
+                this.location.onServer().orElseThrow(() -> new IllegalStateException("Client isn't supported yet")),
+                (Function<Location<? extends World<?, ?>, ?>, SyncBlockPosition>) (Object) this.newInstance);
     }
 
     @Override
@@ -59,14 +62,23 @@ public class SBlockPosition extends SSyncedPosition<Integer> implements SyncBloc
     public SBlockPosition setBlock(BlockDetails details, PositionFlag.SetFlag... flags) {
         Optional<ServerLocation> opLocSer = this.location.onServer();
         if (details instanceof SBlockSnapshot && opLocSer.isPresent()) {
-            SBlockSnapshot<? extends Position<Integer>> snapshot = (SBlockSnapshot<? extends Position<Integer>>) details;
+            SBlockSnapshot<? extends Position<Integer>> snapshot =
+                    (SBlockSnapshot<? extends Position<Integer>>) details;
             BlockSnapshot snapshot1 = snapshot.getSnapshot();
             snapshot1 = snapshot1.withLocation(opLocSer.get());
-            SApplyPhysicsFlag physicsFlag = (SApplyPhysicsFlag) Stream.of(flags).filter(f -> f instanceof ApplyPhysicsFlag).findAny().orElse(ApplyPhysicsFlags.NONE.get());
+            SApplyPhysicsFlag physicsFlag = (SApplyPhysicsFlag) Stream
+                    .of(flags)
+                    .filter(f -> f instanceof ApplyPhysicsFlag)
+                    .findAny()
+                    .orElse(ApplyPhysicsFlags.NONE.get());
             snapshot1.restore(true, physicsFlag.getFlag());
         } else {
             org.spongepowered.api.block.BlockState state = ((StateDetails) details).getState();
-            SApplyPhysicsFlag physicsFlag = (SApplyPhysicsFlag) Stream.of(flags).filter(f -> f instanceof ApplyPhysicsFlag).findAny().orElse(ApplyPhysicsFlags.NONE.get());
+            SApplyPhysicsFlag physicsFlag = (SApplyPhysicsFlag) Stream
+                    .of(flags)
+                    .filter(f -> f instanceof ApplyPhysicsFlag)
+                    .findAny()
+                    .orElse(ApplyPhysicsFlags.NONE.get());
             this.location.setBlock(state, physicsFlag.getFlag());
             if (details.get(KeyedData.TILED_ENTITY).isPresent()) {
                 TileEntitySnapshot<? extends TileEntity> snapshot = details.get(KeyedData.TILED_ENTITY).get();
@@ -84,7 +96,9 @@ public class SBlockPosition extends SSyncedPosition<Integer> implements SyncBloc
     public SyncPosition<Integer> setBlock(BlockDetails details, LivePlayer... players) {
         for (LivePlayer player : players) {
             if (player.getPosition().getWorld().equals(this.getWorld())) {
-                ((SLivePlayer) player).getSpongeEntity().sendBlockChange(this.location.blockPosition(), ((StateDetails) details).getState());
+                ((SLivePlayer) player)
+                        .getSpongeEntity()
+                        .sendBlockChange(this.location.blockPosition(), ((StateDetails) details).getState());
             }
         }
         return this;

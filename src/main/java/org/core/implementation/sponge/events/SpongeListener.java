@@ -48,16 +48,19 @@ public class SpongeListener {
         Set<SEventLaunch> methods = new HashSet<>();
         TranslateCore.getEventManager().getEventListeners().forEach((key, value) -> value.forEach(el -> {
             for (Method method : el.getClass().getDeclaredMethods()) {
-                if (method.getDeclaredAnnotationsByType(HEvent.class)==null) {
+                if (method.getDeclaredAnnotationsByType(HEvent.class) == null) {
                     continue;
                 }
                 if (method.getName().contains("lambda") || method.getName().contains("$")) {
                     continue;
                 }
                 Parameter[] parameters = method.getParameters();
-                if (parameters.length==0) {
-                    TranslateCore.getConsole().sendMessage(AText.ofPlain("Failed to know what to do: HEvent found on " +
-                            "method, but no event on " + el.getClass().getName() + "." + method.getName() + "()").withColour(NamedTextColours.RED));
+                if (parameters.length == 0) {
+                    TranslateCore.getConsole().sendMessage(AText
+                            .ofPlain("Failed to know what to do: HEvent found on " +
+                                    "method, but no event on " + el.getClass().getName() + "." + method.getName() +
+                                    "()")
+                            .withColour(NamedTextColours.RED));
                     continue;
                 }
                 if (!Modifier.isPublic(method.getModifiers())) {
@@ -70,7 +73,8 @@ public class SpongeListener {
                             .sendMessage(
                                     AText
                                             .ofPlain(
-                                                    "Failed to know what to do: HEvent found on method, but no known event on "
+                                                    "Failed to know what to do: HEvent found on method, but no known " +
+                                                            "event on "
                                                             + el.getClass().getName()
                                                             + "."
                                                             + method.getName()
@@ -97,7 +101,8 @@ public class SpongeListener {
         SignTileEntitySnapshot from = new SSignTileEntitySnapshot(event.text().asImmutable());
         SignTileEntitySnapshot to = new SSignTileEntitySnapshot(event.text());
         if (rootCause instanceof org.spongepowered.api.entity.living.player.Player) {
-            LivePlayer player = (LivePlayer) ((SpongePlatform) TranslateCore.getPlatform()).createEntityInstance((Entity) rootCause);
+            LivePlayer player = (LivePlayer) ((SpongePlatform) TranslateCore.getPlatform()).createEntityInstance(
+                    (Entity) rootCause);
             sEvent = new SSignChangeEvent.SSignChangeEventByPlayer(bp, from, to, player);
         } else {
             sEvent = new SSignChangeEvent(bp, from, to);
@@ -107,7 +112,12 @@ public class SpongeListener {
             event.setCancelled(true);
         }
         ListValue.Mutable<Component> data = event.text();
-        List<Component> text = sEvent.getTo().getText().stream().map(t -> ((AdventureText) t).getComponent()).collect(Collectors.toList());
+        List<Component> text = sEvent
+                .getTo()
+                .getText()
+                .stream()
+                .map(t -> ((AdventureText) t).getComponent())
+                .collect(Collectors.toList());
         data.set(text);
     }
 
@@ -121,11 +131,15 @@ public class SpongeListener {
         this.onPlayerInteractWithBlock(event, player);
     }
 
-    private void onPlayerInteractWithBlock(org.spongepowered.api.event.block.InteractBlockEvent event, org.spongepowered.api.entity.living.player.Player player) {
+    private void onPlayerInteractWithBlock(org.spongepowered.api.event.block.InteractBlockEvent event,
+            org.spongepowered.api.entity.living.player.Player player) {
         LivePlayer player1 = new SLivePlayer(player);
         BlockSnapshot snapshot = event.block();
 
-        SyncBlockPosition bp = player1.getPosition().getWorld().getPosition(snapshot.position().x(), snapshot.position().y(), snapshot.position().z());
+        SyncBlockPosition bp = player1
+                .getPosition()
+                .getWorld()
+                .getPosition(snapshot.position().x(), snapshot.position().y(), snapshot.position().z());
         int action = -1;
         if (event instanceof org.spongepowered.api.event.block.InteractBlockEvent.Primary) {
             action = EntityInteractEvent.PRIMARY_CLICK_ACTION;
@@ -133,7 +147,8 @@ public class SpongeListener {
             action = EntityInteractEvent.SECONDARY_CLICK_ACTION;
         }
         Direction direction = DirectionUtils.getCoreDirection(event.targetSide());
-        SEntityInteractEvent.SPlayerInteractWithBlockEvent event1 = new SEntityInteractEvent.SPlayerInteractWithBlockEvent(bp, action, direction, player1);
+        SEntityInteractEvent.SPlayerInteractWithBlockEvent event1 = new SEntityInteractEvent.SPlayerInteractWithBlockEvent(
+                bp, action, direction, player1);
         call(event1);
         if (event1.isCancelled()) {
             ((Cancellable) event).setCancelled(true);

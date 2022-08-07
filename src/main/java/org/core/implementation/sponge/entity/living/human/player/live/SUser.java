@@ -38,7 +38,9 @@ public class SUser implements User {
         if (!opAccount.isPresent()) {
             return new BigDecimal(0);
         }
-        return opAccount.get().balance(Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency());
+        return opAccount
+                .get()
+                .balance(Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency());
     }
 
     @Override
@@ -58,7 +60,11 @@ public class SUser implements User {
     }
 
     private Optional<UniqueAccount> getAccount() {
-        Optional<ServiceRegistration<EconomyService>> opReg = Sponge.serviceProvider().registration(EconomyService.class);
-        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration.service().findOrCreateAccount(this.getUniqueId()));
+        Optional<ServiceRegistration<EconomyService>> opReg = Sponge
+                .serviceProvider()
+                .registration(EconomyService.class);
+        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration
+                .service()
+                .findOrCreateAccount(this.getUniqueId()));
     }
 }

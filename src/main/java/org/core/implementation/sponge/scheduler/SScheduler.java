@@ -19,12 +19,12 @@ import java.util.function.Consumer;
 public class SScheduler implements Scheduler.Native {
 
     protected final Consumer<Scheduler> taskToRun;
-    protected Scheduler runAfter;
     protected final Integer delayCount;
     protected final TimeUnit delayTimeUnit;
     protected final Integer iteration;
     protected final TimeUnit iterationTimeUnit;
     protected final Plugin plugin;
+    protected Scheduler runAfter;
     protected ScheduledTask task;
     protected String displayName;
 

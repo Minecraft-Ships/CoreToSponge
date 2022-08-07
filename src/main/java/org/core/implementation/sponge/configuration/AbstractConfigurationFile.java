@@ -14,7 +14,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L extends ConfigurationLoader<N>> implements ConfigurationStream.ConfigurationFile {
+public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L extends ConfigurationLoader<N>>
+        implements ConfigurationStream.ConfigurationFile {
 
     protected final File file;
     protected final L loader;
@@ -31,7 +32,8 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
         return this.file;
     }
 
-    private <T> Optional<T> get(org.core.config.ConfigurationNode node, Function<? super ConfigurationNode, ? extends T> value) {
+    private <T> Optional<T> get(org.core.config.ConfigurationNode node,
+            Function<? super ConfigurationNode, ? extends T> value) {
         @NonNull ConfigurationNode node1 = this.root.node(node.getObjectPath());
         if (node1.empty()) {
             return Optional.empty();
@@ -60,7 +62,8 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
     }
 
     @Override
-    public <T, C extends Collection<T>> C parseCollection(org.core.config.ConfigurationNode node, Parser<? super String, T> parser, C collection) {
+    public <T, C extends Collection<T>> C parseCollection(org.core.config.ConfigurationNode node,
+            Parser<? super String, T> parser, C collection) {
         @NonNull ConfigurationNode node1 = this.root.node(node.getObjectPath());
         if (node1.empty()) {
             return collection;
@@ -127,7 +130,8 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
     }
 
     @Override
-    public <T> void set(org.core.config.ConfigurationNode node, Parser<String, ? super T> parser, Collection<T> collection) {
+    public <T> void set(org.core.config.ConfigurationNode node, Parser<String, ? super T> parser,
+            Collection<T> collection) {
         List<String> list = new ArrayList<>();
         collection.forEach(v -> list.add(parser.unparse(v)));
         try {
@@ -141,14 +145,19 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
     public Set<org.core.config.ConfigurationNode> getChildren(org.core.config.ConfigurationNode node) {
         Collection<? extends ConfigurationNode> values = this.root.node(node.getObjectPath()).childrenList();
         Set<org.core.config.ConfigurationNode> set = new HashSet<>();
-        values.stream().filter(n -> n.path().size()==(node.getPath().length + 1)).filter(n -> {
-            for (int A = 0; A < node.getPath().length; A++) {
-                if (!node.getPath()[A].equals(n.path().get(A).toString())) {
-                    return false;
-                }
-            }
-            return true;
-        }).forEach(v -> set.add(new org.core.config.ConfigurationNode(ArrayUtils.convert(String.class, Object::toString, v.path()))));
+        values
+                .stream()
+                .filter(n -> n.path().size() == (node.getPath().length + 1))
+                .filter(n -> {
+                    for (int A = 0; A < node.getPath().length; A++) {
+                        if (!node.getPath()[A].equals(n.path().get(A).toString())) {
+                            return false;
+                        }
+                    }
+                    return true;
+                })
+                .forEach(v -> set.add(new org.core.config.ConfigurationNode(
+                        ArrayUtils.convert(String.class, Object::toString, v.path()))));
         return set;
     }
 

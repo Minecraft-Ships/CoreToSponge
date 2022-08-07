@@ -3,13 +3,13 @@ package org.core.implementation.sponge.platform;
 import org.core.command.CommandLauncher;
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.entity.living.human.player.User;
+import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
+import org.core.implementation.sponge.entity.living.human.player.live.SUser;
 import org.core.implementation.sponge.world.SWorldExtent;
 import org.core.platform.PlatformServer;
 import org.core.platform.plugin.Plugin;
 import org.core.world.WorldExtent;
 import org.core.world.position.block.details.BlockSnapshot;
-import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
-import org.core.implementation.sponge.entity.living.human.player.live.SUser;
 import org.spongepowered.api.ResourceKey;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
@@ -65,7 +65,8 @@ public class SpongePlatformServer implements PlatformServer {
     }
 
     @Override
-    public void applyBlockSnapshots(Collection<? extends BlockSnapshot.AsyncBlockSnapshot> collection, Plugin plugin, Runnable onComplete) {
+    public void applyBlockSnapshots(Collection<? extends BlockSnapshot.AsyncBlockSnapshot> collection, Plugin plugin,
+            Runnable onComplete) {
         throw new RuntimeException("Not implemented yet");
     }
 
@@ -75,7 +76,9 @@ public class SpongePlatformServer implements PlatformServer {
         if (opPlayer.isPresent()) {
             return CompletableFuture.supplyAsync(() -> opPlayer.map(SLivePlayer::new));
         }
-        CompletableFuture<Optional<org.spongepowered.api.entity.living.player.User>> compFutureOpUser = this.platform.userManager().load(uuid);
+        CompletableFuture<Optional<org.spongepowered.api.entity.living.player.User>> compFutureOpUser = this.platform
+                .userManager()
+                .load(uuid);
         return compFutureOpUser.thenApply(opUser -> opUser.map(SUser::new));
     }
 

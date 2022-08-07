@@ -17,6 +17,8 @@ import java.util.Optional;
 
 public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySnapshot<E> {
 
+    protected final Collection<EntitySnapshot<? extends LiveEntity>> passengers = new HashSet<>();
+    protected final E createdFrom;
     protected double pitch;
     protected double yaw;
     protected double roll;
@@ -26,8 +28,6 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     protected AdventureText customName;
     protected boolean customNameVisible;
     protected boolean isOnGround;
-    protected final Collection<EntitySnapshot<? extends LiveEntity>> passengers = new HashSet<>();
-    protected final E createdFrom;
 
     public SEntitySnapshot(EntitySnapshot<E> snapshot) {
         this.init(snapshot);
@@ -169,13 +169,15 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     }
 
     @Override
-    public EntitySnapshot<? extends LiveEntity> addPassengers(Collection<? extends EntitySnapshot<? extends LiveEntity>> entities) {
+    public EntitySnapshot<? extends LiveEntity> addPassengers(
+            Collection<? extends EntitySnapshot<? extends LiveEntity>> entities) {
         this.passengers.addAll(entities);
         return this;
     }
 
     @Override
-    public EntitySnapshot<? extends LiveEntity> removePassengers(Collection<EntitySnapshot<? extends LiveEntity>> entities) {
+    public EntitySnapshot<? extends LiveEntity> removePassengers(
+            Collection<EntitySnapshot<? extends LiveEntity>> entities) {
         this.passengers.removeAll(entities);
         return this;
     }

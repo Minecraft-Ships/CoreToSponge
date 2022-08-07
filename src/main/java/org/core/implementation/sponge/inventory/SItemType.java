@@ -1,10 +1,10 @@
 package org.core.implementation.sponge.inventory;
 
+import org.core.implementation.sponge.inventory.inventories.item.SItemStackSnapshot;
+import org.core.implementation.sponge.world.position.block.SBlockType;
 import org.core.inventory.item.ItemType;
 import org.core.inventory.item.stack.ItemStackSnapshot;
 import org.core.world.position.block.BlockType;
-import org.core.implementation.sponge.inventory.inventories.item.SItemStackSnapshot;
-import org.core.implementation.sponge.world.position.block.SBlockType;
 import org.spongepowered.api.item.inventory.ItemStack;
 import org.spongepowered.api.registry.RegistryTypes;
 

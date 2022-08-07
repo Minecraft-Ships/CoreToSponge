@@ -2,6 +2,9 @@ package org.core.implementation.sponge.world;
 
 import org.core.TranslateCore;
 import org.core.entity.LiveEntity;
+import org.core.implementation.sponge.platform.SpongePlatform;
+import org.core.implementation.sponge.world.position.synced.SBlockPosition;
+import org.core.implementation.sponge.world.position.synced.SExactPosition;
 import org.core.world.ChunkExtent;
 import org.core.world.WorldExtent;
 import org.core.world.position.block.entity.LiveTileEntity;
@@ -10,9 +13,6 @@ import org.core.world.position.impl.async.ASyncExactPosition;
 import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.core.world.position.impl.sync.SyncExactPosition;
 import org.jetbrains.annotations.NotNull;
-import org.core.implementation.sponge.platform.SpongePlatform;
-import org.core.implementation.sponge.world.position.synced.SBlockPosition;
-import org.core.implementation.sponge.world.position.synced.SExactPosition;
 import org.spongepowered.api.util.AABB;
 import org.spongepowered.api.world.chunk.WorldChunk;
 
@@ -61,7 +61,11 @@ public class SLoadedChunkExtent implements ChunkExtent {
     @Override
     public Set<LiveEntity> getEntities() {
         SpongePlatform platform = ((SpongePlatform) TranslateCore.getPlatform());
-        return this.chunk.entities(AABB.of(this.chunk.min(), this.chunk.max())).stream().map(platform::createEntityInstance).collect(Collectors.toSet());
+        return this.chunk
+                .entities(AABB.of(this.chunk.min(), this.chunk.max()))
+                .stream()
+                .map(platform::createEntityInstance)
+                .collect(Collectors.toSet());
     }
 
     @Override

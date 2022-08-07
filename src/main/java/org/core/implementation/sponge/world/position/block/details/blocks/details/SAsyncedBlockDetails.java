@@ -31,7 +31,8 @@ public class SAsyncedBlockDetails extends SBlockDetails {
         return new SAsyncedBlockDetails(this.blockstate.copy());
     }
 
-    private org.spongepowered.api.block.BlockSnapshot t(org.spongepowered.api.world.Location<? extends World<?, ?>, ?> loc) {
+    private org.spongepowered.api.block.BlockSnapshot t(
+            org.spongepowered.api.world.Location<? extends World<?, ?>, ?> loc) {
         if (loc.world() instanceof ServerWorld) {
             return org.spongepowered.api.block.BlockSnapshot.builder()
                     .blockState(this.blockstate)

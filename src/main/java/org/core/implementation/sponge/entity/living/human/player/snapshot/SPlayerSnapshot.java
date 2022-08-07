@@ -123,7 +123,10 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
     @Override
     public BigDecimal getBalance() {
         Optional<UniqueAccount> opAccount = this.getAccount();
-        return opAccount.map(uniqueAccount -> uniqueAccount.balance(Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency())).orElseGet(() -> new BigDecimal(0));
+        return opAccount
+                .map(uniqueAccount -> uniqueAccount.balance(
+                        Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency()))
+                .orElseGet(() -> new BigDecimal(0));
     }
 
     @Override
@@ -143,8 +146,12 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
     }
 
     private Optional<UniqueAccount> getAccount() {
-        Optional<ServiceRegistration<EconomyService>> opReg = Sponge.serviceProvider().registration(EconomyService.class);
-        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration.service().findOrCreateAccount(this.getUniqueId()));
+        Optional<ServiceRegistration<EconomyService>> opReg = Sponge
+                .serviceProvider()
+                .registration(EconomyService.class);
+        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration
+                .service()
+                .findOrCreateAccount(this.getUniqueId()));
     }
 
     @Override

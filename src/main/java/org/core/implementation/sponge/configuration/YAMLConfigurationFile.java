@@ -8,7 +8,8 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader;
 import java.io.File;
 import java.io.IOException;
 
-public class YAMLConfigurationFile extends AbstractConfigurationFile<CommentedConfigurationNode, YamlConfigurationLoader> {
+public class YAMLConfigurationFile
+        extends AbstractConfigurationFile<CommentedConfigurationNode, YamlConfigurationLoader> {
 
     public YAMLConfigurationFile(File file) {
         super(file, YamlConfigurationLoader

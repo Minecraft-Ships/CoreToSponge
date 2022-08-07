@@ -40,7 +40,8 @@ public class DirectionSnapshotWrapper implements DirectionalData {
         org.spongepowered.api.util.Direction direction1 = DirectionUtils.getSpongeDirection(direction);
         boolean check = this.details.setKey(Keys.DIRECTION, direction1);
         if (!check) {
-            throw new DirectionNotSupported(direction, this.details.getState().type().key(RegistryTypes.BLOCK_TYPE).asString());
+            throw new DirectionNotSupported(direction,
+                    this.details.getState().type().key(RegistryTypes.BLOCK_TYPE).asString());
         }
         return this;
     }

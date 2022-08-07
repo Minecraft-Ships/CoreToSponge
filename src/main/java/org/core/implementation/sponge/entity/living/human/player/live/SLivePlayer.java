@@ -68,8 +68,20 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     }
 
     @Override
+    public SLivePlayer setExhaustionLevel(double value) throws IndexOutOfBoundsException {
+        this.getSpongeEntity().offer(Keys.EXHAUSTION, value);
+        return this;
+    }
+
+    @Override
     public double getSaturationLevel() {
         return this.getSpongeEntity().get(Keys.SATURATION).get();
+    }
+
+    @Override
+    public SLivePlayer setSaturationLevel(double value) throws IndexOutOfBoundsException {
+        this.getSpongeEntity().offer(Keys.SATURATION, value);
+        return this;
     }
 
     @Override
@@ -88,26 +100,14 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     }
 
     @Override
-    public SLivePlayer setFood(int value) throws IndexOutOfBoundsException {
-        this.getSpongeEntity().offer(Keys.FOOD_LEVEL, value);
-        return this;
-    }
-
-    @Override
-    public SLivePlayer setExhaustionLevel(double value) throws IndexOutOfBoundsException {
-        this.getSpongeEntity().offer(Keys.EXHAUSTION, value);
-        return this;
-    }
-
-    @Override
-    public SLivePlayer setSaturationLevel(double value) throws IndexOutOfBoundsException {
-        this.getSpongeEntity().offer(Keys.SATURATION, value);
-        return this;
-    }
-
-    @Override
     public SLivePlayer setSneaking(boolean sneaking) {
         this.getSpongeEntity().offer(Keys.IS_SNEAKING, sneaking);
+        return this;
+    }
+
+    @Override
+    public SLivePlayer setFood(int value) throws IndexOutOfBoundsException {
+        this.getSpongeEntity().offer(Keys.FOOD_LEVEL, value);
         return this;
     }
 
@@ -165,7 +165,9 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
         CommandResult result;
         Server server = ((SpongePlatformServer) TranslateCore.getServer()).getServer();
         try {
-            result = server.commandManager().process((Subject) this.getSpongeEntity(), server.broadcastAudience(), wholeCommand);
+            result = server
+                    .commandManager()
+                    .process((Subject) this.getSpongeEntity(), server.broadcastAudience(), wholeCommand);
         } catch (CommandException e) {
             throw new IllegalStateException(e);
         }
@@ -178,7 +180,9 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
         if (!opAccount.isPresent()) {
             return new BigDecimal(0);
         }
-        return opAccount.get().balance(Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency());
+        return opAccount
+                .get()
+                .balance(Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency());
     }
 
     @Override
@@ -198,7 +202,11 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     }
 
     private Optional<UniqueAccount> getAccount() {
-        Optional<ServiceRegistration<EconomyService>> opReg = Sponge.serviceProvider().registration(EconomyService.class);
-        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration.service().findOrCreateAccount(this.getUniqueId()));
+        Optional<ServiceRegistration<EconomyService>> opReg = Sponge
+                .serviceProvider()
+                .registration(EconomyService.class);
+        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration
+                .service()
+                .findOrCreateAccount(this.getUniqueId()));
     }
 }

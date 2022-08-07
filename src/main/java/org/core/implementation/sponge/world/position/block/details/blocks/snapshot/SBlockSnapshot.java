@@ -39,97 +39,33 @@ import java.util.function.Function;
 
 public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSnapshot<P>, StateDetails {
 
-    public static class SAsyncedBlockSnapshot extends SBlockSnapshot<ASyncBlockPosition> implements BlockSnapshot.AsyncBlockSnapshot {
-
-        public SAsyncedBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot) {
-            super(snapshot);
-        }
-
-        public SAsyncedBlockSnapshot(ServerLocation location, Function<Location<? extends World<?, ?>, ?>, ASyncBlockPosition> newInstance) {
-            super(location, newInstance);
-        }
-
-        public SAsyncedBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot, TileEntitySnapshot<? extends LiveTileEntity> tileEntity) {
-            super(snapshot, tileEntity);
-        }
-
-        @Override
-        protected SBlockSnapshot<ASyncBlockPosition> createCopyOf(org.spongepowered.api.block.BlockSnapshot snapshot, TileEntitySnapshot<? extends LiveTileEntity> tileEntity) {
-            return new SAsyncedBlockSnapshot(snapshot, tileEntity);
-        }
-
-        @Override
-        public AsyncBlockSnapshot createCopyOf() {
-            return new SAsyncedBlockSnapshot(this.snapshot.copy(), this.tileEntitySnapshot.getSnapshot());
-        }
-    }
-
-    public static class SSyncedBlockSnapshot extends SBlockSnapshot<SyncBlockPosition> implements BlockSnapshot.SyncBlockSnapshot {
-
-        public SSyncedBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot) {
-            super(snapshot);
-        }
-
-        public SSyncedBlockSnapshot(ServerLocation location, Function<Location<? extends World<?, ?>, ?>, SyncBlockPosition> newInstance) {
-            super(location, newInstance);
-        }
-
-        public SSyncedBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot, TileEntitySnapshot<? extends LiveTileEntity> tileEntity) {
-            super(snapshot, tileEntity);
-        }
-
-        @Override
-        protected SSyncedBlockSnapshot createCopyOf(org.spongepowered.api.block.BlockSnapshot snapshot, TileEntitySnapshot<? extends LiveTileEntity> tileEntity) {
-            return new SSyncedBlockSnapshot(snapshot, tileEntity);
-        }
-
-        @Override
-        public AsyncBlockSnapshot asAsynced() {
-            return this.createSnapshot(Position.toASync(this.getPosition()));
-        }
-
-        @Override
-        public BlockSnapshot.SyncBlockSnapshot createCopyOf() {
-            return new SSyncedBlockSnapshot(this.snapshot.copy(), this.tileEntitySnapshot.getSnapshot());
-        }
-    }
-
-    public class STileEntityKeyedData implements TileEntityKeyedData {
-
-        @Override
-        public Optional<TileEntitySnapshot<? extends TileEntity>> getData() {
-            return Optional.ofNullable(SBlockSnapshot.this.tileEntitySnapshot);
-        }
-
-        @Override
-        public void setData(TileEntitySnapshot<? extends TileEntity> value) {
-            SBlockSnapshot.this.tileEntitySnapshot = value;
-        }
-    }
-
+    protected final Function<Location<? extends World<?, ?>, ?>, P> newPosition;
     protected TileEntitySnapshot<? extends TileEntity> tileEntitySnapshot;
     protected org.spongepowered.api.block.BlockSnapshot snapshot;
-    protected final Function<Location<? extends World<?, ?>, ?>, P> newPosition;
 
     public SBlockSnapshot(@NotNull org.spongepowered.api.block.BlockSnapshot snapshot) {
         this.snapshot = snapshot;
         this.newPosition = (Function<Location<? extends World<?, ?>, ?>, P>) SPosition.TO_SYNCED_BLOCK_POSITION;
     }
-
-    protected abstract SBlockSnapshot<P> createCopyOf(org.spongepowered.api.block.BlockSnapshot snapshot, TileEntitySnapshot<? extends LiveTileEntity> tileEntity);
-
     public SBlockSnapshot(ServerLocation location, Function<Location<? extends World<?, ?>, ?>, P> newInstance) {
         this.snapshot = location.world().createSnapshot(location.blockPosition());
         this.newPosition = newInstance;
         Optional<? extends org.spongepowered.api.block.entity.BlockEntity> opTileEntity = location.blockEntity();
-        opTileEntity.flatMap(blockEntity -> ((SpongePlatform) TranslateCore.getPlatform()).createTileEntityInstance(blockEntity)).ifPresent(te -> this.tileEntitySnapshot = te.getSnapshot());
+        opTileEntity
+                .flatMap(blockEntity -> ((SpongePlatform) TranslateCore.getPlatform()).createTileEntityInstance(
+                        blockEntity))
+                .ifPresent(te -> this.tileEntitySnapshot = te.getSnapshot());
     }
-
-    public SBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot, TileEntitySnapshot<? extends LiveTileEntity> tileEntity) {
+    public SBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot,
+            TileEntitySnapshot<? extends LiveTileEntity> tileEntity) {
         this.snapshot = snapshot;
-        this.newPosition = (Function<org.spongepowered.api.world.Location<? extends World<?, ?>, ?>, P>) SPosition.TO_SYNCED_BLOCK_POSITION;
+        this.newPosition =
+                (Function<org.spongepowered.api.world.Location<? extends World<?, ?>, ?>, P>) SPosition.TO_SYNCED_BLOCK_POSITION;
         this.tileEntitySnapshot = tileEntity;
     }
+
+    protected abstract SBlockSnapshot<P> createCopyOf(org.spongepowered.api.block.BlockSnapshot snapshot,
+            TileEntitySnapshot<? extends LiveTileEntity> tileEntity);
 
     public org.spongepowered.api.block.BlockSnapshot getSnapshot() {
         return this.snapshot;
@@ -201,7 +137,8 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
             //TODO
         } else if (data.isAssignableFrom(AttachableKeyedData.class) && this.snapshot.supports(Keys.IS_ATTACHED)) {
             //TODO
-        } else if (data.isAssignableFrom(MultiDirectionalKeyedData.class) && this.snapshot.supports(Keys.CONNECTED_DIRECTIONS)) {
+        } else if (data.isAssignableFrom(MultiDirectionalKeyedData.class) &&
+                this.snapshot.supports(Keys.CONNECTED_DIRECTIONS)) {
             //TODO
         }
         return Optional.ofNullable(key);
@@ -258,6 +195,82 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
         Optional<KeyedData<T>> opKey = this.getKey(data);
         opKey.ifPresent(k -> k.setData(value));
         return this;
+    }
+
+    public static class SAsyncedBlockSnapshot extends SBlockSnapshot<ASyncBlockPosition>
+            implements BlockSnapshot.AsyncBlockSnapshot {
+
+        public SAsyncedBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot) {
+            super(snapshot);
+        }
+
+        public SAsyncedBlockSnapshot(ServerLocation location,
+                Function<Location<? extends World<?, ?>, ?>, ASyncBlockPosition> newInstance) {
+            super(location, newInstance);
+        }
+
+        public SAsyncedBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot,
+                TileEntitySnapshot<? extends LiveTileEntity> tileEntity) {
+            super(snapshot, tileEntity);
+        }
+
+        @Override
+        protected SBlockSnapshot<ASyncBlockPosition> createCopyOf(org.spongepowered.api.block.BlockSnapshot snapshot,
+                TileEntitySnapshot<? extends LiveTileEntity> tileEntity) {
+            return new SAsyncedBlockSnapshot(snapshot, tileEntity);
+        }
+
+        @Override
+        public AsyncBlockSnapshot createCopyOf() {
+            return new SAsyncedBlockSnapshot(this.snapshot.copy(), this.tileEntitySnapshot.getSnapshot());
+        }
+    }
+
+    public static class SSyncedBlockSnapshot extends SBlockSnapshot<SyncBlockPosition>
+            implements BlockSnapshot.SyncBlockSnapshot {
+
+        public SSyncedBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot) {
+            super(snapshot);
+        }
+
+        public SSyncedBlockSnapshot(ServerLocation location,
+                Function<Location<? extends World<?, ?>, ?>, SyncBlockPosition> newInstance) {
+            super(location, newInstance);
+        }
+
+        public SSyncedBlockSnapshot(org.spongepowered.api.block.BlockSnapshot snapshot,
+                TileEntitySnapshot<? extends LiveTileEntity> tileEntity) {
+            super(snapshot, tileEntity);
+        }
+
+        @Override
+        protected SSyncedBlockSnapshot createCopyOf(org.spongepowered.api.block.BlockSnapshot snapshot,
+                TileEntitySnapshot<? extends LiveTileEntity> tileEntity) {
+            return new SSyncedBlockSnapshot(snapshot, tileEntity);
+        }
+
+        @Override
+        public AsyncBlockSnapshot asAsynced() {
+            return this.createSnapshot(Position.toASync(this.getPosition()));
+        }
+
+        @Override
+        public BlockSnapshot.SyncBlockSnapshot createCopyOf() {
+            return new SSyncedBlockSnapshot(this.snapshot.copy(), this.tileEntitySnapshot.getSnapshot());
+        }
+    }
+
+    public class STileEntityKeyedData implements TileEntityKeyedData {
+
+        @Override
+        public Optional<TileEntitySnapshot<? extends TileEntity>> getData() {
+            return Optional.ofNullable(SBlockSnapshot.this.tileEntitySnapshot);
+        }
+
+        @Override
+        public void setData(TileEntitySnapshot<? extends TileEntity> value) {
+            SBlockSnapshot.this.tileEntitySnapshot = value;
+        }
     }
 
 }

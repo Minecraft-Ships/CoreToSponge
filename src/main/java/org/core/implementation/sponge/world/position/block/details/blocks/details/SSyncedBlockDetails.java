@@ -20,19 +20,6 @@ import java.util.Optional;
 
 public class SSyncedBlockDetails extends SBlockDetails {
 
-    public class STileEntityKeyedData implements TileEntityKeyedData {
-
-        @Override
-        public Optional<TileEntitySnapshot<? extends TileEntity>> getData() {
-            return Optional.ofNullable(SSyncedBlockDetails.this.tileEntitySnapshot);
-        }
-
-        @Override
-        public void setData(TileEntitySnapshot<? extends TileEntity> value) {
-            SSyncedBlockDetails.this.tileEntitySnapshot = value;
-        }
-    }
-
     protected TileEntitySnapshot<? extends TileEntity> tileEntitySnapshot;
 
     public SSyncedBlockDetails(org.spongepowered.api.block.BlockState state) {
@@ -80,5 +67,18 @@ public class SSyncedBlockDetails extends SBlockDetails {
             return Optional.of((KeyedData<T>) new STileEntityKeyedData());
         }
         return super.getKey(data);
+    }
+
+    public class STileEntityKeyedData implements TileEntityKeyedData {
+
+        @Override
+        public Optional<TileEntitySnapshot<? extends TileEntity>> getData() {
+            return Optional.ofNullable(SSyncedBlockDetails.this.tileEntitySnapshot);
+        }
+
+        @Override
+        public void setData(TileEntitySnapshot<? extends TileEntity> value) {
+            SSyncedBlockDetails.this.tileEntitySnapshot = value;
+        }
     }
 }

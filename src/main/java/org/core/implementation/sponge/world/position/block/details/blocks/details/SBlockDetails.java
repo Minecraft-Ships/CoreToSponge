@@ -36,9 +36,11 @@ public abstract class SBlockDetails implements BlockDetails, StateDetails {
     @Override
     @Deprecated(forRemoval = true)
     public <P extends BlockPosition> BlockSnapshot<P> createSnapshot(P position) {
-        /*org.spongepowered.api.world.Location<? extends World<?, ?>, ?> loc = ((SBlockPosition) position).getSpongeLocation();
+        /*org.spongepowered.api.world.Location<? extends World<?, ?>, ?> loc = ((SBlockPosition) position)
+        .getSpongeLocation();
         if (loc.world() instanceof ServerWorld) {
-            org.spongepowered.api.block.BlockSnapshot blockSnapshot = org.spongepowered.api.block.BlockSnapshot.builder()
+            org.spongepowered.api.block.BlockSnapshot blockSnapshot = org.spongepowered.api.block.BlockSnapshot
+            .builder()
                     .blockState(this.blockstate)
                     .world(((ServerWorld) loc.world()).properties())
                     .position(loc.blockPosition())
@@ -97,7 +99,8 @@ public abstract class SBlockDetails implements BlockDetails, StateDetails {
         KeyedData<T> key = null;
         if (data.isAssignableFrom(OpenableKeyedData.class) && (this.blockstate.supports(Keys.IS_OPEN))) {
         } else if (data.isAssignableFrom(AttachableKeyedData.class) && this.blockstate.supports(Keys.IS_ATTACHED)) {
-        } else if (data.isAssignableFrom(MultiDirectionalKeyedData.class) && this.blockstate.supports(Keys.CONNECTED_DIRECTIONS)) {
+        } else if (data.isAssignableFrom(MultiDirectionalKeyedData.class) &&
+                this.blockstate.supports(Keys.CONNECTED_DIRECTIONS)) {
         }
         return Optional.ofNullable(key);
     }

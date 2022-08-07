@@ -130,7 +130,7 @@ public abstract class SLiveEntity implements LiveEntity {
 
     @Override
     public Entity<LiveEntity> setCustomName(@Nullable AText text) {
-        if (text==null) {
+        if (text == null) {
             this.entity.remove(Keys.CUSTOM_NAME);
             return this;
         }

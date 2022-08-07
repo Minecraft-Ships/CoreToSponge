@@ -22,14 +22,16 @@ import java.util.function.Function;
 
 public abstract class SAsyncedPosition<N extends Number> extends SPosition<N> implements ASyncPosition<N> {
 
-    public SAsyncedPosition(Location<? extends World<?, ?>, ?> location, Function<? extends Location<? extends World<?, ?>, ?>, ? extends SPosition<N>> newInstance) {
+    public SAsyncedPosition(Location<? extends World<?, ?>, ?> location,
+            Function<? extends Location<? extends World<?, ?>, ?>, ? extends SPosition<N>> newInstance) {
         super(location, newInstance);
     }
 
     protected abstract SSyncedPosition<N> toSynced();
 
     @Override
-    public FutureResult<SyncPosition<N>> scheduleBlock(Plugin plugin, BlockDetails details, PositionFlag.SetFlag... flags) {
+    public FutureResult<SyncPosition<N>> scheduleBlock(Plugin plugin, BlockDetails details,
+            PositionFlag.SetFlag... flags) {
         FutureResult<SyncPosition<N>> fr = new FutureResult<>();
         Task task = Task
                 .builder()

@@ -13,11 +13,9 @@ import org.core.implementation.sponge.platform.PlatformConsole;
 import org.core.implementation.sponge.platform.SpongePlatform;
 import org.core.implementation.sponge.platform.SpongePlatformServer;
 import org.core.implementation.sponge.scheduler.SScheduleManager;
-import org.core.implementation.sponge.scheduler.SSchedulerBuilder;
 import org.core.platform.Platform;
 import org.core.platform.PlatformServer;
 import org.core.schedule.ScheduleManager;
-import org.core.schedule.SchedulerBuilder;
 import org.core.source.command.ConsoleSource;
 import org.core.world.boss.ServerBossBar;
 import org.spongepowered.plugin.PluginContainer;
@@ -80,6 +78,7 @@ public class CoreToSponge extends TranslateCore.CoreImplementation {
 
     @Override
     public ServerBossBar bossBuilder() {
-        return new SServerBossBar(BossBar.bossBar(Component.empty(), 0, BossBar.Color.PURPLE, BossBar.Overlay.PROGRESS));
+        return new SServerBossBar(
+                BossBar.bossBar(Component.empty(), 0, BossBar.Color.PURPLE, BossBar.Overlay.PROGRESS));
     }
 }

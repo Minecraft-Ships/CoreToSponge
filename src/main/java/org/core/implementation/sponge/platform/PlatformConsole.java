@@ -14,7 +14,9 @@ public class PlatformConsole implements ConsoleSource {
 
     @Override
     public CommandViewer sendMessage(AText message, UUID uuid) {
-        org.spongepowered.api.Sponge.systemSubject().sendMessage(Identity.identity(uuid), ((AdventureText) message).getComponent());
+        org.spongepowered.api.Sponge
+                .systemSubject()
+                .sendMessage(Identity.identity(uuid), ((AdventureText) message).getComponent());
         return this;
     }
 
@@ -28,7 +30,11 @@ public class PlatformConsole implements ConsoleSource {
     public boolean sudo(String wholeCommand) {
         if (Sponge.isServerAvailable()) {
             try {
-                return Sponge.server().commandManager().process(Sponge.systemSubject(), Sponge.server().broadcastAudience(), wholeCommand).isSuccess();
+                return Sponge
+                        .server()
+                        .commandManager()
+                        .process(Sponge.systemSubject(), Sponge.server().broadcastAudience(), wholeCommand)
+                        .isSuccess();
             } catch (CommandException e) {
                 e.printStackTrace();
                 return false;
@@ -36,7 +42,13 @@ public class PlatformConsole implements ConsoleSource {
         }
         if (Sponge.isClientAvailable()) {
             try {
-                return Sponge.client().server().orElseThrow(() -> new IllegalStateException("Command manager on the client is not accessible")).commandManager().process(Sponge.systemSubject(), Sponge.server().broadcastAudience(), wholeCommand).isSuccess();
+                return Sponge
+                        .client()
+                        .server()
+                        .orElseThrow(() -> new IllegalStateException("Command manager on the client is not accessible"))
+                        .commandManager()
+                        .process(Sponge.systemSubject(), Sponge.server().broadcastAudience(), wholeCommand)
+                        .isSuccess();
 
             } catch (CommandException e) {
                 e.printStackTrace();

@@ -9,8 +9,8 @@ import org.spongepowered.api.block.entity.carrier.furnace.Furnace;
 
 public class SLiveFurnaceEntity extends AbstractLiveTileEntity<Furnace> implements LiveFurnaceTileEntity {
 
-    public SLiveFurnaceEntity(org.spongepowered.api.block.entity.BlockEntity tileEntity){
-        super((org.spongepowered.api.block.entity.carrier.furnace.Furnace)tileEntity);
+    public SLiveFurnaceEntity(org.spongepowered.api.block.entity.BlockEntity tileEntity) {
+        super((org.spongepowered.api.block.entity.carrier.furnace.Furnace) tileEntity);
     }
 
     public SLiveFurnaceEntity(org.spongepowered.api.block.entity.carrier.furnace.Furnace tileEntity) {

@@ -55,7 +55,9 @@ public class SWorldExtent implements WorldExtent {
         if (type.equals(WorldTypes.THE_NETHER.get())) {
             return "The_Nether";
         }
-        throw new IllegalStateException("Unknown World name of " + this.world.worldType().key(RegistryTypes.WORLD_TYPE).asString() + " | " + this.world.seed());
+        throw new IllegalStateException(
+                "Unknown World name of " + this.world.worldType().key(RegistryTypes.WORLD_TYPE).asString() + " | " +
+                        this.world.seed());
     }
 
     @Override
@@ -87,7 +89,9 @@ public class SWorldExtent implements WorldExtent {
 
     @Override
     public ChunkExtent loadChunk(Vector3<Integer> vector) {
-        return new SLoadedChunkExtent(this.world.loadChunk(vector.getX(), vector.getY(), vector.getZ(), true).orElseThrow(() -> new IllegalStateException("Could not load the chunk")));
+        return new SLoadedChunkExtent(this.world
+                .loadChunk(vector.getX(), vector.getY(), vector.getZ(), true)
+                .orElseThrow(() -> new IllegalStateException("Could not load the chunk")));
     }
 
     @Override

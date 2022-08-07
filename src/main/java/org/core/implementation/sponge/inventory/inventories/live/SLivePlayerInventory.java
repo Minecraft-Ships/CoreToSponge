@@ -11,21 +11,8 @@ import java.util.Set;
 
 public class SLivePlayerInventory implements LivePlayerInventory {
 
-    public class PlayerHotbar implements Hotbar {
-
-        @Override
-        public int getSelectedSlotPos() {
-            return SLivePlayerInventory.this.player.getInventory().getHotbar().getSelectedSlotPos();
-        }
-
-        @Override
-        public Set<Slot> getSlots() {
-            return SLivePlayerInventory.this.player.getInventory().getHotbar().getSlots();
-        }
-    }
-
-    protected SLivePlayer player;
     protected final PlayerHotbar hotbar = new PlayerHotbar();
+    protected SLivePlayer player;
 
     @Override
     public Hotbar getHotbar() {
@@ -64,5 +51,18 @@ public class SLivePlayerInventory implements LivePlayerInventory {
     public Slot getOffHoldingItem() {
         throw new RuntimeException("Not implemented yet");
 
+    }
+
+    public class PlayerHotbar implements Hotbar {
+
+        @Override
+        public int getSelectedSlotPos() {
+            return SLivePlayerInventory.this.player.getInventory().getHotbar().getSelectedSlotPos();
+        }
+
+        @Override
+        public Set<Slot> getSlots() {
+            return SLivePlayerInventory.this.player.getInventory().getHotbar().getSlots();
+        }
     }
 }

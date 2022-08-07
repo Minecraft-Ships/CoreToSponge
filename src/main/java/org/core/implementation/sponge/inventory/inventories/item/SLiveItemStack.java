@@ -63,7 +63,8 @@ public class SLiveItemStack implements LiveItemStack {
 
     @Override
     public ItemStack copyWithQuantity(int quantity) {
-        return new SLiveItemStack(org.spongepowered.api.item.inventory.ItemStack.builder().from(this.stack).quantity(quantity).build());
+        return new SLiveItemStack(
+                org.spongepowered.api.item.inventory.ItemStack.builder().from(this.stack).quantity(quantity).build());
     }
 
     @Override

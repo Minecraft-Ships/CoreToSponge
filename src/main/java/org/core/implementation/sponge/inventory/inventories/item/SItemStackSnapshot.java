@@ -61,7 +61,12 @@ public class SItemStackSnapshot implements org.core.inventory.item.stack.ItemSta
 
     @Override
     public ItemStack copyWithQuantity(int quantity) {
-        return new SItemStackSnapshot(org.spongepowered.api.item.inventory.ItemStack.builder().fromSnapshot(this.item).quantity(quantity).build().createSnapshot());
+        return new SItemStackSnapshot(org.spongepowered.api.item.inventory.ItemStack
+                .builder()
+                .fromSnapshot(this.item)
+                .quantity(quantity)
+                .build()
+                .createSnapshot());
     }
 
     @Override

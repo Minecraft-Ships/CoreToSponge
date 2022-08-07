@@ -4,7 +4,8 @@ import org.core.implementation.sponge.world.position.synced.SBlockPosition;
 import org.core.world.position.block.entity.LiveTileEntity;
 import org.core.world.position.impl.sync.SyncBlockPosition;
 
-public abstract class AbstractLiveTileEntity<T extends org.spongepowered.api.block.entity.BlockEntity> implements LiveTileEntity {
+public abstract class AbstractLiveTileEntity<T extends org.spongepowered.api.block.entity.BlockEntity>
+        implements LiveTileEntity {
 
     protected final T tileEntity;
 

@@ -17,22 +17,17 @@ import java.util.function.Function;
 
 public abstract class SPosition<N extends Number> implements Position<N> {
 
-    public static final Function<? extends Location<? extends World<?, ?>, ?>, SBlockPosition> TO_SYNCED_BLOCK_POSITION = (SBlockPosition::new);
-    public static final Function<? extends Location<? extends World<?, ?>, ?>, SExactPosition> TO_SYNCED_EXACT_POSITION = (SExactPosition::new);
-    public static final Function<? extends Location<? extends World<?, ?>, ?>, SAsyncedBlockPosition> TO_ASYNCED_BLOCK_POSITION = (SAsyncedBlockPosition::new);
-    public static final Function<? extends Location<? extends World<?, ?>, ?>, SAsyncedExactPosition> TO_ASYNCED_EXACT_POSITION = (SAsyncedExactPosition::new);
-
-    protected final Location<? extends World<?, ?>, ?> location;
-    protected final Function<? extends Location<? extends World<?, ?>, ?>, ? extends SPosition<N>> newInstance;
-
-    public SPosition(Location<? extends World<?, ?>, ?> location, Function<? extends Location<? extends World<?, ?>, ?>, ? extends SPosition<N>> newInstance) {
+    protected final Location<? extends World<?, ?>, ?> location;    public static final Function<? extends Location<? extends World<?, ?>, ?>, SBlockPosition> TO_SYNCED_BLOCK_POSITION = (SBlockPosition::new);
+    protected final Function<? extends Location<? extends World<?, ?>, ?>, ? extends SPosition<N>> newInstance;    public static final Function<? extends Location<? extends World<?, ?>, ?>, SExactPosition> TO_SYNCED_EXACT_POSITION = (SExactPosition::new);
+    public SPosition(Location<? extends World<?, ?>, ?> location,
+            Function<? extends Location<? extends World<?, ?>, ?>, ? extends SPosition<N>> newInstance) {
         this.location = location;
         this.newInstance = newInstance;
-    }
+    }    public static final Function<? extends Location<? extends World<?, ?>, ?>, SAsyncedBlockPosition> TO_ASYNCED_BLOCK_POSITION = (SAsyncedBlockPosition::new);
 
     public Location<? extends World<?, ?>, ?> getSpongeLocation() {
         return this.location;
-    }
+    }    public static final Function<? extends Location<? extends World<?, ?>, ?>, SAsyncedExactPosition> TO_ASYNCED_EXACT_POSITION = (SAsyncedExactPosition::new);
 
     @Override
     public Vector3<Integer> getChunkPosition() {
@@ -61,4 +56,12 @@ public abstract class SPosition<N extends Number> implements Position<N> {
     public String toString() {
         return this.getX() + "," + this.getY() + "," + this.getZ() + "," + this.getWorld().getName();
     }
+
+
+
+
+
+
+
+
 }

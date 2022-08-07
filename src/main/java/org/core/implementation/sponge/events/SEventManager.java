@@ -12,7 +12,7 @@ public class SEventManager implements EventManager {
     final Map<Plugin, Set<EventListener>> eventListeners = new HashMap<>();
     final SpongeListener listener = new SpongeListener();
 
-    public SpongeListener getRawListener(){
+    public SpongeListener getRawListener() {
         return this.listener;
     }
 
@@ -25,14 +25,14 @@ public class SEventManager implements EventManager {
     public EventManager register(Plugin plugin, EventListener... listeners) {
         Set<EventListener> listeners1 = this.eventListeners.get(plugin);
         boolean requiresPut = false;
-        if(listeners1 == null){
+        if (listeners1 == null) {
             requiresPut = true;
             listeners1 = new HashSet<>();
         }
         listeners1.addAll(Arrays.asList(listeners));
-        if(requiresPut){
+        if (requiresPut) {
             this.eventListeners.put(plugin, listeners1);
-        }else{
+        } else {
             this.eventListeners.replace(plugin, listeners1);
         }
         return this;

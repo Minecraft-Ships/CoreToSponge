@@ -6,7 +6,8 @@ import org.spongepowered.api.world.BlockChangeFlags;
 
 public class SApplyPhysicsFlag implements ApplyPhysicsFlag {
 
-    public static final SApplyPhysicsFlag DEFAULT = new SApplyPhysicsFlag("sponge:default", "Default", BlockChangeFlags.ALL);
+    public static final SApplyPhysicsFlag DEFAULT = new SApplyPhysicsFlag("sponge:default", "Default",
+            BlockChangeFlags.ALL);
     public static final SApplyPhysicsFlag NONE = new SApplyPhysicsFlag("sponge:none", "None", BlockChangeFlags.NONE);
 
 
