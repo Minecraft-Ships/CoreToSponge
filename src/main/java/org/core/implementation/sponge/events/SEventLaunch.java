@@ -1,6 +1,5 @@
 package org.core.implementation.sponge.events;
 
-import org.array.utils.ArrayUtils;
 import org.core.event.Event;
 import org.core.event.EventListener;
 import org.core.platform.plugin.Plugin;
@@ -32,23 +31,28 @@ public class SEventLaunch {
                     .map(p -> p.getType().getSimpleName())
                     .collect(Collectors.joining(", ")) + ")");
             e.printStackTrace();
-        } catch (ExceptionInInitializerError e) {
+        } catch (ExceptionInInitializerError | InvocationTargetException e) {
+            String parameterNames = Arrays
+                    .stream(this.method.getParameters())
+                    .map(p -> p.getType().getSimpleName() + " " + p.getName())
+                    .collect(Collectors.joining(", "));
             System.err.println("Failed to know what to do: EventListener caused exception from " +
                     this.listener.getClass().getName() + "." + this.method.getName() + "(" +
-                    ArrayUtils.toString(", ", p -> p.getType().getSimpleName() + " " + p.getName(),
-                            this.method.getParameters()) + ")");
-            e.getException().printStackTrace();
-        } catch (InvocationTargetException e) {
-            System.err.println("Failed to know what to do: EventListener caused exception from " +
-                    this.listener.getClass().getName() + "." + this.method.getName() + "(" +
-                    ArrayUtils.toString(", ", p -> p.getType().getSimpleName() + " " + p.getName(),
-                            this.method.getParameters()) + ")");
-            e.getTargetException().printStackTrace();
+                    parameterNames + ")");
+            if (e instanceof ExceptionInInitializerError eInInit) {
+                eInInit.getException().printStackTrace();
+                return;
+            }
+            ((InvocationTargetException) e).getTargetException().printStackTrace();
         } catch (Throwable e) {
+            String parameterNames = Arrays
+                    .stream(this.method.getParameters())
+                    .map(p -> p.getType().getSimpleName() + " " + p.getName())
+                    .collect(Collectors.joining(", "));
+
             System.err.println("Failed to know what to do: HEvent found on method, but exception found when running " +
                     this.listener.getClass().getName() + "." + this.method.getName() + "(" +
-                    ArrayUtils.toString(", ", p -> p.getType().getSimpleName() + " " + p.getName(),
-                            this.method.getParameters()) + ") found in plugin: " + this.plugin.getPluginName());
+                    parameterNames + ") found in plugin: " + this.plugin.getPluginName());
             e.printStackTrace();
         }
     }

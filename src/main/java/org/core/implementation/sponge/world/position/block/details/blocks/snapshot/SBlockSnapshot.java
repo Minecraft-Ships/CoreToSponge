@@ -13,7 +13,11 @@ import org.core.world.position.block.BlockType;
 import org.core.world.position.block.details.BlockDetails;
 import org.core.world.position.block.details.BlockSnapshot;
 import org.core.world.position.block.details.data.DirectionalData;
-import org.core.world.position.block.details.data.keyed.*;
+import org.core.world.position.block.details.data.keyed.AttachableKeyedData;
+import org.core.world.position.block.details.data.keyed.KeyedData;
+import org.core.world.position.block.details.data.keyed.MultiDirectionalKeyedData;
+import org.core.world.position.block.details.data.keyed.OpenableKeyedData;
+import org.core.world.position.block.details.data.keyed.TileEntityKeyedData;
 import org.core.world.position.block.entity.LiveTileEntity;
 import org.core.world.position.block.entity.TileEntity;
 import org.core.world.position.block.entity.TileEntitySnapshot;
@@ -73,7 +77,7 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
 
     @Override
     public AsyncBlockSnapshot createSnapshot(ASyncBlockPosition position) {
-        SBlockPosition position1 = (SBlockPosition) position;
+        SPosition<Integer> position1 = (SPosition<Integer>) position;
         org.spongepowered.api.block.BlockSnapshot snapshot;
         if (position1.getSpongeLocation().world() instanceof ServerWorld) {
             snapshot = org.spongepowered.api.block.BlockSnapshot.builder()
@@ -100,7 +104,7 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
 
     @Override
     public SyncBlockSnapshot createSnapshot(SyncBlockPosition position) {
-        SBlockPosition position1 = (SBlockPosition) position;
+        SPosition<Integer> position1 = (SPosition<Integer>) position;
         org.spongepowered.api.block.BlockSnapshot snapshot;
         if (position1.getSpongeLocation().world() instanceof ServerWorld) {
             snapshot = org.spongepowered.api.block.BlockSnapshot.builder()
