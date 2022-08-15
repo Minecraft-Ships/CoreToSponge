@@ -5,6 +5,7 @@ import org.core.implementation.sponge.inventory.inventories.item.SLiveItemStack;
 import org.core.implementation.sponge.inventory.inventories.snapshot.SSnapshotFurnaceInventory;
 import org.core.implementation.sponge.world.position.synced.SBlockPosition;
 import org.core.inventory.inventories.general.block.FurnaceInventory;
+import org.core.inventory.inventories.live.block.LiveFurnaceInventory;
 import org.core.inventory.inventories.snapshots.block.FurnaceInventorySnapshot;
 import org.core.inventory.item.stack.ItemStack;
 import org.core.inventory.parts.Slot;
@@ -18,7 +19,7 @@ import org.spongepowered.api.item.inventory.type.BlockEntityInventory;
 
 import java.util.Optional;
 
-public class SLiveFurnaceInventory implements FurnaceInventory {
+public class SLiveFurnaceInventory implements LiveFurnaceInventory {
 
     protected final org.spongepowered.api.block.entity.carrier.furnace.Furnace furnace;
     protected final SLiveFurnaceInventory.FurnaceSlot fuel;
