@@ -30,6 +30,7 @@ import org.core.platform.Platform;
 import org.core.platform.PlatformDetails;
 import org.core.platform.plugin.Plugin;
 import org.core.platform.plugin.details.CorePluginVersion;
+import org.core.platform.update.PlatformUpdate;
 import org.core.utils.Singleton;
 import org.core.world.boss.colour.BossColour;
 import org.core.world.boss.colour.BossColours;
@@ -64,8 +65,7 @@ public class SpongePlatform implements Platform {
 
     protected final Set<? extends EntityType<? extends LiveEntity, ? extends EntitySnapshot<? extends LiveEntity>>> entityTypes = new HashSet<>();
     protected final Map<Class<? extends org.spongepowered.api.entity.Entity>, Class<? extends LiveEntity>> entityToEntityMap = new HashMap<>();
-    protected final Map<Class<? extends org.spongepowered.api.block.entity.BlockEntity>,
-            Class<? extends LiveTileEntity>> blockStateToTileEntity = new HashMap<>();
+    protected final Map<Class<? extends org.spongepowered.api.block.entity.BlockEntity>, Class<? extends LiveTileEntity>> blockStateToTileEntity = new HashMap<>();
     protected final Collection<TileEntitySnapshot<? extends TileEntity>> defaultTileEntities = new HashSet<>();
     protected final Collection<UnspecificParser<? extends Object>> unspecificParsers = new HashSet<>();
     protected final Set<Permission> permissions = new HashSet<>();
@@ -75,7 +75,7 @@ public class SpongePlatform implements Platform {
 
         this.blockStateToTileEntity.put(org.spongepowered.api.block.entity.Sign.class, SLiveSignEntity.class);
         this.blockStateToTileEntity.put(org.spongepowered.api.block.entity.carrier.furnace.Furnace.class,
-                SLiveFurnaceEntity.class);
+                                        SLiveFurnaceEntity.class);
 
         this.defaultTileEntities.add(new SSignTileEntitySnapshot());
     }
@@ -94,8 +94,8 @@ public class SpongePlatform implements Platform {
         return null;
     }*/
 
-    public <E extends LiveEntity, S extends EntitySnapshot<E>> Optional<S> createSnapshot(
-            EntityType<E, ? extends S> type, SyncExactPosition pos) {
+    public <E extends LiveEntity, S extends EntitySnapshot<E>> Optional<S> createSnapshot(EntityType<E, ? extends S> type,
+                                                                                          SyncExactPosition pos) {
         try {
             S snapshot = type.getSnapshotClass().getConstructor(SyncExactPosition.class).newInstance(pos);
             return Optional.of(snapshot);
@@ -128,10 +128,8 @@ public class SpongePlatform implements Platform {
         }
     }
 
-    public Optional<LiveTileEntity> createTileEntityInstance(
-            org.spongepowered.api.block.entity.BlockEntity tileEntity) {
-        Optional<Map.Entry<Class<? extends org.spongepowered.api.block.entity.BlockEntity>, Class<?
-                extends LiveTileEntity>>> opEntry = this.blockStateToTileEntity
+    public Optional<LiveTileEntity> createTileEntityInstance(org.spongepowered.api.block.entity.BlockEntity tileEntity) {
+        Optional<Map.Entry<Class<? extends org.spongepowered.api.block.entity.BlockEntity>, Class<? extends LiveTileEntity>>> opEntry = this.blockStateToTileEntity
                 .entrySet()
                 .stream()
                 .filter(e -> e.getKey().isInstance(tileEntity))
@@ -142,8 +140,8 @@ public class SpongePlatform implements Platform {
         Class<? extends LiveTileEntity> bdclass = opEntry.get().getValue();
         try {
             return Optional.of(bdclass
-                    .getConstructor(org.spongepowered.api.block.entity.BlockEntity.class)
-                    .newInstance(tileEntity));
+                                       .getConstructor(org.spongepowered.api.block.entity.BlockEntity.class)
+                                       .newInstance(tileEntity));
         } catch (InstantiationException | NoSuchMethodException | InvocationTargetException |
                  IllegalAccessException e) {
             e.printStackTrace();
@@ -253,8 +251,7 @@ public class SpongePlatform implements Platform {
 
     @Override
     public Collection<EntityType<? extends LiveEntity, ? extends EntitySnapshot<? extends LiveEntity>>> getEntityTypes() {
-        return RegistryTypes
-                .ENTITY_TYPE
+        return RegistryTypes.ENTITY_TYPE
                 .get()
                 .stream()
                 .map(e -> this.getEntityType(e.key(RegistryTypes.ENTITY_TYPE).asString()))
@@ -346,6 +343,11 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
+    public @NotNull Collection<PlatformUpdate> getUpdateCheckers() {
+        return Collections.emptyList();
+    }
+
+    @Override
     public @NotNull Singleton<BossColour> get(BossColours colours) {
         return new Singleton<>(() -> {
             throw new RuntimeException("Not implemented");
@@ -372,11 +374,10 @@ public class SpongePlatform implements Platform {
 
     @Override
     public @NotNull Singleton<ItemType> get(ItemTypeCommon itemId) {
-        Supplier<ItemType> supplier = () -> RegistryTypes.ITEM_TYPE.get()
+        Supplier<ItemType> supplier = () -> RegistryTypes.ITEM_TYPE
+                .get()
                 .stream()
-                .filter(i -> i.key(RegistryTypes.ITEM_TYPE)
-                        .asString()
-                        .equals(itemId.getId()))
+                .filter(i -> i.key(RegistryTypes.ITEM_TYPE).asString().equals(itemId.getId()))
                 .findAny()
                 .map(SItemType::new)
                 .orElseThrow(() -> new IllegalStateException("Unknown item of " + itemId.getId()));
@@ -405,8 +406,7 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
-    public <E extends LiveEntity, S extends EntitySnapshot<E>> @NotNull Singleton<EntityType<E, S>> get(
-            EntityTypes<E, S> entityId) {
+    public <E extends LiveEntity, S extends EntitySnapshot<E>> @NotNull Singleton<EntityType<E, S>> get(EntityTypes<E, S> entityId) {
         return new Singleton<>(() -> {
             throw new RuntimeException("Not implemented");
         });
