@@ -125,15 +125,6 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     }
 
     @Override
-    @Deprecated(forRemoval = true)
-    public boolean hasPermission(String permission) {
-        if (!(this.entity instanceof ServerPlayer)) {
-            return true;
-        }
-        return ((Subject) this.getSpongeEntity()).hasPermission(permission);
-    }
-
-    @Override
     public Optional<BlockPosition> getBlockLookingAt(int scanLength) {
         return Optional.empty();
     }
@@ -191,13 +182,10 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
         if (!opAccount.isPresent()) {
             return;
         }
-        opAccount.get()
-                .setBalance(Sponge
-                                .serviceProvider()
-                                .registration(EconomyService.class)
-                                .get()
-                                .service()
-                                .defaultCurrency(),
+        opAccount
+                .get()
+                .setBalance(
+                        Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency(),
                         decimal);
     }
 

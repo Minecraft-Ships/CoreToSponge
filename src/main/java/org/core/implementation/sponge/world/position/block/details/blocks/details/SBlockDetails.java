@@ -34,31 +34,6 @@ public abstract class SBlockDetails implements BlockDetails, StateDetails {
     }
 
     @Override
-    @Deprecated(forRemoval = true)
-    public <P extends BlockPosition> BlockSnapshot<P> createSnapshot(P position) {
-        /*org.spongepowered.api.world.Location<? extends World<?, ?>, ?> loc = ((SBlockPosition) position)
-        .getSpongeLocation();
-        if (loc.world() instanceof ServerWorld) {
-            org.spongepowered.api.block.BlockSnapshot blockSnapshot = org.spongepowered.api.block.BlockSnapshot
-            .builder()
-                    .blockState(this.blockstate)
-                    .world(((ServerWorld) loc.world()).properties())
-                    .position(loc.blockPosition())
-                    .build();
-            return new SBlockSnapshot<>(blockSnapshot);
-        }
-        org.spongepowered.api.block.BlockSnapshot blockSnapshot = org.spongepowered.api.block.BlockSnapshot.builder()
-                .blockState(this.blockstate)
-                .position(loc.blockPosition())
-                .build();
-        return new SBlockSnapshot<>(blockSnapshot);*/
-        if (position instanceof SyncBlockPosition) {
-            return (BlockSnapshot<P>) this.createSnapshot((SyncBlockPosition) position);
-        }
-        return (BlockSnapshot<P>) this.createSnapshot((ASyncBlockPosition) position);
-    }
-
-    @Override
     public Optional<DirectionalData> getDirectionalData() {
         if (this.blockstate.supports(Keys.DIRECTION)) {
             return Optional.of(new DirectionStateWrapper(this));

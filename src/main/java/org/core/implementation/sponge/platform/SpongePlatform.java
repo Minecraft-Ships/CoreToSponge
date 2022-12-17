@@ -67,7 +67,7 @@ public class SpongePlatform implements Platform {
     protected final Map<Class<? extends org.spongepowered.api.entity.Entity>, Class<? extends LiveEntity>> entityToEntityMap = new HashMap<>();
     protected final Map<Class<? extends org.spongepowered.api.block.entity.BlockEntity>, Class<? extends LiveTileEntity>> blockStateToTileEntity = new HashMap<>();
     protected final Collection<TileEntitySnapshot<? extends TileEntity>> defaultTileEntities = new HashSet<>();
-    protected final Collection<UnspecificParser<? extends Object>> unspecificParsers = new HashSet<>();
+    protected final Collection<UnspecificParser<?>> unspecificParsers = new HashSet<>();
     protected final Set<Permission> permissions = new HashSet<>();
 
     public SpongePlatform() {
@@ -79,20 +79,6 @@ public class SpongePlatform implements Platform {
 
         this.defaultTileEntities.add(new SSignTileEntitySnapshot());
     }
-
-    /*public CommandSource get(org.spongepowered.api.command.CommandSource source){
-        if (source instanceof org.spongepowered.api.entity.living.player.Player) {
-            return new SLivePlayer((org.spongepowered.api.entity.living.player.Player)source);
-        }
-        if(source instanceof org.spongepowered.api.command.source.CommandBlockSource){
-            //no command block yet
-            return null;
-        }
-        if(source instanceof org.spongepowered.api.command.source.ConsoleSource){
-            return CorePlugin.getConsole();
-        }
-        return null;
-    }*/
 
     public <E extends LiveEntity, S extends EntitySnapshot<E>> Optional<S> createSnapshot(EntityType<E, ? extends S> type,
                                                                                           SyncExactPosition pos) {
@@ -343,7 +329,7 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
-    public @NotNull Collection<PlatformUpdate> getUpdateCheckers() {
+    public @NotNull Collection<PlatformUpdate<?>> getUpdateCheckers() {
         return Collections.emptyList();
     }
 

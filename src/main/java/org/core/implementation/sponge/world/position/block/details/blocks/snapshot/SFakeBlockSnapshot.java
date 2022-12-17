@@ -42,11 +42,6 @@ public abstract class SFakeBlockSnapshot<P extends BlockPosition> implements Blo
         return this.details.get(data);
     }
 
-    /*@Override
-    public <T extends BlockPosition> SFakeBlockSnapshot<T> createSnapshot(T position) {
-        return new SFakeBlockSnapshot<T>(position, this.details.createCopyOf());
-    }*/
-
     @Override
     public <T> BlockDetails set(Class<? extends KeyedData<T>> data, T value) {
         return this.details.set(data, value);
@@ -57,12 +52,6 @@ public abstract class SFakeBlockSnapshot<P extends BlockPosition> implements Blo
 
         public SFakeAsyncedBlockSnapshot(ASyncBlockPosition position, BlockDetails details) {
             super(position, details);
-        }
-
-        @Override
-        @Deprecated(forRemoval = true)
-        public <T extends BlockPosition> BlockSnapshot<T> createSnapshot(T position) {
-            throw new RuntimeException("Remove this method");
         }
 
         @Override
@@ -89,12 +78,6 @@ public abstract class SFakeBlockSnapshot<P extends BlockPosition> implements Blo
         }
 
         @Override
-        @Deprecated(forRemoval = true)
-        public <T extends BlockPosition> BlockSnapshot<T> createSnapshot(T position) {
-            throw new RuntimeException("Remove this method");
-        }
-
-        @Override
         public AsyncBlockSnapshot createSnapshot(ASyncBlockPosition position) {
             return new SFakeAsyncedBlockSnapshot(position, this.details.createCopyOf());
         }
@@ -114,9 +97,4 @@ public abstract class SFakeBlockSnapshot<P extends BlockPosition> implements Blo
             return this.createSnapshot(this.position);
         }
     }
-
-    /*@Override
-    public BlockSnapshot<P> createCopyOf() {
-        return new SFakeBlockSnapshot<>(this.position, this.details.createCopyOf());
-    }*/
 }

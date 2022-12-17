@@ -163,15 +163,6 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
     }
 
     @Override
-    @Deprecated(forRemoval = true)
-    public <BP extends BlockPosition> BlockSnapshot<BP> createSnapshot(BP position) {
-        if (position instanceof SyncBlockPosition) {
-            return (BlockSnapshot<BP>) this.createSnapshot((SyncBlockPosition) position);
-        }
-        return (BlockSnapshot<BP>) this.createSnapshot((ASyncBlockPosition) position);
-    }
-
-    @Override
     public Optional<DirectionalData> getDirectionalData() {
         if (this.snapshot.supports(Keys.DIRECTION)) {
             return Optional.of(new DirectionSnapshotWrapper(this));
