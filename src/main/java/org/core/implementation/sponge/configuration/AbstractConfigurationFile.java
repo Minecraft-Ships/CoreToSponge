@@ -33,7 +33,7 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
     }
 
     private <T> Optional<T> get(org.core.config.ConfigurationNode node,
-            Function<? super ConfigurationNode, ? extends T> value) {
+                                Function<? super ConfigurationNode, ? extends T> value) {
         @NonNull ConfigurationNode node1 = this.root.node(node.getObjectPath());
         if (node1.empty()) {
             return Optional.empty();
@@ -63,32 +63,26 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
 
     @Override
     public <T, C extends Collection<T>> C parseCollection(org.core.config.ConfigurationNode node,
-            Parser<? super String, T> parser, C collection) {
+                                                          Parser<? super String, T> parser,
+                                                          C collection,
+                                                          C defaultValue) {
         @NonNull ConfigurationNode node1 = this.root.node(node.getObjectPath());
         if (node1.empty()) {
-            return collection;
+            return defaultValue;
         }
         if (!node1.isList()) {
-            return collection;
+            return defaultValue;
         }
-        List<T> list = node1
-                .childrenList()
-                .stream()
-                .map(v -> {
-                    try {
-                        return parser.parse(v.getString());
-                    } catch (Throwable e) {
-                        throw new RuntimeException(
-                                "Could not parse value at "
-                                        + Arrays
-                                        .stream(v.path().array())
-                                        .map(Object::toString)
-                                        .collect(Collectors.joining("->")));
-                    }
-                })
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
+        List<T> list = node1.childrenList().stream().map(v -> {
+            try {
+                return parser.parse(v.getString());
+            } catch (Throwable e) {
+                throw new RuntimeException("Could not parse value at " + Arrays
+                        .stream(v.path().array())
+                        .map(Object::toString)
+                        .collect(Collectors.joining("->")));
+            }
+        }).filter(Optional::isPresent).map(Optional::get).toList();
         collection.addAll(list);
         return collection;
     }
@@ -130,8 +124,9 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
     }
 
     @Override
-    public <T> void set(org.core.config.ConfigurationNode node, Parser<String, ? super T> parser,
-            Collection<T> collection) {
+    public <T> void set(org.core.config.ConfigurationNode node,
+                        Parser<String, ? super T> parser,
+                        Collection<T> collection) {
         List<String> list = new ArrayList<>();
         collection.forEach(v -> list.add(parser.unparse(v)));
         try {
