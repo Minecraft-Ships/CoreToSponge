@@ -16,16 +16,15 @@ import org.core.world.position.impl.async.ASyncExactPosition;
 import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.core.world.position.impl.sync.SyncExactPosition;
 import org.spongepowered.api.registry.RegistryTypes;
-import org.spongepowered.api.util.AABB;
 import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.world.WorldType;
 import org.spongepowered.api.world.WorldTypes;
 import org.spongepowered.api.world.server.ServerWorld;
-import org.spongepowered.math.vector.Vector3i;
 
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class SWorldExtent implements WorldExtent {
@@ -56,8 +55,8 @@ public class SWorldExtent implements WorldExtent {
             return "The_Nether";
         }
         throw new IllegalStateException(
-                "Unknown World name of " + this.world.worldType().key(RegistryTypes.WORLD_TYPE).asString() + " | " +
-                        this.world.seed());
+                "Unknown World name of " + this.world.worldType().key(RegistryTypes.WORLD_TYPE).asString() + " | "
+                        + this.world.seed());
     }
 
     @Override
@@ -88,10 +87,16 @@ public class SWorldExtent implements WorldExtent {
     }
 
     @Override
+    public CompletableFuture<ChunkExtent> loadChunkAsynced(Vector3<Integer> vector) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    @Override
     public ChunkExtent loadChunk(Vector3<Integer> vector) {
         return new SLoadedChunkExtent(this.world
-                .loadChunk(vector.getX(), vector.getY(), vector.getZ(), true)
-                .orElseThrow(() -> new IllegalStateException("Could not load the chunk")));
+                                              .loadChunk(vector.getX(), vector.getY(), vector.getZ(), true)
+                                              .orElseThrow(
+                                                      () -> new IllegalStateException("Could not load the chunk")));
     }
 
     @Override
@@ -127,25 +132,12 @@ public class SWorldExtent implements WorldExtent {
     @Override
     public Set<LiveEntity> getEntities() {
         SpongePlatform platform = ((SpongePlatform) TranslateCore.getPlatform());
-        if (this.world instanceof ServerWorld) {
-            ServerWorld world = (ServerWorld) this.world;
-            return world.entities().stream().map(platform::createEntityInstance).collect(Collectors.toSet());
-        }
-        Vector3i min = this.getSpongeWorld().min();
-        Vector3i max = this.getSpongeWorld().max();
-        AABB aabb = AABB.of(min, max);
-        return this
-                .world
-                .entities(aabb)
-                .stream()
-                .map(e -> ((SpongePlatform) TranslateCore.getPlatform()).createEntityInstance(e))
-                .collect(Collectors.toSet());
+        return this.world.entities().stream().map(platform::createEntityInstance).collect(Collectors.toSet());
     }
 
     @Override
     public Set<LiveTileEntity> getTileEntities() {
-        return this
-                .world
+        return this.world
                 .blockEntities()
                 .stream()
                 .map(te -> ((SpongePlatform) TranslateCore.getPlatform()).createTileEntityInstance(te))
