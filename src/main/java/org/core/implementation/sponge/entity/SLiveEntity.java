@@ -36,6 +36,11 @@ public abstract class SLiveEntity implements LiveEntity {
     }
 
     @Override
+    public boolean isRemoved() {
+        return this.entity.isRemoved();
+    }
+
+    @Override
     public boolean isOnGround() {
         return this.entity.get(Keys.ON_GROUND).get();
     }
@@ -102,11 +107,13 @@ public abstract class SLiveEntity implements LiveEntity {
 
     @Override
     public Collection<LiveEntity> getPassengers() {
-        return this.entity.get(Keys.PASSENGERS)
+        return this.entity
+                .get(Keys.PASSENGERS)
                 .map(list -> list
                         .stream()
                         .map(entity -> ((SpongePlatform) TranslateCore.getPlatform()).createEntityInstance(entity))
-                        .collect(Collectors.toSet())).orElse(Collections.emptySet());
+                        .collect(Collectors.toSet()))
+                .orElse(Collections.emptySet());
     }
 
     @Override

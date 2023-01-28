@@ -98,9 +98,7 @@ public class SpongePlatform implements Platform {
                 .stream()
                 .filter(e -> e.getKey().isInstance(entity))
                 .findAny();
-        if (!opEntry.isPresent()) {
-            //System.err.println("\tFailed to find entity (" + entity.getType().getId() + ") in map. Using forge
-            // Entity");
+        if (opEntry.isEmpty()) {
             return new SForgeEntity(entity);
         }
         Class<? extends LiveEntity> bdclass = opEntry.get().getValue();
@@ -120,7 +118,7 @@ public class SpongePlatform implements Platform {
                 .stream()
                 .filter(e -> e.getKey().isInstance(tileEntity))
                 .findAny();
-        if (!opEntry.isPresent()) {
+        if (opEntry.isEmpty()) {
             return Optional.empty();
         }
         Class<? extends LiveTileEntity> bdclass = opEntry.get().getValue();
@@ -136,7 +134,7 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
-    public CorePluginVersion getMinecraftVersion() {
+    public @NotNull CorePluginVersion getMinecraftVersion() {
         return new CorePluginVersion(1, 16, 5);
     }
 
@@ -151,28 +149,28 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
-    public Set<Plugin> getPlugins() {
+    public @NotNull Set<Plugin> getPlugins() {
         throw new RuntimeException("Not implemented yet");
     }
 
     @Override
-    public File getPlatformPluginsFolder() {
+    public @NotNull File getPlatformPluginsFolder() {
         return new File("mods");
     }
 
     @Override
-    public File getPlatformConfigFolder() {
+    public @NotNull File getPlatformConfigFolder() {
         return new File("configuration");
     }
 
     @Override
-    public <E extends CustomEvent> E callEvent(E event) {
+    public <E extends CustomEvent> @NotNull E callEvent(@NotNull E event) {
         return SpongeListener.call(event);
     }
 
     @Override
-    public Optional<EntityType<? extends LiveEntity, ? extends EntitySnapshot<? extends LiveEntity>>> getEntityType(
-            String id) {
+    public @NotNull Optional<EntityType<? extends LiveEntity, ? extends EntitySnapshot<? extends LiveEntity>>> getEntityType(
+            @NotNull String id) {
         if (id.equals("minecraft:player")) {
             return Optional.of(new SEntityType.SPlayerType());
         }
@@ -191,7 +189,7 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
-    public Optional<BlockType> getBlockType(String id) {
+    public @NotNull Optional<BlockType> getBlockType(@NotNull String id) {
         String[] splitId = id.split(":");
         Optional<RegistryEntry<org.spongepowered.api.block.BlockType>> opType = RegistryTypes.BLOCK_TYPE
                 .get()
@@ -200,99 +198,99 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
-    public Optional<ItemType> getItemType(String id) {
+    public @NotNull Optional<ItemType> getItemType(@NotNull String id) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<DyeType> getDyeType(String id) {
+    public @NotNull Optional<DyeType> getDyeType(@NotNull String id) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<PatternLayerType> getPatternLayerType(String id) {
+    public @NotNull Optional<PatternLayerType> getPatternLayerType(@NotNull String id) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<BossColour> getBossColour(String id) {
+    public @NotNull Optional<BossColour> getBossColour(@NotNull String id) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<ParrotType> getParrotType(String id) {
+    public @NotNull Optional<ParrotType> getParrotType(@NotNull String id) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<ApplyPhysicsFlag> getApplyPhysics(String id) {
+    public @NotNull Optional<ApplyPhysicsFlag> getApplyPhysics(@NotNull String id) {
         return Optional.empty();
     }
 
     @Override
     @Deprecated
-    public Optional<UnspecificParser<?>> getUnspecifiedParser(String id) {
+    public @NotNull Optional<UnspecificParser<?>> getUnspecifiedParser(@NotNull String id) {
         return this.unspecificParsers.stream().filter(f -> f.getId().equals(id)).findFirst();
     }
 
     @Override
-    public Collection<EntityType<? extends LiveEntity, ? extends EntitySnapshot<? extends LiveEntity>>> getEntityTypes() {
+    public @NotNull Collection<EntityType<? extends LiveEntity, ? extends EntitySnapshot<? extends LiveEntity>>> getEntityTypes() {
         return RegistryTypes.ENTITY_TYPE
                 .get()
                 .stream()
                 .map(e -> this.getEntityType(e.key(RegistryTypes.ENTITY_TYPE).asString()))
-                .filter(e -> !e.isPresent())
+                .filter(Optional::isEmpty)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
     }
 
     @Override
-    public Collection<BlockType> getBlockTypes() {
+    public @NotNull Collection<BlockType> getBlockTypes() {
         return RegistryTypes.BLOCK_TYPE.get().stream().map(SBlockType::new).collect(Collectors.toSet());
     }
 
     @Override
-    public Collection<ItemType> getItemTypes() {
+    public @NotNull Collection<ItemType> getItemTypes() {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public Collection<DyeType> getDyeTypes() {
+    public @NotNull Collection<DyeType> getDyeTypes() {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public Collection<PatternLayerType> getPatternLayerTypes() {
+    public @NotNull Collection<PatternLayerType> getPatternLayerTypes() {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public Collection<BlockGroup> getBlockGroups() {
+    public @NotNull Collection<BlockGroup> getBlockGroups() {
         return BlockGroups.values();
     }
 
     @Override
-    public Collection<BossColour> getBossColours() {
+    public @NotNull Collection<BossColour> getBossColours() {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public Collection<ParrotType> getParrotType() {
+    public @NotNull Collection<ParrotType> getParrotType() {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public Collection<ApplyPhysicsFlag> getApplyPhysics() {
+    public @NotNull Collection<ApplyPhysicsFlag> getApplyPhysics() {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public Collection<Permission> getPermissions() {
+    public @NotNull Collection<Permission> getPermissions() {
         return this.permissions;
     }
 
     @Override
-    public Collection<Structure> getStructures() {
+    public @NotNull Collection<Structure> getStructures() {
         throw new RuntimeException("Not implemented yet");
     }
 
@@ -319,12 +317,12 @@ public class SpongePlatform implements Platform {
 
     @Override
     @Deprecated
-    public Collection<UnspecificParser<?>> getUnspecifiedParsers() {
+    public @NotNull Collection<UnspecificParser<?>> getUnspecifiedParsers() {
         throw new RuntimeException("Not implemented");
     }
 
     @Override
-    public Collection<TileEntitySnapshot<? extends TileEntity>> getDefaultTileEntities() {
+    public @NotNull Collection<TileEntitySnapshot<? extends TileEntity>> getDefaultTileEntities() {
         return this.defaultTileEntities;
     }
 
@@ -342,24 +340,23 @@ public class SpongePlatform implements Platform {
 
     @Override
     @Deprecated
-    public <T> UnspecificParser<T> get(UnspecificParsers<T> parsers) {
-        return (UnspecificParser<T>) this.getUnspecifiedParser(parsers.getId()).get();
+    public <T> @NotNull UnspecificParser<T> get(@NotNull UnspecificParsers<T> parsers) {
+        return (UnspecificParser<T>) this
+                .getUnspecifiedParser(parsers.getId())
+                .orElseThrow(() -> new RuntimeException("Cannot find unspecified parser"));
     }
 
     @Override
-    public @NotNull Singleton<ApplyPhysicsFlag> get(ApplyPhysicsFlags flags) {
-        switch (flags.getId()) {
-            case "none":
-                return new Singleton<>(() -> SApplyPhysicsFlag.NONE);
-            case "default":
-                return new Singleton<>(() -> SApplyPhysicsFlag.DEFAULT);
-            default:
-                throw new RuntimeException("Unknown Applied Physics Flag of: " + flags.getId());
-        }
+    public @NotNull Singleton<ApplyPhysicsFlag> get(@NotNull ApplyPhysicsFlags flags) {
+        return switch (flags.getId()) {
+            case "none" -> new Singleton<>(() -> SApplyPhysicsFlag.NONE);
+            case "default" -> new Singleton<>(() -> SApplyPhysicsFlag.DEFAULT);
+            default -> throw new RuntimeException("Unknown Applied Physics Flag of: " + flags.getId());
+        };
     }
 
     @Override
-    public @NotNull Singleton<ItemType> get(ItemTypeCommon itemId) {
+    public @NotNull Singleton<ItemType> get(@NotNull ItemTypeCommon itemId) {
         Supplier<ItemType> supplier = () -> RegistryTypes.ITEM_TYPE
                 .get()
                 .stream()
@@ -371,28 +368,28 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
-    public @NotNull Singleton<ParrotType> get(ParrotTypes parrotID) {
+    public @NotNull Singleton<ParrotType> get(@NotNull ParrotTypes parrotID) {
         return new Singleton<>(() -> {
             throw new RuntimeException("Not implemented");
         });
     }
 
     @Override
-    public @NotNull Singleton<DyeType> get(DyeTypes id) {
+    public @NotNull Singleton<DyeType> get(@NotNull DyeTypes id) {
         return new Singleton<>(() -> {
             throw new RuntimeException("Not implemented");
         });
     }
 
     @Override
-    public @NotNull Singleton<PatternLayerType> get(PatternLayerTypes id) {
+    public @NotNull Singleton<PatternLayerType> get(@NotNull PatternLayerTypes id) {
         return new Singleton<>(() -> {
             throw new RuntimeException("Not implemented");
         });
     }
 
     @Override
-    public <E extends LiveEntity, S extends EntitySnapshot<E>> @NotNull Singleton<EntityType<E, S>> get(EntityTypes<E, S> entityId) {
+    public <E extends LiveEntity, S extends EntitySnapshot<E>> @NotNull Singleton<EntityType<E, S>> get(@NotNull EntityTypes<E, S> entityId) {
         return new Singleton<>(() -> {
             throw new RuntimeException("Not implemented");
         });

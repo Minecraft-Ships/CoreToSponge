@@ -5,6 +5,7 @@ import org.core.entity.living.human.player.PlayerSnapshot;
 import org.core.implementation.sponge.entity.SEntitySnapshot;
 import org.core.implementation.sponge.entity.SEntityType;
 import org.core.inventory.inventories.general.entity.PlayerInventory;
+import org.core.inventory.inventories.snapshots.entity.PlayerInventorySnapshot;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.service.ServiceRegistration;
 import org.spongepowered.api.service.economy.EconomyService;
@@ -21,14 +22,17 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
     protected double saturationLevel;
     protected String name;
     protected boolean isSneaking;
+    protected final PlayerInventorySnapshot inventorySnapshot;
 
 
     public SPlayerSnapshot(PlayerSnapshot snapshot) {
         super(snapshot);
+        this.inventorySnapshot = snapshot.getInventory().createSnapshot();
     }
 
     public SPlayerSnapshot(LivePlayer entity) {
         super(entity);
+        this.inventorySnapshot = entity.getInventory().createSnapshot();
     }
 
     @Override
@@ -43,7 +47,7 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
 
     @Override
     public PlayerInventory getInventory() {
-        throw new RuntimeException("Not implemented yet");
+        return this.inventorySnapshot;
     }
 
     @Override
@@ -135,13 +139,10 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
         if (!opAccount.isPresent()) {
             return;
         }
-        opAccount.get()
-                .setBalance(Sponge
-                                .serviceProvider()
-                                .registration(EconomyService.class)
-                                .get()
-                                .service()
-                                .defaultCurrency(),
+        opAccount
+                .get()
+                .setBalance(
+                        Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency(),
                         decimal);
     }
 
@@ -156,6 +157,14 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
 
     @Override
     public LivePlayer teleportEntity(boolean keepInventory) {
-        throw new RuntimeException("Not implemented");
+        this.applyDefault(this.createdFrom);
+        this.createdFrom.setSneaking(this.isSneaking);
+        this.createdFrom.setExhaustionLevel(this.exhaustionLevel);
+        this.createdFrom.setFood(this.foodLevel);
+        this.createdFrom.setSaturationLevel(this.saturationLevel);
+        if (!keepInventory) {
+            this.inventorySnapshot.apply(this.createdFrom);
+        }
+        return this.createdFrom;
     }
 }

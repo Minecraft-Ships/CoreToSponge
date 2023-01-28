@@ -7,6 +7,8 @@ import org.core.platform.plugin.Plugin;
 import org.core.schedule.Scheduler;
 import org.core.schedule.SchedulerBuilder;
 import org.core.schedule.unit.TimeUnit;
+import org.spongepowered.api.Server;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.api.scheduler.ScheduledTask;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.plugin.PluginContainer;
@@ -18,15 +20,16 @@ import java.util.function.Consumer;
 
 public class SScheduler implements Scheduler.Native {
 
-    protected final Consumer<Scheduler> taskToRun;
-    protected final Integer delayCount;
-    protected final TimeUnit delayTimeUnit;
-    protected final Integer iteration;
-    protected final TimeUnit iterationTimeUnit;
-    protected final Plugin plugin;
-    protected Scheduler runAfter;
-    protected ScheduledTask task;
-    protected String displayName;
+    private final Consumer<Scheduler> taskToRun;
+    private final Integer delayCount;
+    private final TimeUnit delayTimeUnit;
+    private final Integer iteration;
+    private final TimeUnit iterationTimeUnit;
+    private final Plugin plugin;
+    private Scheduler runAfter;
+    private ScheduledTask task;
+    private String displayName;
+    private boolean async;
 
     public SScheduler(SchedulerBuilder builder, Plugin plugin) {
         this.taskToRun = builder.getRunner();
@@ -35,6 +38,7 @@ public class SScheduler implements Scheduler.Native {
         this.delayCount = builder.getDelay().orElse(0);
         this.delayTimeUnit = builder.getDelayUnit().orElse(null);
         this.plugin = plugin;
+        this.async = builder.isAsync();
         this.displayName = builder.getDisplayName().orElseThrow(() -> new IllegalStateException("No display name set"));
         builder.getToRunAfter().ifPresent(s -> this.runAfter = s);
     }
@@ -111,7 +115,12 @@ public class SScheduler implements Scheduler.Native {
                 builder = builder.interval(this.iteration, this.to(this.iterationTimeUnit));
             }
         }
-        this.task = ((SpongePlatformServer) TranslateCore.getServer()).getServer().scheduler().submit(builder.build());
+        Server server = ((SpongePlatformServer) TranslateCore.getServer()).getServer();
+        if (this.async) {
+            this.task = Sponge.asyncScheduler().submit(builder.build());
+        } else {
+            this.task = server.scheduler().submit(builder.build());
+        }
     }
 
     @Override

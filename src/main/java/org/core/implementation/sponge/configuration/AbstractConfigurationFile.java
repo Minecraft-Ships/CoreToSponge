@@ -4,6 +4,7 @@ import org.array.utils.ArrayUtils;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.core.config.ConfigurationStream;
 import org.core.config.parser.Parser;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.loader.ConfigurationLoader;
 import org.spongepowered.configurate.serialize.SerializationException;
@@ -63,8 +64,8 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
 
     @Override
     public <T, C extends Collection<T>> C parseCollection(org.core.config.ConfigurationNode node,
-                                                          Parser<? super String, T> parser,
-                                                          C collection,
+                                                          @NotNull Parser<? super String, T> parser,
+                                                          @NotNull C collection,
                                                           C defaultValue) {
         @NonNull ConfigurationNode node1 = this.root.node(node.getObjectPath());
         if (node1.empty()) {
@@ -144,8 +145,8 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
                 .stream()
                 .filter(n -> n.path().size() == (node.getPath().length + 1))
                 .filter(n -> {
-                    for (int A = 0; A < node.getPath().length; A++) {
-                        if (!node.getPath()[A].equals(n.path().get(A).toString())) {
+                    for (int a = 0; a < node.getPath().length; a++) {
+                        if (!node.getPath()[a].equals(n.path().get(a).toString())) {
                             return false;
                         }
                     }

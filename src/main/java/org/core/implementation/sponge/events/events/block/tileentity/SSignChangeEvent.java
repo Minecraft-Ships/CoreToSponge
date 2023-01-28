@@ -7,9 +7,9 @@ import org.core.world.position.impl.sync.SyncBlockPosition;
 
 public class SSignChangeEvent implements SignChangeEvent {
 
-    protected final SignTileEntitySnapshot to;
+    protected SignTileEntitySnapshot to;
     protected final SyncBlockPosition bp;
-    protected SignTileEntitySnapshot from;
+    protected final SignTileEntitySnapshot from;
     protected boolean cancelled;
 
     public SSignChangeEvent(SyncBlockPosition position, SignTileEntitySnapshot from, SignTileEntitySnapshot to) {
@@ -25,7 +25,7 @@ public class SSignChangeEvent implements SignChangeEvent {
 
     @Override
     public SignChangeEvent setTo(SignTileEntitySnapshot snapshot) {
-        this.from = snapshot;
+        this.to = snapshot;
         return this;
     }
 
@@ -53,8 +53,10 @@ public class SSignChangeEvent implements SignChangeEvent {
 
         protected LivePlayer player;
 
-        public SSignChangeEventByPlayer(SyncBlockPosition position, SignTileEntitySnapshot from,
-                SignTileEntitySnapshot to, LivePlayer player) {
+        public SSignChangeEventByPlayer(SyncBlockPosition position,
+                                        SignTileEntitySnapshot from,
+                                        SignTileEntitySnapshot to,
+                                        LivePlayer player) {
             super(position, from, to);
             this.player = player;
         }

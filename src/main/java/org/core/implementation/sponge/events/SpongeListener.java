@@ -8,25 +8,25 @@ import org.core.adventureText.format.NamedTextColours;
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.event.Event;
 import org.core.event.HEvent;
-import org.core.event.events.entity.EntityInteractEvent;
 import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
+import org.core.implementation.sponge.events.events.block.place.SPlayerBlockPlaceEvent;
+import org.core.implementation.sponge.events.events.block.place.SPostBlockPlaceEvent;
 import org.core.implementation.sponge.events.events.block.tileentity.SSignChangeEvent;
-import org.core.implementation.sponge.events.events.entity.interact.SEntityInteractEvent;
+import org.core.implementation.sponge.events.events.entity.command.SEntityCommandEvent;
 import org.core.implementation.sponge.platform.SpongePlatform;
-import org.core.implementation.sponge.utils.DirectionUtils;
+import org.core.implementation.sponge.world.position.block.details.blocks.snapshot.SBlockSnapshot;
 import org.core.implementation.sponge.world.position.block.entity.sign.SSignTileEntitySnapshot;
 import org.core.implementation.sponge.world.position.synced.SBlockPosition;
-import org.core.world.direction.Direction;
 import org.core.world.position.block.entity.sign.SignTileEntitySnapshot;
 import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.block.transaction.Operations;
 import org.spongepowered.api.data.value.ListValue;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.Player;
-import org.spongepowered.api.event.Cancellable;
-import org.spongepowered.api.event.Listener;
-import org.spongepowered.api.event.block.InteractBlockEvent;
-import org.spongepowered.api.event.filter.cause.Root;
+import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.event.filter.cause.First;
+import org.spongepowered.api.world.server.ServerLocation;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -56,11 +56,13 @@ public class SpongeListener {
                 }
                 Parameter[] parameters = method.getParameters();
                 if (parameters.length == 0) {
-                    TranslateCore.getConsole().sendMessage(AText
-                            .ofPlain("Failed to know what to do: HEvent found on " +
-                                    "method, but no event on " + el.getClass().getName() + "." + method.getName() +
-                                    "()")
-                            .withColour(NamedTextColours.RED));
+                    TranslateCore
+                            .getConsole()
+                            .sendMessage(AText
+                                                 .ofPlain("Failed to know what to do: HEvent found on "
+                                                                  + "method, but no event on " + el.getClass().getName()
+                                                                  + "." + method.getName() + "()")
+                                                 .withColour(NamedTextColours.RED));
                     continue;
                 }
                 if (!Modifier.isPublic(method.getModifiers())) {
@@ -70,20 +72,16 @@ public class SpongeListener {
                 if (!Event.class.isAssignableFrom(classEvent)) {
                     TranslateCore
                             .getConsole()
-                            .sendMessage(
-                                    AText
-                                            .ofPlain(
-                                                    "Failed to know what to do: HEvent found on method, but no known " +
-                                                            "event on "
-                                                            + el.getClass().getName()
-                                                            + "."
-                                                            + method.getName()
-                                                            + "("
-                                                            + Arrays
-                                                            .stream(parameters)
-                                                            .map(p -> p.getType().getSimpleName() + " " + p.getName())
-                                                            .collect(Collectors.joining(", ")))
-                                            .withColour(NamedTextColours.RED));
+                            .sendMessage(AText
+                                                 .ofPlain(
+                                                         "Failed to know what to do: HEvent found on method, but no known "
+                                                                 + "event on " + el.getClass().getName() + "."
+                                                                 + method.getName() + "(" + Arrays
+                                                                 .stream(parameters)
+                                                                 .map(p -> p.getType().getSimpleName() + " "
+                                                                         + p.getName())
+                                                                 .collect(Collectors.joining(", ")))
+                                                 .withColour(NamedTextColours.RED));
                 }
                 if (class1.isAssignableFrom(classEvent)) {
                     methods.add(new SEventLaunch(key, el, method));
@@ -91,6 +89,65 @@ public class SpongeListener {
             }
         }));
         return methods;
+    }
+
+    @org.spongepowered.api.event.Listener
+    public void onPlaceEvent(ChangeBlockEvent.All event) {
+        List<org.core.world.position.block.details.BlockSnapshot<SyncBlockPosition>> list = event
+                .transactions()
+                .stream()
+                .map(transaction -> (org.core.world.position.block.details.BlockSnapshot<SyncBlockPosition>) new SBlockSnapshot.SSyncedBlockSnapshot(
+                        transaction.finalReplacement()))
+                .toList();
+        event.transactions(Operations.PLACE.get()).forEach(transaction -> {
+            BlockSnapshot original = transaction.original();
+            BlockSnapshot last = transaction.finalReplacement();
+            ServerLocation loc = event.world().location(original.position());
+
+            SBlockSnapshot.SSyncedBlockSnapshot originalSnapshot = new SBlockSnapshot.SSyncedBlockSnapshot(original);
+            SBlockSnapshot.SSyncedBlockSnapshot lastSnapshot = new SBlockSnapshot.SSyncedBlockSnapshot(last);
+            SBlockPosition position = new SBlockPosition(loc);
+
+            SPostBlockPlaceEvent e = new SPostBlockPlaceEvent(position, originalSnapshot, lastSnapshot, list);
+            call(e);
+        });
+    }
+
+    @org.spongepowered.api.event.Listener
+    public void onPlaceEvent(ChangeBlockEvent.All event, @First Player player) {
+        LivePlayer lPlayer = new SLivePlayer(player);
+        List<org.core.world.position.block.details.BlockSnapshot<SyncBlockPosition>> list = event
+                .transactions()
+                .stream()
+                .map(transaction -> (org.core.world.position.block.details.BlockSnapshot<SyncBlockPosition>) new SBlockSnapshot.SSyncedBlockSnapshot(
+                        transaction.finalReplacement()))
+                .toList();
+        event.transactions(Operations.PLACE.get()).forEach(transaction -> {
+            BlockSnapshot original = transaction.original();
+            BlockSnapshot last = transaction.finalReplacement();
+            ServerLocation loc = event.world().location(original.position());
+
+            SBlockSnapshot.SSyncedBlockSnapshot originalSnapshot = new SBlockSnapshot.SSyncedBlockSnapshot(original);
+            SBlockSnapshot.SSyncedBlockSnapshot lastSnapshot = new SBlockSnapshot.SSyncedBlockSnapshot(last);
+            SBlockPosition position = new SBlockPosition(loc);
+
+            SPlayerBlockPlaceEvent e = new SPlayerBlockPlaceEvent(position, originalSnapshot, lastSnapshot, lPlayer,
+                                                                  list);
+            call(e);
+            if (e.isCancelled()) {
+                transaction.invalidate();
+            }
+        });
+    }
+
+    @org.spongepowered.api.event.Listener
+    public void onCommandEvent(org.spongepowered.api.event.command.ExecuteCommandEvent event) {
+        if (!(event.commandCause().audience() instanceof Player sPlayer)) {
+            return;
+        }
+        LivePlayer player = new SLivePlayer(sPlayer);
+        SEntityCommandEvent e = new SEntityCommandEvent(player, event.originalCommand().split(" "));
+        call(e);
     }
 
     @org.spongepowered.api.event.Listener
@@ -119,39 +176,5 @@ public class SpongeListener {
                 .map(t -> ((AdventureText) t).getComponent())
                 .collect(Collectors.toList());
         data.set(text);
-    }
-
-    @Listener
-    public void onPlayerPrimaryInteractWithBlock(InteractBlockEvent.Primary.Start event, @Root Player player) {
-        this.onPlayerInteractWithBlock(event, player);
-    }
-
-    @Listener
-    public void onPlayerSecondaryInteractWithBlock(InteractBlockEvent.Secondary event, @Root Player player) {
-        this.onPlayerInteractWithBlock(event, player);
-    }
-
-    private void onPlayerInteractWithBlock(org.spongepowered.api.event.block.InteractBlockEvent event,
-            org.spongepowered.api.entity.living.player.Player player) {
-        LivePlayer player1 = new SLivePlayer(player);
-        BlockSnapshot snapshot = event.block();
-
-        SyncBlockPosition bp = player1
-                .getPosition()
-                .getWorld()
-                .getPosition(snapshot.position().x(), snapshot.position().y(), snapshot.position().z());
-        int action = -1;
-        if (event instanceof org.spongepowered.api.event.block.InteractBlockEvent.Primary) {
-            action = EntityInteractEvent.PRIMARY_CLICK_ACTION;
-        } else if (event instanceof org.spongepowered.api.event.block.InteractBlockEvent.Secondary) {
-            action = EntityInteractEvent.SECONDARY_CLICK_ACTION;
-        }
-        Direction direction = DirectionUtils.getCoreDirection(event.targetSide());
-        SEntityInteractEvent.SPlayerInteractWithBlockEvent event1 = new SEntityInteractEvent.SPlayerInteractWithBlockEvent(
-                bp, action, direction, player1);
-        call(event1);
-        if (event1.isCancelled()) {
-            ((Cancellable) event).setCancelled(true);
-        }
     }
 }

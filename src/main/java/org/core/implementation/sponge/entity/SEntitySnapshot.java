@@ -6,8 +6,9 @@ import org.core.entity.Entity;
 import org.core.entity.EntitySnapshot;
 import org.core.entity.LiveEntity;
 import org.core.vector.type.Vector3;
+import org.core.world.position.impl.BlockPosition;
+import org.core.world.position.impl.ExactPosition;
 import org.core.world.position.impl.Position;
-import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.core.world.position.impl.sync.SyncExactPosition;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,6 +29,7 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     protected AdventureText customName;
     protected boolean customNameVisible;
     protected boolean isOnGround;
+    protected boolean isRemoved;
 
     public SEntitySnapshot(EntitySnapshot<E> snapshot) {
         this.init(snapshot);
@@ -62,7 +64,15 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
         entity.setPitch(this.pitch);
         entity.setRoll(this.roll);
         entity.setYaw(this.yaw);
+        if (this.isRemoved) {
+            entity.remove();
+        }
         return entity;
+    }
+
+    @Override
+    public boolean isRemoved() {
+        return this.isRemoved;
     }
 
     @Override
@@ -95,12 +105,12 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
 
     @Override
     public EntitySnapshot<? extends LiveEntity> setPosition(Position<? extends Number> position) {
-        if (position instanceof SyncExactPosition) {
-            this.position = (SyncExactPosition) position;
+        if (position instanceof ExactPosition) {
+            this.position = Position.toSync((ExactPosition) position);
         } else {
-            this.position = ((SyncBlockPosition) position).toExactPosition();
+            this.position = Position.toSync(((BlockPosition) position).toExactPosition());
         }
-        throw new RuntimeException("Unknown position type");
+        return this;
     }
 
     @Override
@@ -169,15 +179,13 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     }
 
     @Override
-    public EntitySnapshot<? extends LiveEntity> addPassengers(
-            Collection<? extends EntitySnapshot<? extends LiveEntity>> entities) {
+    public EntitySnapshot<? extends LiveEntity> addPassengers(Collection<? extends EntitySnapshot<? extends LiveEntity>> entities) {
         this.passengers.addAll(entities);
         return this;
     }
 
     @Override
-    public EntitySnapshot<? extends LiveEntity> removePassengers(
-            Collection<EntitySnapshot<? extends LiveEntity>> entities) {
+    public EntitySnapshot<? extends LiveEntity> removePassengers(Collection<EntitySnapshot<? extends LiveEntity>> entities) {
         this.passengers.removeAll(entities);
         return this;
     }

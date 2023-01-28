@@ -5,11 +5,13 @@ import org.core.TranslateCore;
 import org.core.adventureText.AText;
 import org.core.adventureText.adventure.AdventureText;
 import org.core.entity.EntityType;
+import org.core.entity.LiveEntity;
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.entity.living.human.player.PlayerSnapshot;
 import org.core.implementation.sponge.entity.SEntityType;
 import org.core.implementation.sponge.entity.SLiveEntity;
 import org.core.implementation.sponge.entity.living.human.player.snapshot.SPlayerSnapshot;
+import org.core.implementation.sponge.inventory.inventories.live.SLivePlayerInventory;
 import org.core.implementation.sponge.platform.SpongePlatformServer;
 import org.core.inventory.inventories.general.entity.PlayerInventory;
 import org.core.permission.Permission;
@@ -20,6 +22,7 @@ import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.data.Keys;
+import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.service.ServiceRegistration;
 import org.spongepowered.api.service.economy.EconomyService;
@@ -48,13 +51,16 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
 
     @Override
     public boolean isViewingInventory() {
+        Player entity = this.getSpongeEntity();
+        if (entity instanceof LivePlayer) {
+            return ((org.core.entity.living.human.player.Player<LiveEntity>) entity).isViewingInventory();
+        }
         return false;
-        /*TODO return getSpongeEntity().isViewingInventory();*/
     }
 
     @Override
     public PlayerInventory getInventory() {
-        throw new RuntimeException("Not implemented yet");
+        return new SLivePlayerInventory(this);
     }
 
     @Override

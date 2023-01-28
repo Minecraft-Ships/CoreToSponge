@@ -88,7 +88,10 @@ public class SWorldExtent implements WorldExtent {
 
     @Override
     public CompletableFuture<ChunkExtent> loadChunkAsynced(Vector3<Integer> vector) {
-        throw new RuntimeException("Not implemented");
+        CompletableFuture<ChunkExtent> future = new CompletableFuture<>();
+        future.complete(this.loadChunk(vector));
+        return future;
+
     }
 
     @Override
