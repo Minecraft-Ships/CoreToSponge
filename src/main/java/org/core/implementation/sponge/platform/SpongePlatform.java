@@ -327,6 +327,11 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
+    public @NotNull PlatformDetails getImplementationDetails() {
+        throw new RuntimeException("Not implemented yet");
+    }
+
+    @Override
     public @NotNull Collection<PlatformUpdate<?>> getUpdateCheckers() {
         return Collections.emptyList();
     }
