@@ -1,5 +1,6 @@
 package org.core.implementation.sponge.platform;
 
+import org.core.TranslateCore;
 import org.core.config.ConfigurationFormat;
 import org.core.config.parser.unspecific.UnspecificParser;
 import org.core.config.parser.unspecific.UnspecificParsers;
@@ -13,8 +14,9 @@ import org.core.event.CustomEvent;
 import org.core.implementation.sponge.entity.SEntityType;
 import org.core.implementation.sponge.entity.forge.live.SForgeEntity;
 import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
-import org.core.implementation.sponge.events.SpongeListener;
 import org.core.implementation.sponge.inventory.SItemType;
+import org.core.implementation.sponge.platform.details.SpongeImplPlatformDetails;
+import org.core.implementation.sponge.platform.details.SpongeToCorePlatformDetails;
 import org.core.implementation.sponge.world.position.block.SBlockType;
 import org.core.implementation.sponge.world.position.block.entity.furnace.SLiveFurnaceEntity;
 import org.core.implementation.sponge.world.position.block.entity.sign.SLiveSignEntity;
@@ -68,6 +70,7 @@ public class SpongePlatform implements Platform {
     protected final Map<Class<? extends org.spongepowered.api.block.entity.BlockEntity>, Class<? extends LiveTileEntity>> blockStateToTileEntity = new HashMap<>();
     protected final Collection<TileEntitySnapshot<? extends TileEntity>> defaultTileEntities = new HashSet<>();
     protected final Collection<UnspecificParser<?>> unspecificParsers = new HashSet<>();
+    private final Collection<SApplyPhysicsFlag> physicsFlags = new HashSet<>();
     protected final Set<Permission> permissions = new HashSet<>();
 
     public SpongePlatform() {
@@ -140,7 +143,7 @@ public class SpongePlatform implements Platform {
 
     @Override
     public @NotNull PlatformDetails getDetails() {
-        throw new RuntimeException("Not implemented");
+        return new SpongeToCorePlatformDetails();
     }
 
     @Override
@@ -165,7 +168,7 @@ public class SpongePlatform implements Platform {
 
     @Override
     public <E extends CustomEvent> @NotNull E callEvent(@NotNull E event) {
-        return SpongeListener.call(event);
+        return TranslateCore.getEventManager().callEvent(event);
     }
 
     @Override
@@ -224,6 +227,7 @@ public class SpongePlatform implements Platform {
 
     @Override
     public @NotNull Optional<ApplyPhysicsFlag> getApplyPhysics(@NotNull String id) {
+
         return Optional.empty();
     }
 
@@ -328,7 +332,7 @@ public class SpongePlatform implements Platform {
 
     @Override
     public @NotNull PlatformDetails getImplementationDetails() {
-        throw new RuntimeException("Not implemented yet");
+        return new SpongeImplPlatformDetails();
     }
 
     @Override

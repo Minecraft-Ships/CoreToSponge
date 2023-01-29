@@ -43,7 +43,7 @@ public class SBlockPosition extends SSyncedPosition<Integer> implements SyncBloc
     @Override
     public SBlockPosition getRelative(Vector3<?> vector) {
         return new SBlockPosition(this.location.add(vector.getX().doubleValue(), vector.getY().doubleValue(),
-                vector.getZ().doubleValue()));
+                                                    vector.getZ().doubleValue()));
     }
 
     @Override
@@ -62,15 +62,14 @@ public class SBlockPosition extends SSyncedPosition<Integer> implements SyncBloc
     public SBlockPosition setBlock(BlockDetails details, PositionFlag.SetFlag... flags) {
         Optional<ServerLocation> opLocSer = this.location.onServer();
         if (details instanceof SBlockSnapshot && opLocSer.isPresent()) {
-            SBlockSnapshot<? extends Position<Integer>> snapshot =
-                    (SBlockSnapshot<? extends Position<Integer>>) details;
+            SBlockSnapshot<? extends Position<Integer>> snapshot = (SBlockSnapshot<? extends Position<Integer>>) details;
             BlockSnapshot snapshot1 = snapshot.getSnapshot();
             snapshot1 = snapshot1.withLocation(opLocSer.get());
             SApplyPhysicsFlag physicsFlag = (SApplyPhysicsFlag) Stream
                     .of(flags)
                     .filter(f -> f instanceof ApplyPhysicsFlag)
                     .findAny()
-                    .orElse(ApplyPhysicsFlags.NONE.get());
+                    .orElse(ApplyPhysicsFlags.DEFAULT.get());
             snapshot1.restore(true, physicsFlag.getFlag());
         } else {
             org.spongepowered.api.block.BlockState state = ((StateDetails) details).getState();
@@ -78,7 +77,7 @@ public class SBlockPosition extends SSyncedPosition<Integer> implements SyncBloc
                     .of(flags)
                     .filter(f -> f instanceof ApplyPhysicsFlag)
                     .findAny()
-                    .orElse(ApplyPhysicsFlags.NONE.get());
+                    .orElse(ApplyPhysicsFlags.DEFAULT.get());
             this.location.setBlock(state, physicsFlag.getFlag());
             if (details.get(KeyedData.TILED_ENTITY).isPresent()) {
                 TileEntitySnapshot<? extends TileEntity> snapshot = details.get(KeyedData.TILED_ENTITY).get();

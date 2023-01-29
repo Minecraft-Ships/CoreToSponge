@@ -32,7 +32,13 @@ public class CoreToSponge extends TranslateCore.CoreImplementation {
 
     public CoreToSponge(PluginContainer plugin) {
         CoreImplementation.IMPLEMENTATION = this;
-        org.spongepowered.api.Sponge.eventManager().registerListeners(plugin, this.eventManager.getRawListener());
+        org.spongepowered.api.Sponge
+                .eventManager()
+                .registerListeners(plugin, this.eventManager.getRawGeneralListener());
+        org.spongepowered.api.Sponge
+                .eventManager()
+                .registerListeners(plugin, this.eventManager.getRawEntityInteractionListener());
+
         //TODO CHECK IF CORRECT
         //Task.builder().delayTicks(1).intervalTicks(1).name("tps").execute(getRawServer().getTPSExecutor()).build();
     }

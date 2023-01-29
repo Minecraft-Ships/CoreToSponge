@@ -3,6 +3,7 @@ package org.core.implementation.sponge.events.events.entity.interact;
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.event.events.entity.EntityInteractEvent;
 import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
+import org.core.implementation.sponge.events.SEventManager;
 import org.core.implementation.sponge.events.SpongeListener;
 import org.core.implementation.sponge.events.events.entity.interact.block.SPlayerInteractBlockEvent;
 import org.core.implementation.sponge.utils.DirectionUtils;
@@ -44,7 +45,7 @@ public class SEntityInteractionListener {
         }
         Direction direction = DirectionUtils.getCoreDirection(event.targetSide());
         SPlayerInteractBlockEvent event1 = new SPlayerInteractBlockEvent(bp, action, direction, player1);
-        SpongeListener.call(event1);
+        SEventManager.call(event1);
         if (event1.isCancelled()) {
             ((Cancellable) event).setCancelled(true);
         }

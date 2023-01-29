@@ -39,58 +39,6 @@ import java.util.stream.Collectors;
 
 public class SpongeListener {
 
-    public static <E extends Event> E call(E event) {
-        getMethods(event.getClass()).forEach(method -> method.run(event));
-        return event;
-    }
-
-    private static Set<SEventLaunch> getMethods(Class<? extends Event> classEvent) {
-        Set<SEventLaunch> methods = new HashSet<>();
-        TranslateCore.getEventManager().getEventListeners().forEach((key, value) -> value.forEach(el -> {
-            for (Method method : el.getClass().getDeclaredMethods()) {
-                if (method.getDeclaredAnnotationsByType(HEvent.class) == null) {
-                    continue;
-                }
-                if (method.getName().contains("lambda") || method.getName().contains("$")) {
-                    continue;
-                }
-                Parameter[] parameters = method.getParameters();
-                if (parameters.length == 0) {
-                    TranslateCore
-                            .getConsole()
-                            .sendMessage(AText
-                                                 .ofPlain("Failed to know what to do: HEvent found on "
-                                                                  + "method, but no event on " + el.getClass().getName()
-                                                                  + "." + method.getName() + "()")
-                                                 .withColour(NamedTextColours.RED));
-                    continue;
-                }
-                if (!Modifier.isPublic(method.getModifiers())) {
-                    continue;
-                }
-                Class<?> class1 = parameters[0].getType();
-                if (!Event.class.isAssignableFrom(classEvent)) {
-                    TranslateCore
-                            .getConsole()
-                            .sendMessage(AText
-                                                 .ofPlain(
-                                                         "Failed to know what to do: HEvent found on method, but no known "
-                                                                 + "event on " + el.getClass().getName() + "."
-                                                                 + method.getName() + "(" + Arrays
-                                                                 .stream(parameters)
-                                                                 .map(p -> p.getType().getSimpleName() + " "
-                                                                         + p.getName())
-                                                                 .collect(Collectors.joining(", ")))
-                                                 .withColour(NamedTextColours.RED));
-                }
-                if (class1.isAssignableFrom(classEvent)) {
-                    methods.add(new SEventLaunch(key, el, method));
-                }
-            }
-        }));
-        return methods;
-    }
-
     @org.spongepowered.api.event.Listener
     public void onPlaceEvent(ChangeBlockEvent.All event) {
         List<org.core.world.position.block.details.BlockSnapshot<SyncBlockPosition>> list = event
@@ -109,7 +57,7 @@ public class SpongeListener {
             SBlockPosition position = new SBlockPosition(loc);
 
             SPostBlockPlaceEvent e = new SPostBlockPlaceEvent(position, originalSnapshot, lastSnapshot, list);
-            call(e);
+            SEventManager.call(e);
         });
     }
 
@@ -133,7 +81,7 @@ public class SpongeListener {
 
             SPlayerBlockPlaceEvent e = new SPlayerBlockPlaceEvent(position, originalSnapshot, lastSnapshot, lPlayer,
                                                                   list);
-            call(e);
+            SEventManager.call(e);
             if (e.isCancelled()) {
                 transaction.invalidate();
             }
@@ -147,7 +95,7 @@ public class SpongeListener {
         }
         LivePlayer player = new SLivePlayer(sPlayer);
         SEntityCommandEvent e = new SEntityCommandEvent(player, event.originalCommand().split(" "));
-        call(e);
+        SEventManager.call(e);
     }
 
     @org.spongepowered.api.event.Listener
@@ -164,7 +112,7 @@ public class SpongeListener {
         } else {
             sEvent = new SSignChangeEvent(bp, from, to);
         }
-        call(sEvent);
+        SEventManager.call(sEvent);
         if (sEvent.isCancelled()) {
             event.setCancelled(true);
         }
