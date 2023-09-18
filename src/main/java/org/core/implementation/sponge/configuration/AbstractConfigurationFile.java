@@ -139,6 +139,24 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
     }
 
     @Override
+    public void set(org.core.config.ConfigurationNode node, Map<String, ?> value) {
+        value.forEach((key, value1) -> {
+            String[] args = key.split(Pattern.quote("."));
+            String[] fullArgs = ArrayUtils.join(String.class, node.getPath(), args);
+            org.core.config.ConfigurationNode settingNode = new org.core.config.ConfigurationNode(fullArgs);
+            if(value1 instanceof Map){
+                set(settingNode, (Map<String, ?>)value1);
+                return;
+            }
+            try {
+                this.root.node(node.getObjectPath()).set(value1);
+            } catch (SerializationException e) {
+                throw new IllegalStateException(e);
+            }
+        });
+    }
+
+    @Override
     public Set<org.core.config.ConfigurationNode> getChildren(org.core.config.ConfigurationNode node) {
         Collection<? extends ConfigurationNode> values = this.root.node(node.getObjectPath()).childrenList();
         Set<org.core.config.ConfigurationNode> set = new HashSet<>();
