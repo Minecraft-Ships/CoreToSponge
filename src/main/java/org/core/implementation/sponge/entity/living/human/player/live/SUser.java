@@ -1,6 +1,7 @@
 package org.core.implementation.sponge.entity.living.human.player.live;
 
 import org.core.entity.living.human.player.User;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.service.ServiceRegistration;
 import org.spongepowered.api.service.economy.EconomyService;
@@ -44,7 +45,7 @@ public class SUser implements User {
     }
 
     @Override
-    public void setBalance(BigDecimal decimal) {
+    public void setBalance(@NotNull BigDecimal decimal) {
         Optional<UniqueAccount> opAccount = this.getAccount();
         if (!opAccount.isPresent()) {
             return;

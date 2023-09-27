@@ -6,6 +6,7 @@ import org.core.implementation.sponge.entity.SEntitySnapshot;
 import org.core.implementation.sponge.entity.SEntityType;
 import org.core.inventory.inventories.general.entity.PlayerInventory;
 import org.core.inventory.inventories.snapshots.entity.PlayerInventorySnapshot;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.service.ServiceRegistration;
 import org.spongepowered.api.service.economy.EconomyService;
@@ -134,7 +135,7 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
     }
 
     @Override
-    public void setBalance(BigDecimal decimal) {
+    public void setBalance(@NotNull BigDecimal decimal) {
         Optional<UniqueAccount> opAccount = this.getAccount();
         if (!opAccount.isPresent()) {
             return;

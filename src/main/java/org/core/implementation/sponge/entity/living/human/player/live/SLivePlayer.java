@@ -17,6 +17,7 @@ import org.core.inventory.inventories.general.entity.PlayerInventory;
 import org.core.permission.Permission;
 import org.core.source.viewer.CommandViewer;
 import org.core.world.position.impl.BlockPosition;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -183,7 +184,7 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     }
 
     @Override
-    public void setBalance(BigDecimal decimal) {
+    public void setBalance(@NotNull BigDecimal decimal) {
         Optional<UniqueAccount> opAccount = this.getAccount();
         if (!opAccount.isPresent()) {
             return;
