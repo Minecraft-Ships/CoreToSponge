@@ -2,36 +2,46 @@ package org.core.implementation.sponge.events.events.block.tileentity;
 
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.event.events.block.tileentity.SignChangeEvent;
+import org.core.implementation.sponge.world.position.block.entity.sign.SSignSideSnapshot;
+import org.core.world.position.block.entity.sign.SignSide;
 import org.core.world.position.block.entity.sign.SignTileEntitySnapshot;
 import org.core.world.position.impl.sync.SyncBlockPosition;
 
 public class SSignChangeEvent implements SignChangeEvent {
 
-    protected SignTileEntitySnapshot to;
+    public static class SSignChangeEventByPlayer extends SSignChangeEvent implements SignChangeEvent.ByPlayer {
+
+        protected LivePlayer player;
+
+        public SSignChangeEventByPlayer(SyncBlockPosition position,
+                                        SignTileEntitySnapshot from,
+                                        SSignSideSnapshot to,
+                                        LivePlayer player,
+                                        boolean isEdit) {
+            super(position, from, to, isEdit);
+            this.player = player;
+        }
+
+        @Override
+        public LivePlayer getEntity() {
+            return this.player;
+        }
+    }
+
     protected final SyncBlockPosition bp;
     protected final SignTileEntitySnapshot from;
+    private final SSignSideSnapshot to;
+    private final boolean isEdit;
     protected boolean cancelled;
 
-    public SSignChangeEvent(SyncBlockPosition position, SignTileEntitySnapshot from, SignTileEntitySnapshot to) {
+    public SSignChangeEvent(SyncBlockPosition position,
+                            SignTileEntitySnapshot from,
+                            SSignSideSnapshot to,
+                            boolean isEdit) {
         this.to = to;
         this.from = from;
         this.bp = position;
-    }
-
-    @Override
-    public SignTileEntitySnapshot getTo() {
-        return this.to;
-    }
-
-    @Override
-    public SignChangeEvent setTo(SignTileEntitySnapshot snapshot) {
-        this.to = snapshot;
-        return this;
-    }
-
-    @Override
-    public SignTileEntitySnapshot getFrom() {
-        return this.from;
+        this.isEdit = isEdit;
     }
 
     @Override
@@ -49,21 +59,23 @@ public class SSignChangeEvent implements SignChangeEvent {
         return this.bp;
     }
 
-    public static class SSignChangeEventByPlayer extends SSignChangeEvent implements SignChangeEvent.ByPlayer {
+    @Override
+    public SignTileEntitySnapshot getSign() {
+        return this.from;
+    }
 
-        protected LivePlayer player;
+    @Override
+    public SignSide getPreviousSide() {
+        return this.from.getSide(this.to.isFront());
+    }
 
-        public SSignChangeEventByPlayer(SyncBlockPosition position,
-                                        SignTileEntitySnapshot from,
-                                        SignTileEntitySnapshot to,
-                                        LivePlayer player) {
-            super(position, from, to);
-            this.player = player;
-        }
+    @Override
+    public SignSide getChangingSide() {
+        return this.to;
+    }
 
-        @Override
-        public LivePlayer getEntity() {
-            return this.player;
-        }
+    @Override
+    public boolean isEdit() {
+        return this.isEdit;
     }
 }

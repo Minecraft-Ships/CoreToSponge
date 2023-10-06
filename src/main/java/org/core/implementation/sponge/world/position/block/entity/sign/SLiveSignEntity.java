@@ -3,7 +3,9 @@ package org.core.implementation.sponge.world.position.block.entity.sign;
 import org.core.adventureText.AText;
 import org.core.adventureText.adventure.AdventureText;
 import org.core.implementation.sponge.world.position.block.entity.AbstractLiveTileEntity;
+import org.core.utils.ComponentUtils;
 import org.core.world.position.block.entity.sign.LiveSignTileEntity;
+import org.core.world.position.block.entity.sign.SignSide;
 import org.core.world.position.block.entity.sign.SignTileEntity;
 import org.core.world.position.block.entity.sign.SignTileEntitySnapshot;
 import org.spongepowered.api.block.entity.Sign;
@@ -29,15 +31,31 @@ public class SLiveSignEntity extends AbstractLiveTileEntity<Sign> implements Liv
     }
 
     @Override
+    public SignSide getSide(boolean frontSide) {
+        if (frontSide) {
+            return new SLiveSignSide(this.tileEntity, true);
+        }
+        throw new RuntimeException("Multi sided signs are not supported");
+    }
+
+    @Override
+    public boolean isMultiSideSupported() {
+        return false;
+    }
+
+    @Override
     public List<AText> getText() {
-        return this.tileEntity.lines().get().stream().map(AdventureText::new).collect(Collectors.toList());
+        return getFront().getLines().stream().map(text -> new AdventureText(text)).collect(Collectors.toList());
     }
 
     @Override
     public SignTileEntity setText(Collection<? extends AText> text) {
-        this.tileEntity
-                .lines()
-                .set(text.stream().map(t -> ((AdventureText) t).getComponent()).collect(Collectors.toList()));
+        this.getFront().setLines(text.stream().map(text2 -> {
+            if (text2 instanceof AdventureText adventure) {
+                return adventure.getComponent();
+            }
+            return ComponentUtils.fromLegacy(text2.toLegacy());
+        }).collect(Collectors.toList()));
         return this;
     }
 }

@@ -1,9 +1,11 @@
 package org.core.implementation.sponge.entity.living.human.player.live;
 
 import net.kyori.adventure.identity.Identity;
+import net.kyori.adventure.text.Component;
 import org.core.TranslateCore;
 import org.core.adventureText.AText;
 import org.core.adventureText.adventure.AdventureText;
+import org.core.eco.Currency;
 import org.core.entity.EntityType;
 import org.core.entity.LiveEntity;
 import org.core.entity.living.human.player.LivePlayer;
@@ -18,6 +20,7 @@ import org.core.permission.Permission;
 import org.core.source.viewer.CommandViewer;
 import org.core.world.position.impl.BlockPosition;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
@@ -48,6 +51,11 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     @Override
     public org.spongepowered.api.entity.living.player.Player getSpongeEntity() {
         return (org.spongepowered.api.entity.living.player.Player) super.getSpongeEntity();
+    }
+
+    @Override
+    public boolean isOnGround() {
+        return false;
     }
 
     @Override
@@ -97,11 +105,6 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     }
 
     @Override
-    public UUID getUniqueId() {
-        return this.getSpongeEntity().uniqueId();
-    }
-
-    @Override
     public boolean isSneaking() {
         return this.getSpongeEntity().get(Keys.IS_SNEAKING).get();
     }
@@ -119,8 +122,23 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     }
 
     @Override
+    public UUID getUniqueId() {
+        return this.getSpongeEntity().uniqueId();
+    }
+
+    @Override
     public EntityType<LivePlayer, PlayerSnapshot> getType() {
         return new SEntityType.SPlayerType();
+    }
+
+    @Override
+    public PlayerSnapshot createSnapshot() {
+        return new SPlayerSnapshot(this);
+    }
+
+    @Override
+    public Optional<BlockPosition> getBlockLookingAt(int scanLength) {
+        return Optional.empty();
     }
 
     @Override
@@ -132,30 +150,22 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     }
 
     @Override
-    public Optional<BlockPosition> getBlockLookingAt(int scanLength) {
-        return Optional.empty();
-    }
-
-    @Override
-    public PlayerSnapshot createSnapshot() {
-        return new SPlayerSnapshot(this);
-    }
-
-    @Override
-    public boolean isOnGround() {
-        return false;
-    }
-
-    @Override
+    @Deprecated(forRemoval = true)
     public CommandViewer sendMessage(AText message, UUID uuid) {
         this.getSpongeEntity().sendMessage(Identity.identity(uuid), ((AdventureText) message).getComponent());
         return this;
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     public CommandViewer sendMessage(AText message) {
         this.getSpongeEntity().sendMessage(((AdventureText) message).getComponent());
         return this;
+    }
+
+    @Override
+    public void sendMessage(@NotNull Component message, @Nullable UUID uuid) {
+        this.getSpongeEntity().sendMessage(uuid == null ? Identity.nil() : Identity.identity(uuid), message);
     }
 
     @Override
@@ -173,7 +183,7 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     }
 
     @Override
-    public BigDecimal getBalance() {
+    public BigDecimal getBalance(@NotNull Currency currency) {
         Optional<UniqueAccount> opAccount = this.getAccount();
         if (!opAccount.isPresent()) {
             return new BigDecimal(0);
@@ -184,7 +194,7 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     }
 
     @Override
-    public void setBalance(@NotNull BigDecimal decimal) {
+    public void setBalance(@NotNull Currency currency, @NotNull BigDecimal decimal) {
         Optional<UniqueAccount> opAccount = this.getAccount();
         if (!opAccount.isPresent()) {
             return;

@@ -3,11 +3,12 @@ package org.core.implementation.sponge;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import org.core.TranslateCore;
-import org.core.config.ConfigurationFormat;
-import org.core.config.ConfigurationStream;
+import org.core.config.ConfigManager;
+import org.core.eco.CurrencyManager;
 import org.core.event.EventManager;
 import org.core.implementation.sponge.boss.SServerBossBar;
-import org.core.implementation.sponge.configuration.YAMLConfigurationFile;
+import org.core.implementation.sponge.configuration.SConfigManager;
+import org.core.implementation.sponge.currency.SCurrencyManager;
 import org.core.implementation.sponge.events.SEventManager;
 import org.core.implementation.sponge.platform.PlatformConsole;
 import org.core.implementation.sponge.platform.SpongePlatform;
@@ -20,8 +21,6 @@ import org.core.source.command.ConsoleSource;
 import org.core.world.boss.ServerBossBar;
 import org.spongepowered.plugin.PluginContainer;
 
-import java.io.File;
-
 public class CoreToSponge extends TranslateCore.CoreImplementation {
 
     protected final SpongePlatform platform = new SpongePlatform();
@@ -29,6 +28,8 @@ public class CoreToSponge extends TranslateCore.CoreImplementation {
     protected final SScheduleManager scheduleManager = new SScheduleManager();
     protected final PlatformConsole console = new PlatformConsole();
     protected final SpongePlatformServer server = new SpongePlatformServer(org.spongepowered.api.Sponge.server());
+    private final CurrencyManager currencyManager = new SCurrencyManager();
+    private final ConfigManager configManager = new SConfigManager();
 
     public CoreToSponge(PluginContainer plugin) {
         CoreImplementation.IMPLEMENTATION = this;
@@ -64,20 +65,6 @@ public class CoreToSponge extends TranslateCore.CoreImplementation {
     }
 
     @Override
-    public ConfigurationStream.ConfigurationFile createRawConfigurationFile(File file, ConfigurationFormat type) {
-        if (file == null) {
-            throw new IllegalArgumentException("Unknown file");
-        }
-        if (type == null) {
-            throw new IllegalArgumentException("Unknown Configuration Loader Format");
-        }
-        if (type.equals(ConfigurationFormat.FORMAT_YAML)) {
-            return new YAMLConfigurationFile(file);
-        }
-        throw new IllegalStateException("Unknown format type of " + type.getName());
-    }
-
-    @Override
     public PlatformServer getRawServer() {
         return this.server;
     }
@@ -86,5 +73,15 @@ public class CoreToSponge extends TranslateCore.CoreImplementation {
     public ServerBossBar bossBuilder() {
         return new SServerBossBar(
                 BossBar.bossBar(Component.empty(), 0, BossBar.Color.PURPLE, BossBar.Overlay.PROGRESS));
+    }
+
+    @Override
+    public ConfigManager getRawConfigManager() {
+        return this.configManager;
+    }
+
+    @Override
+    public CurrencyManager getRawCurrencyManager() {
+        return this.currencyManager;
     }
 }

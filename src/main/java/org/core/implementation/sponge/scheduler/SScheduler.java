@@ -14,11 +14,24 @@ import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.plugin.PluginContainer;
 
 import java.lang.reflect.InvocationTargetException;
+import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 public class SScheduler implements Scheduler.Native {
+
+    private class RunAfterScheduler implements Runnable {
+
+        @Override
+        public void run() {
+            SScheduler.this.taskToRun.accept(SScheduler.this);
+            Scheduler scheduler = SScheduler.this.runAfter;
+            if (scheduler != null) {
+                scheduler.run();
+            }
+        }
+    }
 
     private final Consumer<Scheduler> taskToRun;
     private final Integer delayCount;
@@ -30,8 +43,11 @@ public class SScheduler implements Scheduler.Native {
     private ScheduledTask task;
     private String displayName;
     private boolean async;
+    private boolean isDelayedOnly;
+    private LocalTime startTime;
+    private Duration delayDuration;
 
-    public SScheduler(SchedulerBuilder builder, Plugin plugin) {
+    public SScheduler(SchedulerBuilder builder, Plugin plugin, boolean isDelayedOnly) {
         this.taskToRun = builder.getRunner();
         this.iteration = builder.getIteration().orElse(null);
         this.iterationTimeUnit = builder.getIterationUnit().orElse(null);
@@ -40,6 +56,7 @@ public class SScheduler implements Scheduler.Native {
         this.plugin = plugin;
         this.async = builder.isAsync();
         this.displayName = builder.getDisplayName().orElseThrow(() -> new IllegalStateException("No display name set"));
+        this.isDelayedOnly = isDelayedOnly;
         builder.getToRunAfter().ifPresent(s -> this.runAfter = s);
     }
 
@@ -71,12 +88,18 @@ public class SScheduler implements Scheduler.Native {
 
     @Override
     public Optional<LocalTime> getEndTime() {
-        return Optional.empty();
+        if (!this.isDelayedOnly) {
+            return Optional.empty();
+        }
+        if (this.startTime == null) {
+            return Optional.empty();
+        }
+        return Optional.of(this.startTime.plus(this.delayDuration));
     }
 
     @Override
     public boolean isAsync() {
-        return false;
+        return this.async;
     }
 
     @Override
@@ -103,12 +126,15 @@ public class SScheduler implements Scheduler.Native {
         Task.Builder builder = Task.builder().plugin(container).execute(new SScheduler.RunAfterScheduler());
         if (this.delayCount != null) {
             if (this.delayTimeUnit == null || this.delayTimeUnit == TimeUnit.MINECRAFT_TICKS) {
-                builder = builder.delay(Ticks.duration(this.delayCount));
+                this.delayDuration = Ticks.duration(this.delayCount);
+                builder = builder.delay(delayDuration);
             } else {
-                builder = builder.delay(this.delayCount, this.to(this.delayTimeUnit));
+                java.util.concurrent.TimeUnit unit = this.to(this.delayTimeUnit);
+                builder = builder.delay(this.delayCount, unit);
+                this.delayDuration = Duration.of(this.delayCount, unit.toChronoUnit());
             }
         }
-        if (this.iteration != null) {
+        if (this.iteration != null && !this.isDelayedOnly) {
             if (this.iterationTimeUnit == null || this.iterationTimeUnit == TimeUnit.MINECRAFT_TICKS) {
                 builder = builder.interval(Ticks.duration(this.iteration));
             } else {
@@ -116,6 +142,7 @@ public class SScheduler implements Scheduler.Native {
             }
         }
         Server server = ((SpongePlatformServer) TranslateCore.getServer()).getServer();
+        this.startTime = LocalTime.now();
         if (this.async) {
             this.task = Sponge.asyncScheduler().submit(builder.build());
         } else {
@@ -124,24 +151,12 @@ public class SScheduler implements Scheduler.Native {
     }
 
     @Override
-    public void cancel() {
-        this.getSpongeTask().ifPresent(ScheduledTask::cancel);
-    }
-
-    @Override
     public Consumer<Scheduler> getRunner() {
         return this.taskToRun;
     }
 
-    private class RunAfterScheduler implements Runnable {
-
-        @Override
-        public void run() {
-            SScheduler.this.taskToRun.accept(SScheduler.this);
-            Scheduler scheduler = SScheduler.this.runAfter;
-            if (scheduler != null) {
-                scheduler.run();
-            }
-        }
+    @Override
+    public void cancel() {
+        this.getSpongeTask().ifPresent(ScheduledTask::cancel);
     }
 }

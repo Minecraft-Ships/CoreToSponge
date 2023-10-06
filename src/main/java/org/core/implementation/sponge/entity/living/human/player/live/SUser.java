@@ -1,5 +1,6 @@
 package org.core.implementation.sponge.entity.living.human.player.live;
 
+import org.core.eco.Currency;
 import org.core.entity.living.human.player.User;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
@@ -34,7 +35,7 @@ public class SUser implements User {
     }
 
     @Override
-    public BigDecimal getBalance() {
+    public BigDecimal getBalance(@NotNull Currency currency) {
         Optional<UniqueAccount> opAccount = this.getAccount();
         if (!opAccount.isPresent()) {
             return new BigDecimal(0);
@@ -45,18 +46,15 @@ public class SUser implements User {
     }
 
     @Override
-    public void setBalance(@NotNull BigDecimal decimal) {
+    public void setBalance(@NotNull Currency currency, @NotNull BigDecimal decimal) {
         Optional<UniqueAccount> opAccount = this.getAccount();
         if (!opAccount.isPresent()) {
             return;
         }
-        opAccount.get()
-                .setBalance(Sponge
-                                .serviceProvider()
-                                .registration(EconomyService.class)
-                                .get()
-                                .service()
-                                .defaultCurrency(),
+        opAccount
+                .get()
+                .setBalance(
+                        Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency(),
                         decimal);
     }
 

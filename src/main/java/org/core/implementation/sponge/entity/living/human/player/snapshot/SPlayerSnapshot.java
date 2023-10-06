@@ -1,5 +1,6 @@
 package org.core.implementation.sponge.entity.living.human.player.snapshot;
 
+import org.core.eco.Currency;
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.entity.living.human.player.PlayerSnapshot;
 import org.core.implementation.sponge.entity.SEntitySnapshot;
@@ -18,12 +19,12 @@ import java.util.UUID;
 
 public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements PlayerSnapshot {
 
+    protected final PlayerInventorySnapshot inventorySnapshot;
     protected int foodLevel;
     protected double exhaustionLevel;
     protected double saturationLevel;
     protected String name;
     protected boolean isSneaking;
-    protected final PlayerInventorySnapshot inventorySnapshot;
 
 
     public SPlayerSnapshot(PlayerSnapshot snapshot) {
@@ -42,18 +43,13 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
     }
 
     @Override
-    public SEntityType.SPlayerType getType() {
-        return new SEntityType.SPlayerType();
-    }
-
-    @Override
     public PlayerInventory getInventory() {
         return this.inventorySnapshot;
     }
 
     @Override
-    public PlayerSnapshot createSnapshot() {
-        return new SPlayerSnapshot(this);
+    public SEntityType.SPlayerType getType() {
+        return new SEntityType.SPlayerType();
     }
 
     @Override
@@ -72,35 +68,14 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
     }
 
     @Override
-    public double getSaturationLevel() {
-        return this.saturationLevel;
-    }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    @Override
-    public UUID getUniqueId() {
-        return this.getCreatedFrom().get().getUniqueId();
-    }
-
-    @Override
-    public boolean isSneaking() {
-        return this.isSneaking;
-    }
-
-    @Override
-    public PlayerSnapshot setFood(int value) throws IndexOutOfBoundsException {
-        this.foodLevel = value;
-        return this;
-    }
-
-    @Override
     public PlayerSnapshot setExhaustionLevel(double value) throws IndexOutOfBoundsException {
         this.exhaustionLevel = value;
         return this;
+    }
+
+    @Override
+    public double getSaturationLevel() {
+        return this.saturationLevel;
     }
 
     @Override
@@ -110,9 +85,30 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
     }
 
     @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
+    public boolean isSneaking() {
+        return this.isSneaking;
+    }
+
+    @Override
     public PlayerSnapshot setSneaking(boolean sneaking) {
         this.isSneaking = sneaking;
         return this;
+    }
+
+    @Override
+    public PlayerSnapshot setFood(int value) throws IndexOutOfBoundsException {
+        this.foodLevel = value;
+        return this;
+    }
+
+    @Override
+    public UUID getUniqueId() {
+        return this.getCreatedFrom().get().getUniqueId();
     }
 
     @Override
@@ -126,7 +122,12 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
     }
 
     @Override
-    public BigDecimal getBalance() {
+    public PlayerSnapshot createSnapshot() {
+        return new SPlayerSnapshot(this);
+    }
+
+    @Override
+    public BigDecimal getBalance(@NotNull Currency currency) {
         Optional<UniqueAccount> opAccount = this.getAccount();
         return opAccount
                 .map(uniqueAccount -> uniqueAccount.balance(
@@ -135,7 +136,7 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
     }
 
     @Override
-    public void setBalance(@NotNull BigDecimal decimal) {
+    public void setBalance(@NotNull Currency currency, @NotNull BigDecimal decimal) {
         Optional<UniqueAccount> opAccount = this.getAccount();
         if (!opAccount.isPresent()) {
             return;

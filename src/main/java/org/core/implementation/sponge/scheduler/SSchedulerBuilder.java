@@ -4,6 +4,7 @@ import org.core.platform.plugin.Plugin;
 import org.core.schedule.Scheduler;
 import org.core.schedule.SchedulerBuilder;
 import org.core.schedule.unit.TimeUnit;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -64,25 +65,25 @@ public class SSchedulerBuilder implements SchedulerBuilder {
     }
 
     @Override
+    public Consumer<Scheduler> getRunner() {
+        return this.executor;
+    }
+
+    @Override
     public SchedulerBuilder setRunner(Consumer<Scheduler> runnable) {
         this.executor = runnable;
         return this;
     }
 
     @Override
-    public Consumer<Scheduler> getRunner() {
-        return this.executor;
+    public Optional<Scheduler> getToRunAfter() {
+        return Optional.ofNullable(this.runAfter);
     }
 
     @Override
     public SchedulerBuilder setToRunAfter(Scheduler scheduler) {
         this.runAfter = scheduler;
         return this;
-    }
-
-    @Override
-    public Optional<Scheduler> getToRunAfter() {
-        return Optional.ofNullable(this.runAfter);
     }
 
     @Override
@@ -108,11 +109,20 @@ public class SSchedulerBuilder implements SchedulerBuilder {
     }
 
     @Override
-    public Scheduler build(Plugin plugin) {
+    public Scheduler buildDelayed(@NotNull Plugin plugin) {
         if (this.executor == null) {
             System.err.println("SchedulerBuilder was attempted to be built but no executor was set");
             throw new RuntimeException("No runner in schedule");
         }
-        return new SScheduler(this, plugin);
+        return new SScheduler(this, plugin, true);
+    }
+
+    @Override
+    public Scheduler buildRepeating(@NotNull Plugin plugin) {
+        if (this.executor == null) {
+            System.err.println("SchedulerBuilder was attempted to be built but no executor was set");
+            throw new RuntimeException("No runner in schedule");
+        }
+        return new SScheduler(this, plugin, false);
     }
 }

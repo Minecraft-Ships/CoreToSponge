@@ -1,10 +1,14 @@
 package org.core.implementation.sponge.platform;
 
 import net.kyori.adventure.identity.Identity;
+import net.kyori.adventure.text.Component;
 import org.core.adventureText.AText;
 import org.core.adventureText.adventure.AdventureText;
+import org.core.source.Messageable;
 import org.core.source.command.ConsoleSource;
 import org.core.source.viewer.CommandViewer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.exception.CommandException;
 
@@ -24,6 +28,11 @@ public class PlatformConsole implements ConsoleSource {
     public CommandViewer sendMessage(AText message) {
         org.spongepowered.api.Sponge.systemSubject().sendMessage(((AdventureText) message).getComponent());
         return this;
+    }
+
+    @Override
+    public void sendMessage(@NotNull Component message, @Nullable UUID uuid) {
+        Sponge.systemSubject().sendMessage(uuid == null ? Identity.nil() : Identity.identity(uuid), message);
     }
 
     @Override
