@@ -2,6 +2,8 @@ package org.core.implementation.sponge.entity.living.human.player.live;
 
 import org.core.eco.Currency;
 import org.core.entity.living.human.player.User;
+import org.core.implementation.sponge.currency.account.SEcoUniqueAccount;
+import org.core.source.eco.PlayerAccount;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.service.ServiceRegistration;
@@ -35,35 +37,14 @@ public class SUser implements User {
     }
 
     @Override
-    public BigDecimal getBalance(@NotNull Currency currency) {
-        Optional<UniqueAccount> opAccount = this.getAccount();
-        if (!opAccount.isPresent()) {
-            return new BigDecimal(0);
-        }
-        return opAccount
-                .get()
-                .balance(Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency());
-    }
-
-    @Override
-    public void setBalance(@NotNull Currency currency, @NotNull BigDecimal decimal) {
-        Optional<UniqueAccount> opAccount = this.getAccount();
-        if (!opAccount.isPresent()) {
-            return;
-        }
-        opAccount
-                .get()
-                .setBalance(
-                        Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency(),
-                        decimal);
-    }
-
-    private Optional<UniqueAccount> getAccount() {
+    public Optional<PlayerAccount> getAccount() {
         Optional<ServiceRegistration<EconomyService>> opReg = Sponge
                 .serviceProvider()
                 .registration(EconomyService.class);
-        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration
-                .service()
-                .findOrCreateAccount(this.getUniqueId()));
+        return opReg
+                .flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration
+                        .service()
+                        .findOrCreateAccount(this.getUniqueId()))
+                .map(SEcoUniqueAccount::new);
     }
 }

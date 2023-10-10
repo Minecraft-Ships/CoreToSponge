@@ -3,7 +3,8 @@ package org.core.implementation.sponge.currency;
 import org.core.TranslateCore;
 import org.core.eco.Currency;
 import org.core.eco.CurrencyManager;
-import org.core.source.eco.EcoSource;
+import org.core.entity.living.human.player.User;
+import org.core.implementation.sponge.currency.account.SEcoUniqueAccount;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.registry.Registry;
@@ -46,7 +47,7 @@ public class SCurrencyManager implements CurrencyManager {
     }
 
     @Override
-    public CompletableFuture<Optional<EcoSource>> getSourceFor(@NotNull UUID uuid) {
+    public @NotNull CompletableFuture<Optional<User>> getSourceFor(@NotNull UUID uuid) {
         if (!this.isEconomyEnabled()) {
             return CompletableFuture.completedFuture(Optional.empty());
         }
