@@ -4,12 +4,16 @@ import org.core.TranslateCore;
 import org.core.eco.Currency;
 import org.core.eco.CurrencyManager;
 import org.core.entity.living.human.player.User;
+import org.core.implementation.sponge.currency.account.SEcoNamedAccount;
 import org.core.implementation.sponge.currency.account.SEcoUniqueAccount;
+import org.core.source.eco.NamedAccount;
+import org.core.source.eco.PlayerAccount;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.registry.Registry;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.service.economy.EconomyService;
+import org.spongepowered.api.service.economy.account.VirtualAccount;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -47,13 +51,20 @@ public class SCurrencyManager implements CurrencyManager {
     }
 
     @Override
-    public @NotNull CompletableFuture<Optional<User>> getSourceFor(@NotNull UUID uuid) {
+    public @NotNull CompletableFuture<Optional<NamedAccount>> getSourceFor(@NotNull String accountName) {
         if (!this.isEconomyEnabled()) {
             return CompletableFuture.completedFuture(Optional.empty());
         }
-        var isUser = Sponge.server().gameProfileManager().cache().findById(uuid).isPresent();
-        if (isUser) {
-            return TranslateCore.getServer().getOfflineUser(uuid).thenApply(op -> op.map(t -> t));
+        return CompletableFuture.completedFuture(this
+                                                         .getService()
+                                                         .flatMap(service -> service.findOrCreateAccount(accountName))
+                                                         .map(a -> new SEcoNamedAccount((VirtualAccount) a)));
+    }
+
+    @Override
+    public @NotNull CompletableFuture<Optional<PlayerAccount>> getSourceFor(@NotNull UUID uuid) {
+        if (!this.isEconomyEnabled()) {
+            return CompletableFuture.completedFuture(Optional.empty());
         }
         return CompletableFuture.completedFuture(
                 this.getService().flatMap(service -> service.findOrCreateAccount(uuid)).map(SEcoUniqueAccount::new));
