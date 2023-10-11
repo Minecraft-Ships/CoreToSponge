@@ -5,7 +5,6 @@ import net.kyori.adventure.text.Component;
 import org.core.TranslateCore;
 import org.core.adventureText.AText;
 import org.core.adventureText.adventure.AdventureText;
-import org.core.eco.Currency;
 import org.core.entity.EntityType;
 import org.core.entity.LiveEntity;
 import org.core.entity.living.human.player.LivePlayer;
@@ -22,18 +21,13 @@ import org.core.world.position.impl.BlockPosition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.Server;
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
-import org.spongepowered.api.service.ServiceRegistration;
-import org.spongepowered.api.service.economy.EconomyService;
-import org.spongepowered.api.service.economy.account.UniqueAccount;
 import org.spongepowered.api.service.permission.Subject;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -180,38 +174,5 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
             throw new IllegalStateException(e);
         }
         return result.isSuccess();
-    }
-
-    @Override
-    public BigDecimal getBalance(@NotNull Currency currency) {
-        Optional<UniqueAccount> opAccount = this.getAccount();
-        if (!opAccount.isPresent()) {
-            return new BigDecimal(0);
-        }
-        return opAccount
-                .get()
-                .balance(Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency());
-    }
-
-    @Override
-    public void setBalance(@NotNull Currency currency, @NotNull BigDecimal decimal) {
-        Optional<UniqueAccount> opAccount = this.getAccount();
-        if (!opAccount.isPresent()) {
-            return;
-        }
-        opAccount
-                .get()
-                .setBalance(
-                        Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency(),
-                        decimal);
-    }
-
-    private Optional<UniqueAccount> getAccount() {
-        Optional<ServiceRegistration<EconomyService>> opReg = Sponge
-                .serviceProvider()
-                .registration(EconomyService.class);
-        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration
-                .service()
-                .findOrCreateAccount(this.getUniqueId()));
     }
 }

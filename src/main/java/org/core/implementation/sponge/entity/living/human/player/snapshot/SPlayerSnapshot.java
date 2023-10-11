@@ -1,20 +1,12 @@
 package org.core.implementation.sponge.entity.living.human.player.snapshot;
 
-import org.core.eco.Currency;
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.entity.living.human.player.PlayerSnapshot;
 import org.core.implementation.sponge.entity.SEntitySnapshot;
 import org.core.implementation.sponge.entity.SEntityType;
 import org.core.inventory.inventories.general.entity.PlayerInventory;
 import org.core.inventory.inventories.snapshots.entity.PlayerInventorySnapshot;
-import org.jetbrains.annotations.NotNull;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.service.ServiceRegistration;
-import org.spongepowered.api.service.economy.EconomyService;
-import org.spongepowered.api.service.economy.account.UniqueAccount;
 
-import java.math.BigDecimal;
-import java.util.Optional;
 import java.util.UUID;
 
 public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements PlayerSnapshot {
@@ -124,37 +116,6 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
     @Override
     public PlayerSnapshot createSnapshot() {
         return new SPlayerSnapshot(this);
-    }
-
-    @Override
-    public BigDecimal getBalance(@NotNull Currency currency) {
-        Optional<UniqueAccount> opAccount = this.getAccount();
-        return opAccount
-                .map(uniqueAccount -> uniqueAccount.balance(
-                        Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency()))
-                .orElseGet(() -> new BigDecimal(0));
-    }
-
-    @Override
-    public void setBalance(@NotNull Currency currency, @NotNull BigDecimal decimal) {
-        Optional<UniqueAccount> opAccount = this.getAccount();
-        if (!opAccount.isPresent()) {
-            return;
-        }
-        opAccount
-                .get()
-                .setBalance(
-                        Sponge.serviceProvider().registration(EconomyService.class).get().service().defaultCurrency(),
-                        decimal);
-    }
-
-    private Optional<UniqueAccount> getAccount() {
-        Optional<ServiceRegistration<EconomyService>> opReg = Sponge
-                .serviceProvider()
-                .registration(EconomyService.class);
-        return opReg.flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration
-                .service()
-                .findOrCreateAccount(this.getUniqueId()));
     }
 
     @Override

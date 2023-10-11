@@ -1,13 +1,7 @@
 package org.core.implementation.sponge.entity.living.human.player.live;
 
 import org.core.entity.living.human.player.User;
-import org.core.implementation.sponge.currency.account.SEcoUniqueAccount;
-import org.core.eco.account.PlayerAccount;
-import org.spongepowered.api.Sponge;
-import org.spongepowered.api.service.ServiceRegistration;
-import org.spongepowered.api.service.economy.EconomyService;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class SUser implements User {
@@ -30,17 +24,5 @@ public class SUser implements User {
     @Override
     public UUID getUniqueId() {
         return this.user.uniqueId();
-    }
-
-    @Override
-    public Optional<PlayerAccount> getAccount() {
-        Optional<ServiceRegistration<EconomyService>> opReg = Sponge
-                .serviceProvider()
-                .registration(EconomyService.class);
-        return opReg
-                .flatMap(economyServiceProviderRegistration -> economyServiceProviderRegistration
-                        .service()
-                        .findOrCreateAccount(this.getUniqueId()))
-                .map(SEcoUniqueAccount::new);
     }
 }
