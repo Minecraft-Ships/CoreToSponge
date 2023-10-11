@@ -2,14 +2,10 @@ package org.core.implementation.sponge.currency.account;
 
 import org.core.eco.Currency;
 import org.core.implementation.sponge.currency.SCurrency;
-import org.core.source.eco.Account;
-import org.core.source.eco.PlayerAccount;
 import org.core.utils.ComponentUtils;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.api.service.economy.account.UniqueAccount;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 public class SEcoAccount<SAccount extends org.spongepowered.api.service.economy.account.Account> implements Account {
 

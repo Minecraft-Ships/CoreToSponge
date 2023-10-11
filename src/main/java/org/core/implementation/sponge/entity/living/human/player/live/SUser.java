@@ -1,16 +1,12 @@
 package org.core.implementation.sponge.entity.living.human.player.live;
 
-import org.core.eco.Currency;
 import org.core.entity.living.human.player.User;
 import org.core.implementation.sponge.currency.account.SEcoUniqueAccount;
-import org.core.source.eco.PlayerAccount;
-import org.jetbrains.annotations.NotNull;
+import org.core.eco.account.PlayerAccount;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.service.ServiceRegistration;
 import org.spongepowered.api.service.economy.EconomyService;
-import org.spongepowered.api.service.economy.account.UniqueAccount;
 
-import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.UUID;
 

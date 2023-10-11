@@ -1,13 +1,11 @@
 package org.core.implementation.sponge.currency;
 
-import org.core.TranslateCore;
 import org.core.eco.Currency;
 import org.core.eco.CurrencyManager;
-import org.core.entity.living.human.player.User;
 import org.core.implementation.sponge.currency.account.SEcoNamedAccount;
 import org.core.implementation.sponge.currency.account.SEcoUniqueAccount;
-import org.core.source.eco.NamedAccount;
-import org.core.source.eco.PlayerAccount;
+import org.core.eco.account.NamedAccount;
+import org.core.eco.account.PlayerAccount;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.registry.Registry;
