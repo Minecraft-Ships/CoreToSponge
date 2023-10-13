@@ -28,16 +28,21 @@ public class CoreToSponge extends TranslateCore.CoreImplementation {
     protected final SEventManager eventManager = new SEventManager();
     protected final SScheduleManager scheduleManager = new SScheduleManager();
     protected final PlatformConsole console = new PlatformConsole();
-    protected final Singleton<SpongePlatformServer> server = new Singleton<>(() -> new SpongePlatformServer(org.spongepowered.api.Sponge.server()));
+    protected final Singleton<SpongePlatformServer> server;
     private final CurrencyManager currencyManager = new SCurrencyManager();
     private final ConfigManager configManager = new SConfigManager();
     private final PluginContainer container;
 
     public CoreToSponge(PluginContainer plugin) {
         CoreImplementation.IMPLEMENTATION = this;
-        org.spongepowered.api.Sponge.eventManager().registerListeners(plugin, this.eventManager.getRawGeneralListener());
-        org.spongepowered.api.Sponge.eventManager().registerListeners(plugin, this.eventManager.getRawEntityInteractionListener());
+        org.spongepowered.api.Sponge
+                .eventManager()
+                .registerListeners(plugin, this.eventManager.getRawGeneralListener());
+        org.spongepowered.api.Sponge
+                .eventManager()
+                .registerListeners(plugin, this.eventManager.getRawEntityInteractionListener());
         container = plugin;
+        server = new Singleton<>(() -> new SpongePlatformServer(org.spongepowered.api.Sponge.server()));
 
         //TODO CHECK IF CORRECT
         //Task.builder().delayTicks(1).intervalTicks(1).name("tps").execute(getRawServer().getTPSExecutor()).build();
@@ -74,7 +79,8 @@ public class CoreToSponge extends TranslateCore.CoreImplementation {
 
     @Override
     public ServerBossBar bossBuilder() {
-        return new SServerBossBar(BossBar.bossBar(Component.empty(), 0, BossBar.Color.PURPLE, BossBar.Overlay.PROGRESS));
+        return new SServerBossBar(
+                BossBar.bossBar(Component.empty(), 0, BossBar.Color.PURPLE, BossBar.Overlay.PROGRESS));
     }
 
     @Override

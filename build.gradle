@@ -28,27 +28,8 @@ task plugin {
 }
 
 jar {
-    dependsOn configurations.runtimeClasspath
-    doLast {
-        def path = project.buildDir.path + "/libs/"
-        def fileName = 'TranslateCoreSponge.jar'
-        file(path).mkdirs()
-        archiveClassifier = 'uber'
-        archiveFileName = fileName
-        destinationDirectory = file(path)
-
-        from sourceSets.main.output
-        from {
-            configurations.runtimeClasspath.findAll {
-                it.name.endsWith('jar') && !it.name.contains("junit") && !it.name.contains("hamcrest")
-            }.collect {
-                zipTree(it).matching {
-                    exclude "*.txt"
-                }
-            }
-        }
-        println("Creating file in '" + path + fileName + "'")
-    }
+    archiveClassifier = 'uber'
+    archiveFileName = "CoreToSponge"
 }
 
 dependencies {
