@@ -29,7 +29,7 @@ task plugin {
 
 jar {
     archiveClassifier = 'uber'
-    archiveFileName = "CoreToSponge"
+    archiveFileName = "CoreToSponge.jar"
 }
 
 dependencies {

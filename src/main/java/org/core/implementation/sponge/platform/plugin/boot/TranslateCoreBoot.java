@@ -34,7 +34,6 @@ public class TranslateCoreBoot {
     private final SLogger logger;
     private final List<LaunchWrapper> plugins = new ArrayList<>();
 
-
     @Inject
     public TranslateCoreBoot(PluginContainer container, Logger logger) {
         this.core = new CoreToSponge(container);
@@ -51,7 +50,7 @@ public class TranslateCoreBoot {
         } else {
             Class<? extends CorePlugin> pluginClass = opLauncher.get();
             CorePlugin plugin = CommonLoad.loadStandAlonePlugin(pluginClass);
-            LaunchWrapper wrapper = new LaunchWrapper(plugin, new SLogger(LogManager.getLogger(plugin.getPluginId())));
+            LaunchWrapper wrapper = new LaunchWrapper(plugin, new SLogger(LogManager.getLogger(plugin.getPluginId())), this.core.container());
             Sponge.eventManager().registerListeners(this.core.container(), wrapper);
             this.plugins.add(wrapper);
         }

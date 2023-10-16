@@ -23,7 +23,7 @@ public class VanillaPluginContainer implements PluginContainerWrapper {
     public VanillaPluginContainer(CorePlugin plugin) {
         this.plugin = plugin;
         this.logger = LogManager.getLogger(plugin.getPluginId());
-        this.mainInstance = new LaunchWrapper(plugin, new SLogger(this.logger));
+        this.mainInstance = new LaunchWrapper(plugin, new SLogger(this.logger), this);
     }
 
     @Override
