@@ -1,5 +1,7 @@
 package org.core.implementation.sponge.entity.living.human.player.live;
 
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.audience.ForwardingAudience;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import org.core.TranslateCore;
@@ -28,10 +30,11 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.service.permission.Subject;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
-public class SLivePlayer extends SLiveEntity implements LivePlayer {
+public class SLivePlayer extends SLiveEntity implements LivePlayer, ForwardingAudience {
 
     @Deprecated
     public SLivePlayer(org.spongepowered.api.entity.Entity entity) {
@@ -46,6 +49,7 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
     public org.spongepowered.api.entity.living.player.Player getSpongeEntity() {
         return (org.spongepowered.api.entity.living.player.Player) super.getSpongeEntity();
     }
+
 
     @Override
     public boolean isOnGround() {
@@ -174,5 +178,10 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer {
             throw new IllegalStateException(e);
         }
         return result.isSuccess();
+    }
+
+    @Override
+    public @NotNull Iterable<? extends Audience> audiences() {
+        return Collections.singleton(this.getSpongeEntity());
     }
 }
