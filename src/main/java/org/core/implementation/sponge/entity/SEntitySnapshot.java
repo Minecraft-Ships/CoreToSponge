@@ -1,5 +1,6 @@
 package org.core.implementation.sponge.entity;
 
+import net.kyori.adventure.text.Component;
 import org.core.adventureText.AText;
 import org.core.adventureText.adventure.AdventureText;
 import org.core.entity.Entity;
@@ -26,7 +27,7 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     protected SyncExactPosition position;
     protected boolean gravity;
     protected Vector3<Double> velocity;
-    protected AdventureText customName;
+    protected Component customName;
     protected boolean customNameVisible;
     protected boolean isOnGround;
     protected boolean isRemoved;
@@ -44,7 +45,7 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     }
 
     private void init(Entity<?> entity) {
-        this.customName = (AdventureText) entity.getCustomName().orElse(null);
+        this.customName = entity.getCustomNameComponent().orElse(null);
         this.customNameVisible = entity.isCustomNameVisible();
         this.gravity = entity.hasGravity();
         this.pitch = entity.getPitch();
@@ -71,36 +72,8 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     }
 
     @Override
-    public boolean isRemoved() {
-        return this.isRemoved;
-    }
-
-    @Override
     public SyncExactPosition getPosition() {
         return this.position;
-    }
-
-    @Override
-    public boolean isOnGround() {
-        return this.isOnGround;
-    }
-
-    @Override
-    public EntitySnapshot<? extends LiveEntity> setPitch(double value) {
-        this.pitch = value;
-        return this;
-    }
-
-    @Override
-    public EntitySnapshot<? extends LiveEntity> setYaw(double value) {
-        this.yaw = value;
-        return this;
-    }
-
-    @Override
-    public EntitySnapshot<? extends LiveEntity> setRoll(double value) {
-        this.roll = value;
-        return this;
     }
 
     @Override
@@ -120,26 +93,14 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     }
 
     @Override
-    public EntitySnapshot<? extends LiveEntity> setVelocity(Vector3<Double> velocity) {
-        this.velocity = velocity;
-        return this;
-    }
-
-    @Override
-    public org.core.entity.Entity<EntitySnapshot<? extends LiveEntity>> setCustomName(@Nullable AText text) {
-        this.customName = ((AdventureText) text);
-        return this;
-    }
-
-    @Override
-    public EntitySnapshot<? extends LiveEntity> setCustomNameVisible(boolean visible) {
-        this.customNameVisible = visible;
-        return this;
-    }
-
-    @Override
     public double getPitch() {
         return this.pitch;
+    }
+
+    @Override
+    public EntitySnapshot<? extends LiveEntity> setPitch(double value) {
+        this.pitch = value;
+        return this;
     }
 
     @Override
@@ -148,8 +109,20 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     }
 
     @Override
+    public EntitySnapshot<? extends LiveEntity> setYaw(double value) {
+        this.yaw = value;
+        return this;
+    }
+
+    @Override
     public double getRoll() {
         return this.roll;
+    }
+
+    @Override
+    public EntitySnapshot<? extends LiveEntity> setRoll(double value) {
+        this.roll = value;
+        return this;
     }
 
     @Override
@@ -163,14 +136,43 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     }
 
     @Override
+    public EntitySnapshot<? extends LiveEntity> setVelocity(Vector3<Double> velocity) {
+        this.velocity = velocity;
+        return this;
+    }
+
+    @Override
     @Deprecated
     public Optional<AText> getCustomName() {
+        return Optional.ofNullable(this.customName).map(AdventureText::new);
+    }
+
+    @Override
+    public org.core.entity.Entity<EntitySnapshot<? extends LiveEntity>> setCustomName(@Nullable AText text) {
+        this.customName = ((AdventureText) text).getComponent();
+        return this;
+    }
+
+    @Override
+    public Optional<Component> getCustomNameComponent() {
         return Optional.ofNullable(this.customName);
+    }
+
+    @Override
+    public Entity<EntitySnapshot<? extends LiveEntity>> setCustomName(@Nullable Component component) {
+        this.customName = component;
+        return this;
     }
 
     @Override
     public boolean isCustomNameVisible() {
         return this.customNameVisible;
+    }
+
+    @Override
+    public EntitySnapshot<? extends LiveEntity> setCustomNameVisible(boolean visible) {
+        this.customNameVisible = visible;
+        return this;
     }
 
     @Override
@@ -188,6 +190,16 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     public EntitySnapshot<? extends LiveEntity> removePassengers(Collection<EntitySnapshot<? extends LiveEntity>> entities) {
         this.passengers.removeAll(entities);
         return this;
+    }
+
+    @Override
+    public boolean isOnGround() {
+        return this.isOnGround;
+    }
+
+    @Override
+    public boolean isRemoved() {
+        return this.isRemoved;
     }
 
     @Override

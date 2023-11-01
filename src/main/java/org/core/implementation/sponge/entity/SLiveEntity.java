@@ -36,6 +36,21 @@ public abstract class SLiveEntity implements LiveEntity {
     }
 
     @Override
+    public Optional<Component> getCustomNameComponent() {
+        return this.entity.get(Keys.CUSTOM_NAME);
+    }
+
+    @Override
+    public Entity<LiveEntity> setCustomName(@Nullable Component component) {
+        if(component == null){
+            this.entity.remove(Keys.CUSTOM_NAME);
+            return this;
+        }
+        this.entity.offer(Keys.CUSTOM_NAME, component);
+        return this;
+    }
+
+    @Override
     public boolean isRemoved() {
         return this.entity.isRemoved();
     }

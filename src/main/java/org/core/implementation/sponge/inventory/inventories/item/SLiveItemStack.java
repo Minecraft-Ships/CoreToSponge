@@ -1,5 +1,6 @@
 package org.core.implementation.sponge.inventory.inventories.item;
 
+import net.kyori.adventure.text.Component;
 import org.core.TranslateCore;
 import org.core.adventureText.AText;
 import org.core.adventureText.adventure.AdventureText;
@@ -13,9 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.registry.RegistryTypes;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SLiveItemStack implements LiveItemStack {
@@ -46,14 +45,27 @@ public class SLiveItemStack implements LiveItemStack {
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     public List<AText> getLoreText() {
         return this.stack.get(Keys.LORE).get().stream().map(AdventureText::new).collect(Collectors.toList());
     }
 
+    @Override
+    public List<Component> getLore() {
+        return this.stack.get(Keys.LORE).orElse(Collections.emptyList());
+    }
+
 
     @Override
+    @Deprecated(forRemoval = true)
     public ItemStack setLoreText(Collection<? extends AText> lore) {
         throw new RuntimeException("Not implemented yet");
+    }
+
+    @Override
+    public ItemStack setLore(Collection<? extends Component> lore) {
+        this.stack.offer(Keys.LORE, new ArrayList<>(lore));
+        return this;
     }
 
     @Override

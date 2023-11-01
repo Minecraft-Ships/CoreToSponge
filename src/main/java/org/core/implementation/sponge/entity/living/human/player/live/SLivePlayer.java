@@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;
 import org.core.TranslateCore;
 import org.core.adventureText.AText;
 import org.core.adventureText.adventure.AdventureText;
+import org.core.entity.Entity;
 import org.core.entity.EntityType;
 import org.core.entity.LiveEntity;
 import org.core.entity.living.human.player.LivePlayer;

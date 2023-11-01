@@ -22,40 +22,8 @@ public class SServerBossBar implements ServerBossBar {
     }
 
     @Override
-    public AText getTitle() {
-        return new AdventureText(this.bossBar.name());
-    }
-
-    @Override
-    public ServerBossBar setTitle(AText text) {
-        this.bossBar.name(((AdventureText) text).getComponent());
-        return this;
-    }
-
-    @Override
-    public BossColour getColour() {
-        throw new RuntimeException("Not implemented yet");
-    }
-
-    @Override
-    public ServerBossBar setColour(BossColour colour) {
-        throw new RuntimeException("Not implemented yet");
-
-    }
-
-    @Override
-    public int getValue() {
-        return (int) (this.bossBar.progress() * 10);
-    }
-
-    @Override
-    public ServerBossBar setValue(int value) {
-        if (value > 100) {
-            throw new IllegalArgumentException("ServerBossBar.SetValue must be between 0 and 100 (" + value + ")");
-        }
-        double progress = value / 100.0;
-        this.bossBar.progress((float) progress);
-        return this;
+    public BossBar bossBar() {
+        return this.bossBar;
     }
 
     @Override
