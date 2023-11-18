@@ -7,10 +7,10 @@ import org.core.entity.Entity;
 import org.core.entity.EntitySnapshot;
 import org.core.entity.LiveEntity;
 import org.core.vector.type.Vector3;
-import org.core.world.position.impl.BlockPosition;
 import org.core.world.position.impl.ExactPosition;
 import org.core.world.position.impl.Position;
 import org.core.world.position.impl.sync.SyncExactPosition;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -72,72 +72,8 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     }
 
     @Override
-    public SyncExactPosition getPosition() {
-        return this.position;
-    }
-
-    @Override
-    public EntitySnapshot<? extends LiveEntity> setPosition(Position<? extends Number> position) {
-        if (position instanceof ExactPosition) {
-            this.position = Position.toSync((ExactPosition) position);
-        } else {
-            this.position = Position.toSync(((BlockPosition) position).toExactPosition());
-        }
-        return this;
-    }
-
-    @Override
-    public EntitySnapshot<? extends LiveEntity> setGravity(boolean check) {
-        this.gravity = check;
-        return this;
-    }
-
-    @Override
-    public double getPitch() {
-        return this.pitch;
-    }
-
-    @Override
-    public EntitySnapshot<? extends LiveEntity> setPitch(double value) {
-        this.pitch = value;
-        return this;
-    }
-
-    @Override
-    public double getYaw() {
-        return this.yaw;
-    }
-
-    @Override
-    public EntitySnapshot<? extends LiveEntity> setYaw(double value) {
-        this.yaw = value;
-        return this;
-    }
-
-    @Override
-    public double getRoll() {
-        return this.roll;
-    }
-
-    @Override
-    public EntitySnapshot<? extends LiveEntity> setRoll(double value) {
-        this.roll = value;
-        return this;
-    }
-
-    @Override
-    public boolean hasGravity() {
-        return this.gravity;
-    }
-
-    @Override
-    public Vector3<Double> getVelocity() {
-        return this.velocity;
-    }
-
-    @Override
-    public EntitySnapshot<? extends LiveEntity> setVelocity(Vector3<Double> velocity) {
-        this.velocity = velocity;
+    public EntitySnapshot<? extends LiveEntity> addPassengers(Collection<? extends EntitySnapshot<? extends LiveEntity>> entities) {
+        this.passengers.addAll(entities);
         return this;
     }
 
@@ -154,14 +90,73 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     }
 
     @Override
+    public Entity<EntitySnapshot<? extends LiveEntity>> setCustomName(@Nullable Component component) {
+        this.customName = component;
+        return this;
+    }
+
+    @Override
     public Optional<Component> getCustomNameComponent() {
         return Optional.ofNullable(this.customName);
     }
 
     @Override
-    public Entity<EntitySnapshot<? extends LiveEntity>> setCustomName(@Nullable Component component) {
-        this.customName = component;
+    public Collection<EntitySnapshot<? extends LiveEntity>> getPassengers() {
+        return this.passengers;
+    }
+
+    @Override
+    public double getPitch() {
+        return this.pitch;
+    }
+
+    @Override
+    public EntitySnapshot<? extends LiveEntity> setPitch(double value) {
+        this.pitch = value;
         return this;
+    }
+
+    @Override
+    public SyncExactPosition getPosition() {
+        return this.position;
+    }
+
+    @Override
+    public double getRoll() {
+        return this.roll;
+    }
+
+    @Override
+    public EntitySnapshot<? extends LiveEntity> setRoll(double value) {
+        this.roll = value;
+        return this;
+    }
+
+    @Override
+    public Vector3<Double> getVelocity() {
+        return this.velocity;
+    }
+
+    @Override
+    public EntitySnapshot<? extends LiveEntity> setVelocity(Vector3<Double> velocity) {
+        this.velocity = velocity;
+        return this;
+    }
+
+    @Override
+    public double getYaw() {
+        return this.yaw;
+    }
+
+    @Override
+    public EntitySnapshot<? extends LiveEntity> setYaw(double value) {
+        this.yaw = value;
+        return this;
+    }
+
+    @Override
+    public boolean hasGravity() {
+        return this.gravity;
     }
 
     @Override
@@ -176,14 +171,13 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     }
 
     @Override
-    public Collection<EntitySnapshot<? extends LiveEntity>> getPassengers() {
-        return this.passengers;
+    public boolean isOnGround() {
+        return this.isOnGround;
     }
 
     @Override
-    public EntitySnapshot<? extends LiveEntity> addPassengers(Collection<? extends EntitySnapshot<? extends LiveEntity>> entities) {
-        this.passengers.addAll(entities);
-        return this;
+    public boolean isRemoved() {
+        return this.isRemoved;
     }
 
     @Override
@@ -193,13 +187,19 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     }
 
     @Override
-    public boolean isOnGround() {
-        return this.isOnGround;
+    public EntitySnapshot<? extends LiveEntity> setGravity(boolean check) {
+        this.gravity = check;
+        return this;
     }
 
     @Override
-    public boolean isRemoved() {
-        return this.isRemoved;
+    public boolean setPosition(@NotNull Position<? extends Number> position) {
+        if (position instanceof ExactPosition) {
+            this.position = Position.toSync((ExactPosition) position);
+        } else {
+            this.position = Position.toSync(position.toExactPosition());
+        }
+        return true;
     }
 
     @Override
