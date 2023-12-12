@@ -19,4 +19,9 @@ public class SpongeToCorePlatformDetails implements PlatformDetails {
     public @NotNull CorePluginVersion getVersion() {
         return new CorePluginVersion(0, 0, 1, "snapshot", null);
     }
+
+    @Override
+    public char getTagChar() {
+        return 'S';
+    }
 }

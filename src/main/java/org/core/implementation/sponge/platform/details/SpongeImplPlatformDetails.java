@@ -28,4 +28,9 @@ public class SpongeImplPlatformDetails implements PlatformDetails {
                                      metadata.getIncrementalVersion(), metadata.getQualifier(),
                                      metadata.getBuildNumber());
     }
+
+    @Override
+    public char getTagChar() {
+        return 'S';
+    }
 }
