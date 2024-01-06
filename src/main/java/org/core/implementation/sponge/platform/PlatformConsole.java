@@ -4,7 +4,6 @@ import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import org.core.adventureText.AText;
 import org.core.adventureText.adventure.AdventureText;
-import org.core.source.Messageable;
 import org.core.source.command.ConsoleSource;
 import org.core.source.viewer.CommandViewer;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +32,11 @@ public class PlatformConsole implements ConsoleSource {
     @Override
     public void sendMessage(@NotNull Component message, @Nullable UUID uuid) {
         Sponge.systemSubject().sendMessage(uuid == null ? Identity.nil() : Identity.identity(uuid), message);
+    }
+
+    @Override
+    public void sendMessage(@NotNull Component message) {
+        Sponge.systemSubject().sendMessage(message);
     }
 
     @Override

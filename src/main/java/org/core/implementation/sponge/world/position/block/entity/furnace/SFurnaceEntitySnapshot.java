@@ -20,7 +20,7 @@ public class SFurnaceEntitySnapshot implements FurnaceTileEntitySnapshot {
         this.inventory = new SSnapshotFurnaceInventory();
     }
 
-    public SFurnaceEntitySnapshot(FurnaceTileEntity tileEntity) {
+    public SFurnaceEntitySnapshot(@SuppressWarnings("TypeMayBeWeakened") FurnaceTileEntity tileEntity) {
         this.inventory = tileEntity.getInventory().createSnapshot();
     }
 

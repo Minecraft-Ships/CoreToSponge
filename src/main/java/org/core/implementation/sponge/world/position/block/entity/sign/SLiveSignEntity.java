@@ -45,7 +45,7 @@ public class SLiveSignEntity extends AbstractLiveTileEntity<Sign> implements Liv
 
     @Override
     public List<AText> getText() {
-        return getFront().getLines().stream().map(text -> new AdventureText(text)).collect(Collectors.toList());
+        return getFront().getLines().stream().map(AdventureText::new).collect(Collectors.toList());
     }
 
     @Override

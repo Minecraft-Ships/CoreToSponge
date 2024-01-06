@@ -25,15 +25,8 @@ import java.util.function.Function;
 public abstract class SSyncedPosition<N extends Number> extends SPosition<N> implements SyncPosition<N> {
 
     public SSyncedPosition(Location<? extends World<?, ?>, ?> location,
-            Function<? extends Location<? extends World<?, ?>, ?>, ? extends SPosition<N>> newInstance) {
+                           Function<? extends Location<? extends World<?, ?>, ?>, ? extends SPosition<N>> newInstance) {
         super(location, newInstance);
-    }
-
-    @Override
-    public SyncPosition<N> destroy() {
-        World<?, ?> world = this.location.world();
-        world.destroyBlock(this.location.blockPosition(), true);
-        return this;
     }
 
     @Override
@@ -67,15 +60,21 @@ public abstract class SSyncedPosition<N extends Number> extends SPosition<N> imp
     @Override
     public Optional<LiveTileEntity> getTileEntity() {
         Optional<? extends BlockEntity> opSTileEntity = this.location.blockEntity();
-        if (!opSTileEntity.isPresent()) {
+        if (opSTileEntity.isEmpty()) {
             return Optional.empty();
         }
         return ((SpongePlatform) TranslateCore.getPlatform()).createTileEntityInstance(opSTileEntity.get());
     }
 
     @Override
-    public <E extends LiveEntity, S extends EntitySnapshot<E>> Optional<S> createEntity(
-            EntityType<E, ? extends S> type) {
+    public <E extends LiveEntity, S extends EntitySnapshot<E>> Optional<S> createEntity(EntityType<E, ? extends S> type) {
         return Optional.empty();
+    }
+
+    @Override
+    public SyncPosition<N> destroy() {
+        World<?, ?> world = this.location.world();
+        world.destroyBlock(this.location.blockPosition(), true);
+        return this;
     }
 }

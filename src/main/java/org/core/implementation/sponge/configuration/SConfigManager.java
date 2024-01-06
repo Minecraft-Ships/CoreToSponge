@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 public class SConfigManager implements ConfigManager {
     @Override
@@ -18,7 +19,7 @@ public class SConfigManager implements ConfigManager {
 
     @Override
     public Collection<ConfigurationFormat> getSupportedFormats() {
-        return Arrays.asList(ConfigurationFormat.FORMAT_YAML);
+        return List.of(ConfigurationFormat.FORMAT_YAML);
     }
 
     @Override

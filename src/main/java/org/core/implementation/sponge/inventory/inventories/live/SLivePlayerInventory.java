@@ -17,61 +17,6 @@ import java.util.stream.Collectors;
 
 public class SLivePlayerInventory implements LivePlayerInventory {
 
-    private final PlayerHotbar hotbar = new PlayerHotbar();
-    private final PlayerArmorPart armorPart = new PlayerArmorPart();
-    private final PlayerGrid grid = new PlayerGrid();
-    private final PlayerMainInventory inventory = new PlayerMainInventory();
-    protected SLivePlayer player;
-
-    public SLivePlayerInventory(SLivePlayer player) {
-        this.player = player;
-    }
-
-    @Override
-    public Hotbar getHotbar() {
-        return this.hotbar;
-    }
-
-    @Override
-    public Grid2x2 getCraftingGrid() {
-        return this.grid;
-    }
-
-    @Override
-    public MainPlayerInventory getMainInventory() {
-        return this.inventory;
-    }
-
-    @Override
-    public PlayerInventorySnapshot createSnapshot() {
-        return new SPlayerInventorySnapshot(this.player.getInventory());
-
-    }
-
-    @Override
-    public Optional<LivePlayer> getAttachedEntity() {
-        return Optional.of(this.player);
-    }
-
-    @Override
-    public ArmorPart getArmor() {
-        return this.armorPart;
-    }
-
-    @Override
-    public Slot getOffHoldingItem() {
-        return new LiveSlot(player.getSpongeEntity().inventory().offhand());
-    }
-
-    private Slot getSlot(DefaultedRegistryReference<EquipmentType> type) {
-        return getOptionalSlot(type).orElseThrow(
-                () -> new RuntimeException("Cannot find " + type.location() + " on player inv"));
-    }
-
-    private Optional<Slot> getOptionalSlot(DefaultedRegistryReference<EquipmentType> type) {
-        return player.getSpongeEntity().inventory().armor().slot(type).map(LiveSlot::new);
-    }
-
     public class PlayerArmorPart implements ArmorPart {
 
         @Override
@@ -92,15 +37,6 @@ public class SLivePlayerInventory implements LivePlayerInventory {
         @Override
         public Slot getShoesSlot() {
             return SLivePlayerInventory.this.getSlot(EquipmentTypes.FEET);
-        }
-    }
-
-    public class PlayerGrid implements Grid2x2 {
-
-        @Override
-        public Set<Slot> getSlots() {
-            //TODO
-            return new HashSet<>();
         }
     }
 
@@ -143,5 +79,69 @@ public class SLivePlayerInventory implements LivePlayerInventory {
                     .map(LiveSlot::new)
                     .collect(Collectors.toSet());
         }
+    }
+
+    public static class PlayerGrid implements Grid2x2 {
+
+        @Override
+        public Set<Slot> getSlots() {
+            //TODO
+            return new HashSet<>();
+        }
+    }
+
+    private final PlayerHotbar hotbar = new PlayerHotbar();
+    private final PlayerArmorPart armorPart = new PlayerArmorPart();
+    private final PlayerGrid grid = new PlayerGrid();
+    private final PlayerMainInventory inventory = new PlayerMainInventory();
+    protected SLivePlayer player;
+
+    public SLivePlayerInventory(SLivePlayer player) {
+        this.player = player;
+    }
+
+    @Override
+    public Hotbar getHotbar() {
+        return this.hotbar;
+    }
+
+    @Override
+    public Grid2x2 getCraftingGrid() {
+        return this.grid;
+    }
+
+    @Override
+    public MainPlayerInventory getMainInventory() {
+        return this.inventory;
+    }
+
+    @Override
+    public PlayerInventorySnapshot createSnapshot() {
+        return new SPlayerInventorySnapshot(this.player.getInventory());
+
+    }
+
+    @Override
+    public ArmorPart getArmor() {
+        return this.armorPart;
+    }
+
+    @Override
+    public Slot getOffHoldingItem() {
+        return new LiveSlot(player.getSpongeEntity().inventory().offhand());
+    }
+
+    @Override
+    public Optional<LivePlayer> getAttachedEntity() {
+        return Optional.of(this.player);
+    }
+
+    private Slot getSlot(DefaultedRegistryReference<EquipmentType> type) {
+        return getOptionalSlot(type).orElseThrow(
+                () -> new RuntimeException("Cannot find " + type.location() + " on player inv"));
+    }
+
+    private Optional<Slot> getOptionalSlot(DefaultedRegistryReference<EquipmentType> type) {
+        return player.getSpongeEntity().inventory().armor().slot(type).map(LiveSlot::new);
     }
 }

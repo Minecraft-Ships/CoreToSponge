@@ -26,7 +26,7 @@ public class SItemType implements ItemType {
     @Override
     public Optional<BlockType> getBlockType() {
         Optional<org.spongepowered.api.block.BlockType> opType = this.type.block();
-        if (!opType.isPresent()) {
+        if (opType.isEmpty()) {
             return Optional.empty();
         }
         BlockType type = new SBlockType(opType.get());

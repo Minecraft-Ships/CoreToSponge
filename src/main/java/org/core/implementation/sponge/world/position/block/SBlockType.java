@@ -33,22 +33,21 @@ public class SBlockType implements BlockType {
                 .getPlatform()
                 .getBlockGroups()
                 .stream()
-                .filter(c -> Arrays.asList(c
-                        .getGrouped()).contains(this)).collect(Collectors.toSet());
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof SBlockType)) {
-            return false;
-        }
-        SBlockType type = (SBlockType) obj;
-        return type.type.equals(this.type);
+                .filter(c -> Arrays.asList(c.getGrouped()).contains(this))
+                .collect(Collectors.toSet());
     }
 
     @Override
     public Optional<ItemType> getItemType() {
         return Optional.empty();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof SBlockType type)) {
+            return false;
+        }
+        return type.type.equals(this.type);
     }
 
     @Override

@@ -35,9 +35,11 @@ public class SBlockPosition extends SSyncedPosition<Integer> implements SyncBloc
     }
 
     @Override
-    public SBlockPosition getRelative(Direction direction) {
-        Vector3<Integer> vector = direction.getAsVector();
-        return new SBlockPosition(this.location.add(vector.getX(), vector.getY(), vector.getZ()));
+    public SBlockSnapshot.SSyncedBlockSnapshot getBlockDetails() {
+        //noinspection RedundantCast
+        return new SBlockSnapshot.SSyncedBlockSnapshot(
+                this.location.onServer().orElseThrow(() -> new IllegalStateException("Client isn't supported yet")),
+                (Function<Location<? extends World<?, ?>, ?>, SyncBlockPosition>) (Object) this.newInstance);
     }
 
     @Override
@@ -47,15 +49,9 @@ public class SBlockPosition extends SSyncedPosition<Integer> implements SyncBloc
     }
 
     @Override
-    public SBlockSnapshot.SSyncedBlockSnapshot getBlockDetails() {
-        return new SBlockSnapshot.SSyncedBlockSnapshot(
-                this.location.onServer().orElseThrow(() -> new IllegalStateException("Client isn't supported yet")),
-                (Function<Location<? extends World<?, ?>, ?>, SyncBlockPosition>) (Object) this.newInstance);
-    }
-
-    @Override
-    public Vector3<Integer> getPosition() {
-        return Vector3.valueOf(this.location.blockX(), this.location.blockY(), this.location.blockZ());
+    public SBlockPosition getRelative(Direction direction) {
+        Vector3<Integer> vector = direction.getAsVector();
+        return new SBlockPosition(this.location.add(vector.getX(), vector.getY(), vector.getZ()));
     }
 
     @Override
@@ -106,5 +102,10 @@ public class SBlockPosition extends SSyncedPosition<Integer> implements SyncBloc
     @Override
     public SyncExactPosition toExactPosition() {
         return new SExactPosition(this.location);
+    }
+
+    @Override
+    public Vector3<Integer> getPosition() {
+        return Vector3.valueOf(this.location.blockX(), this.location.blockY(), this.location.blockZ());
     }
 }

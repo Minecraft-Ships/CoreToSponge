@@ -79,8 +79,12 @@ public class CoreToSponge extends TranslateCore.CoreImplementation {
 
     @Override
     public ServerBossBar bossBuilder() {
-        return new SServerBossBar(
-                BossBar.bossBar(Component.empty(), 0, BossBar.Color.PURPLE, BossBar.Overlay.PROGRESS));
+        return bossBuilder(BossBar.bossBar(Component.empty(), 0, BossBar.Color.PURPLE, BossBar.Overlay.PROGRESS));
+    }
+
+    @Override
+    public ServerBossBar bossBuilder(BossBar bar) {
+        return new SServerBossBar(bar);
     }
 
     @Override

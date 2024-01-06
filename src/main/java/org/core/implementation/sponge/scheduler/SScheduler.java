@@ -30,6 +30,8 @@ public class SScheduler implements Scheduler.Native {
             if (scheduler != null) {
                 scheduler.run();
             }
+            SScheduleManager scheduleManager = (SScheduleManager) TranslateCore.getScheduleManager();
+            scheduleManager.unregister(SScheduler.this);
         }
     }
 
@@ -39,11 +41,11 @@ public class SScheduler implements Scheduler.Native {
     private final Integer iteration;
     private final TimeUnit iterationTimeUnit;
     private final Plugin plugin;
+    private final String displayName;
+    private final boolean async;
+    private final boolean isDelayedOnly;
     private Scheduler runAfter;
     private ScheduledTask task;
-    private String displayName;
-    private boolean async;
-    private boolean isDelayedOnly;
     private LocalTime startTime;
     private Duration delayDuration;
 
@@ -122,12 +124,14 @@ public class SScheduler implements Scheduler.Native {
             throw new RuntimeException(e);
         }
 
+        SScheduleManager schedulerManager = (SScheduleManager) TranslateCore.getScheduleManager();
+        schedulerManager.register(this);
 
         Task.Builder builder = Task.builder().plugin(container).execute(new SScheduler.RunAfterScheduler());
         if (this.delayCount != null) {
             if (this.delayTimeUnit == null || this.delayTimeUnit == TimeUnit.MINECRAFT_TICKS) {
                 this.delayDuration = Ticks.duration(this.delayCount);
-                builder = builder.delay(delayDuration);
+                builder = builder.delay(this.delayDuration);
             } else {
                 java.util.concurrent.TimeUnit unit = this.to(this.delayTimeUnit);
                 builder = builder.delay(this.delayCount, unit);

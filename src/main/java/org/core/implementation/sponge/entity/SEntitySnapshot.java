@@ -85,6 +85,10 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
 
     @Override
     public org.core.entity.Entity<EntitySnapshot<? extends LiveEntity>> setCustomName(@Nullable AText text) {
+        if (text == null) {
+            this.customName = null;
+            return this;
+        }
         this.customName = ((AdventureText) text).getComponent();
         return this;
     }

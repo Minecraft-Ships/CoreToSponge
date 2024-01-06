@@ -21,7 +21,18 @@ public class DirectionSnapshotWrapper implements DirectionalData {
 
     @Override
     public Direction getDirection() {
-        return DirectionUtils.getCoreDirection(this.details.getState().get(Keys.DIRECTION).get());
+        return DirectionUtils.getCoreDirection(this.details.getState().get(Keys.DIRECTION).orElseThrow());
+    }
+
+    @Override
+    public DirectionalData setDirection(Direction direction) throws DirectionNotSupported {
+        org.spongepowered.api.util.Direction direction1 = DirectionUtils.getSpongeDirection(direction);
+        boolean check = this.details.setKey(Keys.DIRECTION, direction1);
+        if (!check) {
+            throw new DirectionNotSupported(direction,
+                                            this.details.getState().type().key(RegistryTypes.BLOCK_TYPE).asString());
+        }
+        return this;
     }
 
     @Override
@@ -33,16 +44,5 @@ public class DirectionSnapshotWrapper implements DirectionalData {
             }
         }
         return set.toArray(new Direction[0]);
-    }
-
-    @Override
-    public DirectionalData setDirection(Direction direction) throws DirectionNotSupported {
-        org.spongepowered.api.util.Direction direction1 = DirectionUtils.getSpongeDirection(direction);
-        boolean check = this.details.setKey(Keys.DIRECTION, direction1);
-        if (!check) {
-            throw new DirectionNotSupported(direction,
-                    this.details.getState().type().key(RegistryTypes.BLOCK_TYPE).asString());
-        }
-        return this;
     }
 }

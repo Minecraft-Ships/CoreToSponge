@@ -2,12 +2,12 @@ package org.core.implementation.sponge.entity.living.human.player.live;
 
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.ForwardingAudience;
+import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import org.core.TranslateCore;
 import org.core.adventureText.AText;
 import org.core.adventureText.adventure.AdventureText;
-import org.core.entity.Entity;
 import org.core.entity.EntityType;
 import org.core.entity.LiveEntity;
 import org.core.entity.living.human.player.LivePlayer;
@@ -31,11 +31,15 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.service.permission.Subject;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.LinkedTransferQueue;
 
 public class SLivePlayer extends SLiveEntity implements LivePlayer, ForwardingAudience {
+
+    private final LinkedTransferQueue<BossBar> bossBars = new LinkedTransferQueue<>();
 
     @Deprecated
     public SLivePlayer(org.spongepowered.api.entity.Entity entity) {
@@ -50,7 +54,6 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer, ForwardingAu
     public org.spongepowered.api.entity.living.player.Player getSpongeEntity() {
         return (org.spongepowered.api.entity.living.player.Player) super.getSpongeEntity();
     }
-
 
     @Override
     public boolean isOnGround() {
@@ -126,13 +129,13 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer, ForwardingAu
     }
 
     @Override
-    public EntityType<LivePlayer, PlayerSnapshot> getType() {
-        return new SEntityType.SPlayerType();
+    public PlayerSnapshot createSnapshot() {
+        return new SPlayerSnapshot(this);
     }
 
     @Override
-    public PlayerSnapshot createSnapshot() {
-        return new SPlayerSnapshot(this);
+    public EntityType<LivePlayer, PlayerSnapshot> getType() {
+        return new SEntityType.SPlayerType();
     }
 
     @Override
@@ -146,6 +149,28 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer, ForwardingAu
             return true;
         }
         return ((Subject) this.getSpongeEntity()).hasPermission(permission.getPermissionValue());
+    }
+
+    @Override
+    public @NotNull Collection<? extends BossBar> bossBars() {
+        return Collections.unmodifiableCollection(this.bossBars);
+    }
+
+    @Override
+    public void sendMessage(@NotNull Component message) {
+        this.getSpongeEntity().sendMessage(message);
+    }
+
+    @Override
+    public void showBossBar(@NotNull BossBar bar) {
+        bossBars.add(bar);
+        ForwardingAudience.super.showBossBar(bar);
+    }
+
+    @Override
+    public void hideBossBar(@NotNull BossBar bar) {
+        bossBars.remove(bar);
+        ForwardingAudience.super.hideBossBar(bar);
     }
 
     @Override

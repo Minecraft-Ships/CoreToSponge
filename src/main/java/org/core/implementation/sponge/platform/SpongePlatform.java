@@ -70,8 +70,8 @@ public class SpongePlatform implements Platform {
     protected final Map<Class<? extends org.spongepowered.api.block.entity.BlockEntity>, Class<? extends LiveTileEntity>> blockStateToTileEntity = new HashMap<>();
     protected final Collection<TileEntitySnapshot<? extends TileEntity>> defaultTileEntities = new HashSet<>();
     protected final Collection<UnspecificParser<?>> unspecificParsers = new HashSet<>();
-    private final Collection<SApplyPhysicsFlag> physicsFlags = new HashSet<>();
     protected final Set<Permission> permissions = new HashSet<>();
+    private final Collection<SApplyPhysicsFlag> physicsFlags = new HashSet<>();
 
     public SpongePlatform() {
         this.entityToEntityMap.put(org.spongepowered.api.entity.living.player.Player.class, SLivePlayer.class);
@@ -137,38 +137,77 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
-    public @NotNull CorePluginVersion getMinecraftVersion() {
-        return new CorePluginVersion(1, 16, 5);
+    public @NotNull PlatformDetails getImplementationDetails() {
+        return new SpongeImplPlatformDetails();
     }
 
     @Override
-    public @NotNull PlatformDetails getDetails() {
-        return new SpongeToCorePlatformDetails();
+    public @NotNull Collection<PlatformUpdate<?>> getUpdateCheckers() {
+        return Collections.emptyList();
     }
 
     @Override
-    public @NotNull ConfigurationFormat getConfigFormat() {
-        return ConfigurationFormat.FORMAT_YAML;
+    public @NotNull Singleton<BossColour> get(BossColours colours) {
+        return new Singleton<>(() -> {
+            throw new RuntimeException("Not implemented");
+        });
     }
 
     @Override
-    public @NotNull Set<Plugin> getPlugins() {
-        throw new RuntimeException("Not implemented yet");
+    public @NotNull Singleton<ApplyPhysicsFlag> get(@NotNull ApplyPhysicsFlags flags) {
+        return switch (flags.getId()) {
+            case "none" -> new Singleton<>(() -> SApplyPhysicsFlag.NONE);
+            case "default" -> new Singleton<>(() -> SApplyPhysicsFlag.DEFAULT);
+            default -> throw new RuntimeException("Unknown Applied Physics Flag of: " + flags.getId());
+        };
     }
 
     @Override
-    public @NotNull File getPlatformPluginsFolder() {
-        return new File("mods");
+    public @NotNull Singleton<ItemType> get(@NotNull ItemTypeCommon itemId) {
+        Supplier<ItemType> supplier = () -> RegistryTypes.ITEM_TYPE
+                .get()
+                .stream()
+                .filter(i -> i.key(RegistryTypes.ITEM_TYPE).asString().equals(itemId.getId()))
+                .findAny()
+                .map(SItemType::new)
+                .orElseThrow(() -> new IllegalStateException("Unknown item of " + itemId.getId()));
+        return new Singleton<>(supplier);
     }
 
     @Override
-    public @NotNull File getPlatformConfigFolder() {
-        return new File("configuration");
+    public @NotNull Singleton<ParrotType> get(@NotNull ParrotTypes parrotID) {
+        return new Singleton<>(() -> {
+            throw new RuntimeException("Not implemented");
+        });
     }
 
     @Override
-    public <E extends CustomEvent> @NotNull E callEvent(@NotNull E event) {
-        return TranslateCore.getEventManager().callEvent(event);
+    @Deprecated
+    public <T> @NotNull UnspecificParser<T> get(@NotNull UnspecificParsers<T> parsers) {
+        return (UnspecificParser<T>) this
+                .getUnspecifiedParser(parsers.getId())
+                .orElseThrow(() -> new RuntimeException("Cannot find unspecified parser"));
+    }
+
+    @Override
+    public @NotNull Singleton<DyeType> get(@NotNull DyeTypes id) {
+        return new Singleton<>(() -> {
+            throw new RuntimeException("Not implemented");
+        });
+    }
+
+    @Override
+    public @NotNull Singleton<PatternLayerType> get(@NotNull PatternLayerTypes id) {
+        return new Singleton<>(() -> {
+            throw new RuntimeException("Not implemented");
+        });
+    }
+
+    @Override
+    public <E extends LiveEntity, S extends EntitySnapshot<E>> @NotNull Singleton<EntityType<E, S>> get(@NotNull EntityTypes<E, S> entityId) {
+        return new Singleton<>(() -> {
+            throw new RuntimeException("Not implemented");
+        });
     }
 
     @Override
@@ -243,8 +282,8 @@ public class SpongePlatform implements Platform {
                 .get()
                 .stream()
                 .map(e -> this.getEntityType(e.key(RegistryTypes.ENTITY_TYPE).asString()))
-                .filter(Optional::isEmpty)
-                .map(Optional::get)
+                .filter(Optional::isPresent)
+                .map(Optional::orElseThrow)
                 .collect(Collectors.toSet());
     }
 
@@ -331,77 +370,38 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
-    public @NotNull PlatformDetails getImplementationDetails() {
-        return new SpongeImplPlatformDetails();
+    public @NotNull CorePluginVersion getMinecraftVersion() {
+        return new CorePluginVersion(1, 16, 5);
     }
 
     @Override
-    public @NotNull Collection<PlatformUpdate<?>> getUpdateCheckers() {
-        return Collections.emptyList();
+    public @NotNull PlatformDetails getDetails() {
+        return new SpongeToCorePlatformDetails();
     }
 
     @Override
-    public @NotNull Singleton<BossColour> get(BossColours colours) {
-        return new Singleton<>(() -> {
-            throw new RuntimeException("Not implemented");
-        });
+    public @NotNull ConfigurationFormat getConfigFormat() {
+        return ConfigurationFormat.FORMAT_YAML;
     }
 
     @Override
-    @Deprecated
-    public <T> @NotNull UnspecificParser<T> get(@NotNull UnspecificParsers<T> parsers) {
-        return (UnspecificParser<T>) this
-                .getUnspecifiedParser(parsers.getId())
-                .orElseThrow(() -> new RuntimeException("Cannot find unspecified parser"));
+    public @NotNull Set<Plugin> getPlugins() {
+        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
-    public @NotNull Singleton<ApplyPhysicsFlag> get(@NotNull ApplyPhysicsFlags flags) {
-        return switch (flags.getId()) {
-            case "none" -> new Singleton<>(() -> SApplyPhysicsFlag.NONE);
-            case "default" -> new Singleton<>(() -> SApplyPhysicsFlag.DEFAULT);
-            default -> throw new RuntimeException("Unknown Applied Physics Flag of: " + flags.getId());
-        };
+    public @NotNull File getPlatformPluginsFolder() {
+        return new File("mods");
     }
 
     @Override
-    public @NotNull Singleton<ItemType> get(@NotNull ItemTypeCommon itemId) {
-        Supplier<ItemType> supplier = () -> RegistryTypes.ITEM_TYPE
-                .get()
-                .stream()
-                .filter(i -> i.key(RegistryTypes.ITEM_TYPE).asString().equals(itemId.getId()))
-                .findAny()
-                .map(SItemType::new)
-                .orElseThrow(() -> new IllegalStateException("Unknown item of " + itemId.getId()));
-        return new Singleton<>(supplier);
+    public @NotNull File getPlatformConfigFolder() {
+        return new File("configuration");
     }
 
     @Override
-    public @NotNull Singleton<ParrotType> get(@NotNull ParrotTypes parrotID) {
-        return new Singleton<>(() -> {
-            throw new RuntimeException("Not implemented");
-        });
-    }
-
-    @Override
-    public @NotNull Singleton<DyeType> get(@NotNull DyeTypes id) {
-        return new Singleton<>(() -> {
-            throw new RuntimeException("Not implemented");
-        });
-    }
-
-    @Override
-    public @NotNull Singleton<PatternLayerType> get(@NotNull PatternLayerTypes id) {
-        return new Singleton<>(() -> {
-            throw new RuntimeException("Not implemented");
-        });
-    }
-
-    @Override
-    public <E extends LiveEntity, S extends EntitySnapshot<E>> @NotNull Singleton<EntityType<E, S>> get(@NotNull EntityTypes<E, S> entityId) {
-        return new Singleton<>(() -> {
-            throw new RuntimeException("Not implemented");
-        });
+    public <E extends CustomEvent> @NotNull E callEvent(@NotNull E event) {
+        return TranslateCore.getEventManager().callEvent(event);
     }
 
 }

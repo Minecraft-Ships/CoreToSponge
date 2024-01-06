@@ -64,7 +64,7 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
     }
 
     @Override
-    public <T, C extends Collection<T>> C parseCollection(org.core.config.ConfigurationNode node,
+    public <T, C extends Collection<T>> C parseCollection(org.core.config.@NotNull ConfigurationNode node,
                                                           @NotNull Parser<? super String, T> parser,
                                                           @NotNull C collection,
                                                           C defaultValue) {
@@ -139,24 +139,6 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
     }
 
     @Override
-    public void set(org.core.config.ConfigurationNode node, Map<String, ?> value) {
-        value.forEach((key, value1) -> {
-            String[] args = key.split(Pattern.quote("."));
-            String[] fullArgs = ArrayUtils.join(String.class, node.getPath(), args);
-            org.core.config.ConfigurationNode settingNode = new org.core.config.ConfigurationNode(fullArgs);
-            if(value1 instanceof Map){
-                set(settingNode, (Map<String, ?>)value1);
-                return;
-            }
-            try {
-                this.root.node(node.getObjectPath()).set(value1);
-            } catch (SerializationException e) {
-                throw new IllegalStateException(e);
-            }
-        });
-    }
-
-    @Override
     public Set<org.core.config.ConfigurationNode> getChildren(org.core.config.ConfigurationNode node) {
         Collection<? extends ConfigurationNode> values = this.root.node(node.getObjectPath()).childrenList();
         Set<org.core.config.ConfigurationNode> set = new HashSet<>();
@@ -191,40 +173,6 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
         return get(target);
     }
 
-    private Optional<Object> get(ConfigurationNode target){
-        if (target.isNull()){
-            return Optional.empty();
-        }
-        if(target.isList()){
-            List<Object> list = target
-                    .childrenList()
-                    .stream()
-                    .map(this::get)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .toList();
-            return Optional.of(list);
-        }
-        if(target.isMap()){
-            Map<String, Object> map = target.childrenMap().entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().toString(), entry -> get(entry.getValue())));
-            return Optional.of(map);
-        }
-        String value = target.getString();
-        if(value != null){
-            throw new RuntimeException("Unknown parse for " + target.key());
-        }
-        try{
-            if(value.contains(Pattern.quote("."))) {
-                double num = Double.parseDouble(value);
-                return Optional.of(num);
-            }
-            int num = Integer.parseInt(value);
-            return Optional.of(num);
-        }catch (NumberFormatException e){
-        }
-        return Optional.of(value);
-    }
-
     @Override
     public boolean isList(org.core.config.ConfigurationNode node) {
         ConfigurationNode target = this.root.node(node.getObjectPath());
@@ -240,6 +188,66 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
     @Override
     public Map<Object, Object> getMap(org.core.config.ConfigurationNode node) {
         ConfigurationNode target = this.root.node(node.getObjectPath());
-        return target.childrenMap().entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey(), entry -> get(entry.getValue())));
+        return target
+                .childrenMap()
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> get(entry.getValue())));
+    }
+
+    @Override
+    public void set(org.core.config.ConfigurationNode node, Map<String, ?> value) {
+        value.forEach((key, value1) -> {
+            String[] args = key.split(Pattern.quote("."));
+            String[] fullArgs = ArrayUtils.join(String.class, node.getPath(), args);
+            org.core.config.ConfigurationNode settingNode = new org.core.config.ConfigurationNode(fullArgs);
+            if (value1 instanceof Map) {
+                set(settingNode, (Map<String, ?>) value1);
+                return;
+            }
+            try {
+                this.root.node(node.getObjectPath()).set(value1);
+            } catch (SerializationException e) {
+                throw new IllegalStateException(e);
+            }
+        });
+    }
+
+    private Optional<Object> get(ConfigurationNode target) {
+        if (target.isNull()) {
+            return Optional.empty();
+        }
+        if (target.isList()) {
+            List<Object> list = target
+                    .childrenList()
+                    .stream()
+                    .map(this::get)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .toList();
+            return Optional.of(list);
+        }
+        if (target.isMap()) {
+            Map<String, Object> map = target
+                    .childrenMap()
+                    .entrySet()
+                    .stream()
+                    .collect(Collectors.toMap(entry -> entry.getKey().toString(), entry -> get(entry.getValue())));
+            return Optional.of(map);
+        }
+        String value = target.getString();
+        if (value != null) {
+            throw new RuntimeException("Unknown parse for " + target.key());
+        }
+        try {
+            if (value.contains(Pattern.quote("."))) {
+                double num = Double.parseDouble(value);
+                return Optional.of(num);
+            }
+            int num = Integer.parseInt(value);
+            return Optional.of(num);
+        } catch (NumberFormatException e) {
+        }
+        return Optional.of(value);
     }
 }

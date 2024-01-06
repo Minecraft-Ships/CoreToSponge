@@ -1,12 +1,9 @@
 package org.core.implementation.sponge.boss;
 
 import net.kyori.adventure.bossbar.BossBar;
-import org.core.adventureText.AText;
-import org.core.adventureText.adventure.AdventureText;
 import org.core.entity.living.human.player.LivePlayer;
 import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
 import org.core.world.boss.ServerBossBar;
-import org.core.world.boss.colour.BossColour;
 
 import java.util.HashSet;
 import java.util.Set;

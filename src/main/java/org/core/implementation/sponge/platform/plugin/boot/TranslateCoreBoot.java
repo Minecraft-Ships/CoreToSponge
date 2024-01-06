@@ -9,7 +9,6 @@ import org.core.implementation.sponge.platform.SLogger;
 import org.core.implementation.sponge.platform.plugin.boot.inject.LaunchWrapper;
 import org.core.implementation.sponge.platform.plugin.boot.inject.PluginContainerWrapper;
 import org.core.implementation.sponge.platform.plugin.boot.inject.SpongeInjector;
-import org.core.implementation.sponge.platform.plugin.boot.inject.SpongeInjectors;
 import org.core.platform.plugin.CorePlugin;
 import org.core.platform.plugin.loader.CommonLoad;
 import org.spongepowered.api.Sponge;
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Plugin("translate_core")
 public class TranslateCoreBoot {
@@ -45,12 +43,18 @@ public class TranslateCoreBoot {
         Optional<Class<? extends CorePlugin>> opLauncher = TranslateCore.getStandAloneLauncher();
         if (opLauncher.isEmpty()) {
             File folder = this.core.getRawPlatform().getTranslatePluginsFolder();
-            this.plugins.addAll(this.loadPlugins(folder).stream().map(SpongeInjector::injectPlugin).map(PluginContainerWrapper::instance).toList());
+            this.plugins.addAll(this
+                                        .loadPlugins(folder)
+                                        .stream()
+                                        .map(SpongeInjector::injectPlugin)
+                                        .map(PluginContainerWrapper::instance)
+                                        .toList());
             return;
         } else {
             Class<? extends CorePlugin> pluginClass = opLauncher.get();
             CorePlugin plugin = CommonLoad.loadStandAlonePlugin(pluginClass);
-            LaunchWrapper wrapper = new LaunchWrapper(plugin, new SLogger(LogManager.getLogger(plugin.getPluginId())), this.core.container());
+            LaunchWrapper wrapper = new LaunchWrapper(plugin, new SLogger(LogManager.getLogger(plugin.getPluginId())),
+                                                      this.core.container());
             Sponge.eventManager().registerListeners(this.core.container(), wrapper);
             this.plugins.add(wrapper);
         }

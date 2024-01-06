@@ -2,7 +2,6 @@ package org.core.implementation.sponge.world.position.block.entity.furnace;
 
 import org.core.implementation.sponge.inventory.inventories.live.SLiveFurnaceInventory;
 import org.core.implementation.sponge.world.position.block.entity.AbstractLiveTileEntity;
-import org.core.inventory.inventories.general.block.FurnaceInventory;
 import org.core.inventory.inventories.live.block.LiveFurnaceInventory;
 import org.core.world.position.block.entity.container.furnace.FurnaceTileEntitySnapshot;
 import org.core.world.position.block.entity.container.furnace.LiveFurnaceTileEntity;

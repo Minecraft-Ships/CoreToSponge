@@ -4,7 +4,6 @@ import org.core.entity.living.human.player.LivePlayer;
 import org.core.event.events.entity.EntityInteractEvent;
 import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
 import org.core.implementation.sponge.events.SEventManager;
-import org.core.implementation.sponge.events.SpongeListener;
 import org.core.implementation.sponge.events.events.entity.interact.block.SPlayerInteractBlockEvent;
 import org.core.implementation.sponge.utils.DirectionUtils;
 import org.core.world.direction.Direction;

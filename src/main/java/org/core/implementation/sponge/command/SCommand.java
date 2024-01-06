@@ -3,7 +3,6 @@ package org.core.implementation.sponge.command;
 import net.kyori.adventure.text.Component;
 import org.core.TranslateCore;
 import org.core.command.BaseCommandLauncher;
-import org.core.entity.living.human.player.LivePlayer;
 import org.core.exceptions.NotEnoughArguments;
 import org.core.implementation.sponge.platform.PlatformConsole;
 import org.core.implementation.sponge.platform.SpongePlatform;
@@ -17,7 +16,6 @@ import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.ArgumentReader;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -46,14 +44,16 @@ public class SCommand implements Command.Raw {
         CommandSource sender = toCommandSource(cause.root());
         try {
             boolean result = this.launcher.run(sender, arguments.input().split(" "));
-            return result ? CommandResult.success() : CommandResult.error(Component.text(this.launcher.getUsage(sender)));
+            return result ? CommandResult.success() : CommandResult.error(
+                    Component.text(this.launcher.getUsage(sender)));
         } catch (NotEnoughArguments e) {
             return CommandResult.error(Component.text(e.getMessage()));
         }
     }
 
     @Override
-    public List<CommandCompletion> complete(CommandCause cause, ArgumentReader.Mutable arguments) throws CommandException {
+    public List<CommandCompletion> complete(CommandCause cause, ArgumentReader.Mutable arguments)
+            throws CommandException {
         CommandSource sender = toCommandSource(cause.root());
         List<String> result = this.launcher.tab(sender, arguments.input().split(" "));
         return result.stream().map(CommandCompletion::of).collect(Collectors.toList());

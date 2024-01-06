@@ -4,15 +4,11 @@ import org.core.implementation.sponge.world.position.block.SBlockType;
 import org.core.implementation.sponge.world.position.block.details.blocks.StateDetails;
 import org.core.world.position.block.BlockType;
 import org.core.world.position.block.details.BlockDetails;
-import org.core.world.position.block.details.BlockSnapshot;
 import org.core.world.position.block.details.data.DirectionalData;
 import org.core.world.position.block.details.data.keyed.AttachableKeyedData;
 import org.core.world.position.block.details.data.keyed.KeyedData;
 import org.core.world.position.block.details.data.keyed.MultiDirectionalKeyedData;
 import org.core.world.position.block.details.data.keyed.OpenableKeyedData;
-import org.core.world.position.impl.BlockPosition;
-import org.core.world.position.impl.async.ASyncBlockPosition;
-import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.data.Key;
 import org.spongepowered.api.data.Keys;
@@ -57,6 +53,7 @@ public abstract class SBlockDetails implements BlockDetails, StateDetails {
         return this;
     }
 
+    @Override
     public BlockState getState() {
         return this.blockstate;
     }
@@ -74,8 +71,8 @@ public abstract class SBlockDetails implements BlockDetails, StateDetails {
         KeyedData<T> key = null;
         if (data.isAssignableFrom(OpenableKeyedData.class) && (this.blockstate.supports(Keys.IS_OPEN))) {
         } else if (data.isAssignableFrom(AttachableKeyedData.class) && this.blockstate.supports(Keys.IS_ATTACHED)) {
-        } else if (data.isAssignableFrom(MultiDirectionalKeyedData.class) &&
-                this.blockstate.supports(Keys.CONNECTED_DIRECTIONS)) {
+        } else if (data.isAssignableFrom(MultiDirectionalKeyedData.class) && this.blockstate.supports(
+                Keys.CONNECTED_DIRECTIONS)) {
         }
         return Optional.ofNullable(key);
     }

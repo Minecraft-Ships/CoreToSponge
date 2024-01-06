@@ -16,7 +16,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class PluginMetadataWrapper implements PluginMetadata {
 
@@ -27,11 +26,6 @@ public class PluginMetadataWrapper implements PluginMetadata {
         this.plugin = plugin;
         this.version = version;
     }
-
-    public static PluginMetadataWrapper fromPlugin(CorePlugin plugin) {
-        return new PluginMetadataWrapper(plugin, new DefaultArtifactVersion(plugin.getPluginVersion().asString()));
-    }
-
 
     @Override
     @Deprecated
@@ -145,5 +139,9 @@ public class PluginMetadataWrapper implements PluginMetadata {
     @Override
     public Map<String, Object> properties() {
         throw new RuntimeException("Not needed");
+    }
+
+    public static PluginMetadataWrapper fromPlugin(CorePlugin plugin) {
+        return new PluginMetadataWrapper(plugin, new DefaultArtifactVersion(plugin.getPluginVersion().asString()));
     }
 }
