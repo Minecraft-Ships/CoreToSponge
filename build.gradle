@@ -30,6 +30,8 @@ task plugin {
 jar {
     archiveClassifier = 'uber'
     archiveFileName = "CoreToSponge.jar"
+    targetCompatibility = JavaLanguageVersion.of(11);
+    sourceCompatibility = JavaLanguageVersion.of(11);
 }
 
 dependencies {
@@ -43,5 +45,4 @@ dependencies {
 group = 'org.ships'
 version = '1.0-SNAPSHOT'
 description = 'CoreToSponge'
-java.sourceCompatibility = JavaVersion.VERSION_16
 

@@ -30,8 +30,8 @@ public class SCommand implements Command.Raw {
 
     private CommandSource toCommandSource(Object sender) {
         SpongePlatform platform = (SpongePlatform) (TranslateCore.getPlatform());
-        if (sender instanceof ServerPlayer player) {
-            return (CommandSource) platform.createEntityInstance(player);
+        if (sender instanceof ServerPlayer) {
+            return (CommandSource) platform.createEntityInstance((ServerPlayer)sender);
         }
         if (sender.equals(Sponge.systemSubject())) {
             return new PlatformConsole();

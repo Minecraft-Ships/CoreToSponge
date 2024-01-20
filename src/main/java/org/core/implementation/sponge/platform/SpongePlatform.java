@@ -155,11 +155,14 @@ public class SpongePlatform implements Platform {
 
     @Override
     public @NotNull Singleton<ApplyPhysicsFlag> get(@NotNull ApplyPhysicsFlags flags) {
-        return switch (flags.getId()) {
-            case "none" -> new Singleton<>(() -> SApplyPhysicsFlag.NONE);
-            case "default" -> new Singleton<>(() -> SApplyPhysicsFlag.DEFAULT);
-            default -> throw new RuntimeException("Unknown Applied Physics Flag of: " + flags.getId());
-        };
+        switch (flags.getId()) {
+            case "none":
+                return new Singleton<>(() -> SApplyPhysicsFlag.NONE);
+            case "default":
+                return new Singleton<>(() -> SApplyPhysicsFlag.DEFAULT);
+            default:
+                throw new RuntimeException("Unknown Applied Physics Flag of: " + flags.getId());
+        }
     }
 
     @Override

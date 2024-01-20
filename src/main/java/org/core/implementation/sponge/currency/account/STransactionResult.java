@@ -43,12 +43,18 @@ public class STransactionResult implements org.core.eco.transaction.result.Trans
 
     @Override
     public Optional<String> getFailedReason() {
-        return switch (this.result.result()) {
-            case SUCCESS -> Optional.empty();
-            case CONTEXT_MISMATCH -> Optional.of("Context Mismatch");
-            case FAILED -> Optional.of("Unknown reason");
-            case ACCOUNT_NO_FUNDS -> Optional.of("Account does not have enough money");
-            case ACCOUNT_NO_SPACE -> Optional.of("Account is full");
-        };
+        switch (this.result.result()) {
+            case SUCCESS:
+                return Optional.empty();
+            case CONTEXT_MISMATCH:
+                return Optional.of("Context Mismatch");
+            case FAILED:
+                return Optional.of("Unknown reason");
+            case ACCOUNT_NO_FUNDS:
+                return Optional.of("Account does not have enough money");
+            case ACCOUNT_NO_SPACE:
+                return Optional.of("Account is full");
+        }
+        throw new RuntimeException("Unknown result type of " + this.result.result().name());
     }
 }

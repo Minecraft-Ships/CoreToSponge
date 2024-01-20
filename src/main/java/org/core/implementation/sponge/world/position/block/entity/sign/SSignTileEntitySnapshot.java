@@ -97,8 +97,8 @@ public class SSignTileEntitySnapshot implements SignTileEntitySnapshot {
     @Override
     public SignTileEntity setText(Collection<? extends AText> text) {
         this.getFront().setLines(text.stream().map(t -> {
-            if (t instanceof AdventureText adv) {
-                return adv.getComponent();
+            if (t instanceof AdventureText) {
+                return ((AdventureText)t).getComponent();
             }
             return ComponentUtils.fromLegacy(t.toLegacy());
         }).collect(Collectors.toList()));

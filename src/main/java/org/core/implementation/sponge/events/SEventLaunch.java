@@ -39,8 +39,8 @@ public class SEventLaunch {
             System.err.println("Failed to know what to do: EventListener caused exception from " +
                     this.listener.getClass().getName() + "." + this.method.getName() + "(" +
                     parameterNames + ")");
-            if (e instanceof ExceptionInInitializerError eInInit) {
-                eInInit.getException().printStackTrace();
+            if (e instanceof ExceptionInInitializerError) {
+                ((ExceptionInInitializerError)e).getException().printStackTrace();
                 return;
             }
             ((InvocationTargetException) e).getTargetException().printStackTrace();

@@ -32,15 +32,24 @@ public class SEcoAccount<SAccount extends org.spongepowered.api.service.economy.
 
     @Override
     public @NotNull PendingTransaction transact(@NotNull Transaction transaction) {
-        if (!(transaction.getCurrency() instanceof SCurrency cur)) {
+        if (!(transaction.getCurrency() instanceof SCurrency)) {
             throw new RuntimeException("Unknown type of currency: " + transaction.getCurrency().getClass().getName());
         }
+        SCurrency cur = (SCurrency) transaction.getCurrency();
         BigDecimal originalAmount = this.account.balance(cur.getSponge());
-        org.spongepowered.api.service.economy.transaction.TransactionResult result = switch (transaction.getType()) {
-            case DEPOSIT -> this.account.deposit(cur.getSponge(), transaction.getAmount());
-            case WITHDRAW -> this.account.withdraw(cur.getSponge(), transaction.getAmount());
-            case SET -> this.account.setBalance(cur.getSponge(), transaction.getAmount());
-        };
+        org.spongepowered.api.service.economy.transaction.TransactionResult result = null;
+
+        switch (transaction.getType()) {
+            case DEPOSIT:
+                result = this.account.deposit(cur.getSponge(), transaction.getAmount());
+                break;
+            case WITHDRAW:
+                result = this.account.withdraw(cur.getSponge(), transaction.getAmount());
+                break;
+            case SET:
+                result = this.account.setBalance(cur.getSponge(), transaction.getAmount());
+                break;
+        }
 
         TransactionResult coreResult = new STransactionResult(transaction, originalAmount, result);
         return new PendingSingleTransactionImpl(this, transaction, CompletableFuture.completedFuture(coreResult));
@@ -48,9 +57,9 @@ public class SEcoAccount<SAccount extends org.spongepowered.api.service.economy.
 
     @Override
     public @NotNull BigDecimal getBalance(@NotNull Currency currency) {
-        if (!(currency instanceof SCurrency cur)) {
+        if (!(currency instanceof SCurrency)) {
             throw new RuntimeException("Unknown type of currency: " + currency.getClass().getName());
         }
-        return this.account.balance(cur.getSponge());
+        return this.account.balance(((SCurrency) currency).getSponge());
     }
 }

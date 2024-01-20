@@ -151,9 +151,9 @@ public class SWorldExtent implements WorldExtent {
 
     @Override
     public boolean equals(Object object) {
-        if (!(object instanceof WorldExtent extent)) {
+        if (!(object instanceof WorldExtent)) {
             return false;
         }
-        return extent.getPlatformUniqueId().equals(this.getPlatformUniqueId());
+        return ((WorldExtent)object).getPlatformUniqueId().equals(this.getPlatformUniqueId());
     }
 }

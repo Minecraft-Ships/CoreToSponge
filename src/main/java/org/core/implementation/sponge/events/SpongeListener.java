@@ -69,8 +69,9 @@ public class SpongeListener {
         LiveEntity entity = ((SpongePlatform) TranslateCore.getPlatform()).createEntityInstance(event.entity());
 
         EntityMoveEvent<?> coreEvent;
-        if (entity instanceof LivePlayer player) {
-            coreEvent = new SPlayerMoveEvent(before, after, player, EntityMoveEvent.AsPlayer.MoveReason.NATURAL);
+        if (entity instanceof LivePlayer) {
+            coreEvent = new SPlayerMoveEvent(before, after, ((LivePlayer) entity),
+                                             EntityMoveEvent.AsPlayer.MoveReason.NATURAL);
         } else {
             coreEvent = new SEntityMoveEvent<>(before, after, entity);
         }
@@ -119,10 +120,10 @@ public class SpongeListener {
 
     @org.spongepowered.api.event.Listener
     public void onCommandEvent(org.spongepowered.api.event.command.ExecuteCommandEvent event) {
-        if (!(event.commandCause().audience() instanceof Player sPlayer)) {
+        if (!(event.cause().root() instanceof Player)) {
             return;
         }
-        LivePlayer player = new SLivePlayer(sPlayer);
+        LivePlayer player = new SLivePlayer((Player) event.cause().root());
         SEntityCommandEvent e = new SEntityCommandEvent(player, event.originalCommand().split(" "));
         SEventManager.call(e);
     }

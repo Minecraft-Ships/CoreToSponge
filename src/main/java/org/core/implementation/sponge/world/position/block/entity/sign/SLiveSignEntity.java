@@ -51,8 +51,8 @@ public class SLiveSignEntity extends AbstractLiveTileEntity<Sign> implements Liv
     @Override
     public SignTileEntity setText(Collection<? extends AText> text) {
         this.getFront().setLines(text.stream().map(text2 -> {
-            if (text2 instanceof AdventureText adventure) {
-                return adventure.getComponent();
+            if (text2 instanceof AdventureText) {
+                return ((AdventureText) text2).getComponent();
             }
             return ComponentUtils.fromLegacy(text2.toLegacy());
         }).collect(Collectors.toList()));

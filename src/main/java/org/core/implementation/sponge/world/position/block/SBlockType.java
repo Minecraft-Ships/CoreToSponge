@@ -44,10 +44,10 @@ public class SBlockType implements BlockType {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof SBlockType type)) {
+        if (!(obj instanceof SBlockType)) {
             return false;
         }
-        return type.type.equals(this.type);
+        return ((SBlockType) type).type.equals(this.type);
     }
 
     @Override
