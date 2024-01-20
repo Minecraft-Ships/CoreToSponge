@@ -84,7 +84,7 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
                         .map(Object::toString)
                         .collect(Collectors.joining("->")));
             }
-        }).filter(Optional::isPresent).map(Optional::get).toList();
+        }).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
         collection.addAll(list);
         return collection;
     }
@@ -224,7 +224,7 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
                     .map(this::get)
                     .filter(Optional::isPresent)
                     .map(Optional::get)
-                    .toList();
+                    .collect(Collectors.toList());
             return Optional.of(list);
         }
         if (target.isMap()) {

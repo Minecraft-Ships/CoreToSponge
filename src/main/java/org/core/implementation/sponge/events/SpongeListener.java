@@ -36,6 +36,7 @@ import org.spongepowered.api.world.World;
 import org.spongepowered.api.world.server.ServerLocation;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SpongeListener {
 
@@ -46,7 +47,7 @@ public class SpongeListener {
                 .stream()
                 .map(transaction -> (org.core.world.position.block.details.BlockSnapshot<SyncBlockPosition>) new SBlockSnapshot.SSyncedBlockSnapshot(
                         transaction.finalReplacement()))
-                .toList();
+                .collect(Collectors.toList());
         event.transactions(Operations.PLACE.get()).forEach(transaction -> {
             BlockSnapshot original = transaction.original();
             BlockSnapshot last = transaction.finalReplacement();
@@ -99,7 +100,7 @@ public class SpongeListener {
                 .stream()
                 .map(transaction -> (org.core.world.position.block.details.BlockSnapshot<SyncBlockPosition>) new SBlockSnapshot.SSyncedBlockSnapshot(
                         transaction.finalReplacement()))
-                .toList();
+                .collect(Collectors.toList());
         event.transactions(Operations.PLACE.get()).forEach(transaction -> {
             BlockSnapshot original = transaction.original();
             BlockSnapshot last = transaction.finalReplacement();
