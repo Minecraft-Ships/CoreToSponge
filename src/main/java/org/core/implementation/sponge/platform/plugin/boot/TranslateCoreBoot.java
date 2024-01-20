@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Plugin("translate_core")
+@Plugin("ships")
 public class TranslateCoreBoot {
 
     private final CoreToSponge core;
