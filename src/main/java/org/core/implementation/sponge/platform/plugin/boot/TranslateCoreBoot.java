@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Plugin("translate_core")
 public class TranslateCoreBoot {
@@ -48,7 +49,7 @@ public class TranslateCoreBoot {
                                         .stream()
                                         .map(SpongeInjector::injectPlugin)
                                         .map(PluginContainerWrapper::instance)
-                                        .toList());
+                                        .collect(Collectors.toList()));
             return;
         } else {
             Class<? extends CorePlugin> pluginClass = opLauncher.get();
