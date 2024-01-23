@@ -72,6 +72,7 @@ public class SpongePlatform implements Platform {
     protected final Collection<UnspecificParser<?>> unspecificParsers = new HashSet<>();
     protected final Set<Permission> permissions = new HashSet<>();
     private final Collection<SApplyPhysicsFlag> physicsFlags = new HashSet<>();
+    private final Map<UUID, SLivePlayer> players = new HashMap<>();
 
     public SpongePlatform() {
         this.entityToEntityMap.put(org.spongepowered.api.entity.living.player.Player.class, SLivePlayer.class);

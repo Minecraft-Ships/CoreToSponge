@@ -31,15 +31,14 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 import org.spongepowered.api.service.permission.Subject;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.LinkedTransferQueue;
 
 public class SLivePlayer extends SLiveEntity implements LivePlayer, ForwardingAudience {
 
-    private final LinkedTransferQueue<BossBar> bossBars = new LinkedTransferQueue<>();
+    //private final LinkedTransferQueue<BossBar> bossBars = new LinkedTransferQueue<>();
+
+    private static final Map<UUID, Collection<BossBar>> BARS = new LinkedHashMap<>();
 
     @Deprecated
     public SLivePlayer(org.spongepowered.api.entity.Entity entity) {
@@ -153,7 +152,7 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer, ForwardingAu
 
     @Override
     public @NotNull Collection<? extends BossBar> bossBars() {
-        return Collections.unmodifiableCollection(this.bossBars);
+        return Collections.unmodifiableCollection(BARS.getOrDefault(this.getUniqueId(), Collections.emptyList()));
     }
 
     @Override
@@ -163,13 +162,18 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer, ForwardingAu
 
     @Override
     public void showBossBar(@NotNull BossBar bar) {
-        bossBars.add(bar);
+        Collection<BossBar> bars = BARS.getOrDefault(this.getUniqueId(), new LinkedTransferQueue<>());
+        bars.add(bar);
+        BARS.putIfAbsent(this.getUniqueId(), bars);
         ForwardingAudience.super.showBossBar(bar);
     }
 
     @Override
     public void hideBossBar(@NotNull BossBar bar) {
-        bossBars.remove(bar);
+        if(BARS.containsKey(getUniqueId())){
+            Collection<BossBar> bars = BARS.get(getUniqueId());
+            bars.remove(bar);
+        }
         ForwardingAudience.super.hideBossBar(bar);
     }
 
