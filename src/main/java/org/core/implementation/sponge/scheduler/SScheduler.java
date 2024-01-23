@@ -3,6 +3,7 @@ package org.core.implementation.sponge.scheduler;
 import net.kyori.adventure.util.Ticks;
 import org.core.TranslateCore;
 import org.core.implementation.sponge.platform.SpongePlatformServer;
+import org.core.implementation.sponge.platform.plugin.boot.TranslateCoreBoot;
 import org.core.platform.plugin.Plugin;
 import org.core.schedule.Scheduler;
 import org.core.schedule.SchedulerBuilder;
@@ -13,7 +14,6 @@ import org.spongepowered.api.scheduler.ScheduledTask;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.plugin.PluginContainer;
 
-import java.lang.reflect.InvocationTargetException;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.Optional;
@@ -116,13 +116,9 @@ public class SScheduler implements Scheduler.Native {
 
     @Override
     public void run() {
-        Object spongePlugin = this.plugin.getPlatformLauncher();
+        TranslateCoreBoot spongePlugin = (TranslateCoreBoot) this.plugin.getPlatformLauncher();
         PluginContainer container;
-        try {
-            container = (PluginContainer) spongePlugin.getClass().getMethod("getContainer").invoke(spongePlugin);
-        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        container = spongePlugin.getCore().container();
 
         SScheduleManager schedulerManager = (SScheduleManager) TranslateCore.getScheduleManager();
         schedulerManager.register(this);

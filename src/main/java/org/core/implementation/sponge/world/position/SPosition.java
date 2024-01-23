@@ -42,7 +42,7 @@ public abstract class SPosition<N extends Number> implements Position<N> {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof SyncPosition)) {
+        if (!(obj instanceof Position)) {
             return false;
         }
         Position<? extends Number> pos = (Position<? extends Number>) obj;

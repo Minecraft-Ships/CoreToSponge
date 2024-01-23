@@ -206,7 +206,8 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
                 return;
             }
             try {
-                this.root.node(node.getObjectPath()).set(value1);
+                Object[] fullNode = Arrays.stream(fullArgs).map(t -> (Object) t).toArray();
+                this.root.node(fullNode).set(value1);
             } catch (SerializationException e) {
                 throw new IllegalStateException(e);
             }

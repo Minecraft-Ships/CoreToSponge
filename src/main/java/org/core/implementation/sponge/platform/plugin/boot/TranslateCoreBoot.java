@@ -11,9 +11,11 @@ import org.core.implementation.sponge.platform.plugin.boot.inject.PluginContaine
 import org.core.implementation.sponge.platform.plugin.boot.inject.SpongeInjector;
 import org.core.platform.plugin.CorePlugin;
 import org.core.platform.plugin.loader.CommonLoad;
+import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.ConstructPluginEvent;
+import org.spongepowered.api.event.lifecycle.StartedEngineEvent;
 import org.spongepowered.plugin.PluginContainer;
 import org.spongepowered.plugin.builtin.jvm.Plugin;
 
@@ -37,6 +39,10 @@ public class TranslateCoreBoot {
     public TranslateCoreBoot(PluginContainer container, Logger logger) {
         this.core = new CoreToSponge(container);
         this.logger = new SLogger(logger);
+    }
+
+    public CoreToSponge getCore() {
+        return this.core;
     }
 
     @Listener

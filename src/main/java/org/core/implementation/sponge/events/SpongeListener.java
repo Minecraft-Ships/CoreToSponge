@@ -135,7 +135,7 @@ public class SpongeListener {
         Object rootCause = event.cause().root();
         SyncBlockPosition bp = new SBlockPosition(event.sign().location());
         SignTileEntitySnapshot from = new SSignTileEntitySnapshot(event.text().asImmutable().get());
-        SSignSideSnapshot to = new SSignTileEntitySnapshot().getSide(true);
+        SSignSideSnapshot to = new SSignTileEntitySnapshot(event.text().asImmutable().get()).getSide(true);
 
         if (rootCause instanceof org.spongepowered.api.entity.living.player.Player) {
             LivePlayer player = (LivePlayer) ((SpongePlatform) TranslateCore.getPlatform()).createEntityInstance(

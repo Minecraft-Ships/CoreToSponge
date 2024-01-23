@@ -47,7 +47,7 @@ public class SBlockType implements BlockType {
         if (!(obj instanceof SBlockType)) {
             return false;
         }
-        return ((SBlockType) type).type.equals(this.type);
+        return ((SBlockType) obj).type.equals(this.type);
     }
 
     @Override

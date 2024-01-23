@@ -399,7 +399,7 @@ public class SpongePlatform implements Platform {
 
     @Override
     public @NotNull File getPlatformConfigFolder() {
-        return new File("configuration");
+        return new File("config");
     }
 
     @Override

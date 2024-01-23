@@ -8,6 +8,7 @@ import org.spongepowered.api.Server;
 import org.spongepowered.api.command.Command;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.RegisterCommandEvent;
+import org.spongepowered.api.event.lifecycle.StartedEngineEvent;
 import org.spongepowered.api.event.lifecycle.StartingEngineEvent;
 import org.spongepowered.plugin.PluginContainer;
 
@@ -34,6 +35,11 @@ public class LaunchWrapper {
     @Listener
     public void onServerStarting(StartingEngineEvent<Server> event) {
         this.plugin.onCoreReady();
+    }
+
+    @Listener
+    public void onServerStarted(StartedEngineEvent<Server> event) {
+        this.plugin.onCoreFinishedInit();
     }
 
     @Listener
