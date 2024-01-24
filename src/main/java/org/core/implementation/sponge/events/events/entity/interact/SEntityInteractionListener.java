@@ -9,7 +9,10 @@ import org.core.implementation.sponge.utils.DirectionUtils;
 import org.core.world.direction.Direction;
 import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.spongepowered.api.block.BlockSnapshot;
+import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.entity.living.player.gamemode.GameMode;
+import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.event.Cancellable;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
@@ -19,6 +22,12 @@ public class SEntityInteractionListener {
 
     @Listener
     public void onPlayerPrimaryInteractWithBlock(InteractBlockEvent.Primary.Start event, @Root Player player) {
+        GameMode playerGamemode = player
+                .get(Keys.GAME_MODE)
+                .orElseThrow(() -> new RuntimeException("Player must have a gamemode"));
+        if (playerGamemode.equals(GameModes.CREATIVE.get())) {
+            return;
+        }
         this.onPlayerInteractWithBlock(event, player);
     }
 

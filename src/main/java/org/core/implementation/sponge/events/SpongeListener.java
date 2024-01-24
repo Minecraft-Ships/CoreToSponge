@@ -7,6 +7,7 @@ import org.core.entity.living.human.player.LivePlayer;
 import org.core.event.events.entity.EntityDeathEvent;
 import org.core.event.events.entity.EntityMoveEvent;
 import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
+import org.core.implementation.sponge.events.events.block.breaks.SPlayerBlockBreakEvent;
 import org.core.implementation.sponge.events.events.block.place.SPlayerBlockPlaceEvent;
 import org.core.implementation.sponge.events.events.block.place.SPostBlockPlaceEvent;
 import org.core.implementation.sponge.events.events.block.tileentity.SSignChangeEvent;
@@ -81,7 +82,7 @@ public class SpongeListener {
     }
 
     @org.spongepowered.api.event.Listener
-    public void onEntityMove(DamageEntityEvent event) {
+    public void onEntityDamage(DamageEntityEvent event) {
         if (!event.willCauseDeath()) {
             return;
         }
@@ -92,8 +93,28 @@ public class SpongeListener {
         event.setCancelled(coreEvent.isCancelled());
     }
 
+    @org.spongepowered.api.event.Listener(beforeModifications = true)
+    public void onPlayerBreakEvent(ChangeBlockEvent.All event, @First Player player) {
+        LivePlayer lPlayer = new SLivePlayer(player);
+        event.transactions(Operations.BREAK.get()).forEach(transaction -> {
+            BlockSnapshot original = transaction.original();
+            BlockSnapshot last = transaction.finalReplacement();
+            ServerLocation loc = event.world().location(original.position());
+
+            SBlockSnapshot.SSyncedBlockSnapshot originalSnapshot = new SBlockSnapshot.SSyncedBlockSnapshot(original);
+            SBlockSnapshot.SSyncedBlockSnapshot lastSnapshot = new SBlockSnapshot.SSyncedBlockSnapshot(last);
+            SBlockPosition position = new SBlockPosition(loc);
+
+            SPlayerBlockBreakEvent e = new SPlayerBlockBreakEvent(position, originalSnapshot, lastSnapshot, lPlayer);
+            SEventManager.call(e);
+            if (e.isCancelled()) {
+                transaction.invalidate();
+            }
+        });
+    }
+
     @org.spongepowered.api.event.Listener
-    public void onPlaceEvent(ChangeBlockEvent.All event, @First Player player) {
+    public void onPlayerPlaceEvent(ChangeBlockEvent.All event, @First Player player) {
         LivePlayer lPlayer = new SLivePlayer(player);
         List<org.core.world.position.block.details.BlockSnapshot<SyncBlockPosition>> list = event
                 .transactions()

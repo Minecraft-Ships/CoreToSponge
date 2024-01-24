@@ -31,7 +31,7 @@ public class SCommand implements Command.Raw {
     private CommandSource toCommandSource(Object sender) {
         SpongePlatform platform = (SpongePlatform) (TranslateCore.getPlatform());
         if (sender instanceof ServerPlayer) {
-            return (CommandSource) platform.createEntityInstance((ServerPlayer)sender);
+            return (CommandSource) platform.createEntityInstance((ServerPlayer) sender);
         }
         if (sender.equals(Sponge.systemSubject())) {
             return new PlatformConsole();
@@ -42,8 +42,9 @@ public class SCommand implements Command.Raw {
     @Override
     public CommandResult process(CommandCause cause, ArgumentReader.Mutable arguments) throws CommandException {
         CommandSource sender = toCommandSource(cause.root());
+        String[] args = split(arguments);
         try {
-            boolean result = this.launcher.run(sender, arguments.input().split(" "));
+            boolean result = this.launcher.run(sender, args);
             return result ? CommandResult.success() : CommandResult.error(
                     Component.text(this.launcher.getUsage(sender)));
         } catch (NotEnoughArguments e) {
@@ -55,7 +56,8 @@ public class SCommand implements Command.Raw {
     public List<CommandCompletion> complete(CommandCause cause, ArgumentReader.Mutable arguments)
             throws CommandException {
         CommandSource sender = toCommandSource(cause.root());
-        List<String> result = this.launcher.tab(sender, arguments.input().split(" "));
+        String[] args = split(arguments);
+        List<String> result = this.launcher.tab(sender, args);
         return result.stream().map(CommandCompletion::of).collect(Collectors.toList());
     }
 
@@ -79,5 +81,16 @@ public class SCommand implements Command.Raw {
     public Component usage(CommandCause cause) {
         CommandSource sender = toCommandSource(cause.root());
         return Component.text(this.launcher.getUsage(sender));
+    }
+
+    private String[] split(ArgumentReader arguments) {
+        String[] originalSplit = arguments.input().split(" ");
+        String[] args = new String[originalSplit.length];
+        if (arguments.input().endsWith(" ")) {
+            args = new String[originalSplit.length + 1];
+            args[originalSplit.length] = "";
+        }
+        System.arraycopy(originalSplit, 0, args, 0, originalSplit.length);
+        return args;
     }
 }

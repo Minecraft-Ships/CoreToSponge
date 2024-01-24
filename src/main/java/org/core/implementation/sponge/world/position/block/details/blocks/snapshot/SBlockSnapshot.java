@@ -8,6 +8,8 @@ import org.core.implementation.sponge.platform.SpongePlatform;
 import org.core.implementation.sponge.world.position.SPosition;
 import org.core.implementation.sponge.world.position.block.SBlockType;
 import org.core.implementation.sponge.world.position.block.details.blocks.StateDetails;
+import org.core.implementation.sponge.world.position.block.entity.sign.SSignTileEntitySnapshot;
+import org.core.utils.ComponentUtils;
 import org.core.world.position.block.BlockType;
 import org.core.world.position.block.details.BlockDetails;
 import org.core.world.position.block.details.BlockSnapshot;
@@ -16,6 +18,7 @@ import org.core.world.position.block.details.data.keyed.*;
 import org.core.world.position.block.entity.LiveTileEntity;
 import org.core.world.position.block.entity.TileEntity;
 import org.core.world.position.block.entity.TileEntitySnapshot;
+import org.core.world.position.block.entity.sign.LiveSignTileEntity;
 import org.core.world.position.block.entity.sign.SignTileEntity;
 import org.core.world.position.block.entity.sign.SignTileEntitySnapshot;
 import org.core.world.position.impl.BlockPosition;
@@ -25,6 +28,8 @@ import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.data.Key;
 import org.spongepowered.api.data.Keys;
+import org.spongepowered.api.data.persistence.DataContainer;
+import org.spongepowered.api.data.persistence.DataQuery;
 import org.spongepowered.api.data.value.Value;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
@@ -35,6 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSnapshot<P>, StateDetails {
 
@@ -42,7 +48,36 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
 
         @Override
         public Optional<TileEntitySnapshot<? extends TileEntity>> getData() {
-            return Optional.ofNullable(SBlockSnapshot.this.tileEntitySnapshot);
+            if (SBlockSnapshot.this.tileEntitySnapshot != null) {
+                return Optional.of(SBlockSnapshot.this.tileEntitySnapshot);
+            }
+            //THIS IS HACKY
+            DataContainer tag = SBlockSnapshot.this.snapshot.toContainer();
+            Optional<Component> opFirstLine = tag
+                    .getString(DataQuery.of("UnsafeData", "Text1"))
+                    .map(ComponentUtils::fromGson);
+            Optional<Component> opSecondLine = tag
+                    .getString(DataQuery.of("UnsafeData", "Text2"))
+                    .map(ComponentUtils::fromGson);
+            Optional<Component> opThirdLine = tag
+                    .getString(DataQuery.of("UnsafeData", "Text3"))
+                    .map(ComponentUtils::fromGson);
+            Optional<Component> opForthLine = tag
+                    .getString(DataQuery.of("UnsafeData", "Text4"))
+                    .map(ComponentUtils::fromGson);
+            if (Stream.of(opFirstLine, opSecondLine, opThirdLine, opForthLine).anyMatch(Optional::isPresent)) {
+                List<Component> lines = new ArrayList<>();
+                opFirstLine.ifPresent(lines::add);
+                opSecondLine.ifPresent(lines::add);
+                opThirdLine.ifPresent(lines::add);
+                opForthLine.ifPresent(lines::add);
+                TileEntitySnapshot<LiveSignTileEntity> snapshot = new SSignTileEntitySnapshot(lines);
+                return Optional.of(snapshot);
+            }
+
+
+            return Optional.empty();
+
         }
 
         @Override

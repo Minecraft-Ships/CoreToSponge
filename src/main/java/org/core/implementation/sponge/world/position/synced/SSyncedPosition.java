@@ -1,5 +1,6 @@
 package org.core.implementation.sponge.world.position.synced;
 
+import net.kyori.adventure.text.Component;
 import org.core.TranslateCore;
 import org.core.entity.EntitySnapshot;
 import org.core.entity.EntityType;
@@ -15,10 +16,15 @@ import org.core.world.position.flags.PositionFlag;
 import org.core.world.position.impl.sync.SyncPosition;
 import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.block.entity.BlockEntity;
+import org.spongepowered.api.block.entity.Sign;
+import org.spongepowered.api.data.DataHolder;
+import org.spongepowered.api.data.Keys;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -53,7 +59,19 @@ public abstract class SSyncedPosition<N extends Number> extends SPosition<N> imp
                 .stream(player)
                 .map(p -> ((SLivePlayer) p).getSpongeEntity())
                 .filter(p -> p.world().equals(this.location.world()))
-                .forEach(p -> p.resetBlockChange(this.location.blockPosition()));
+                .forEach(p -> {
+                    p.resetBlockChange(this.location.blockPosition());
+                    Optional<? extends BlockEntity> opBlockEntity = this.location.blockEntity();
+                    if (opBlockEntity.isEmpty()) {
+                        return;
+                    }
+                    BlockEntity entity = opBlockEntity.get();
+                    if (!(entity instanceof Sign)) {
+                        return;
+                    }
+                    List<Component> lines = entity.get(Keys.SIGN_LINES).orElse(Collections.emptyList());
+                    entity.offer(Keys.SIGN_LINES, lines);
+                });
         return this;
     }
 
