@@ -14,9 +14,14 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.entity.living.player.gamemode.GameMode;
 import org.spongepowered.api.entity.living.player.gamemode.GameModes;
 import org.spongepowered.api.event.Cancellable;
+import org.spongepowered.api.event.EventContextKeys;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
 import org.spongepowered.api.event.filter.cause.Root;
+import org.spongepowered.api.item.ItemTypes;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
+
+import java.util.stream.Stream;
 
 public class SEntityInteractionListener {
 
@@ -25,8 +30,20 @@ public class SEntityInteractionListener {
         GameMode playerGamemode = player
                 .get(Keys.GAME_MODE)
                 .orElseThrow(() -> new RuntimeException("Player must have a gamemode"));
+        ItemStackSnapshot handItem = event
+                .context()
+                .get(EventContextKeys.USED_ITEM)
+                .orElseGet(ItemStackSnapshot::empty);
         if (playerGamemode.equals(GameModes.CREATIVE.get())) {
-            return;
+            //need tag of sword ideally
+            boolean willBreak = Stream
+                    .of(ItemTypes.DIAMOND_SWORD, ItemTypes.STONE_SWORD, ItemTypes.GOLDEN_SWORD, ItemTypes.IRON_SWORD,
+                        ItemTypes.WOODEN_SWORD)
+                    .noneMatch(type -> type.get().equals(handItem.type()));
+            if (willBreak) {
+                return;
+            }
+
         }
         this.onPlayerInteractWithBlock(event, player);
     }
