@@ -12,25 +12,29 @@ import org.core.world.position.impl.Position;
 import org.core.world.position.impl.sync.SyncExactPosition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.api.data.Key;
+import org.spongepowered.api.data.Keys;
+import org.spongepowered.api.data.value.Value;
+import org.spongepowered.math.vector.Vector3d;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySnapshot<E> {
 
     protected final Collection<EntitySnapshot<? extends LiveEntity>> passengers = new HashSet<>();
     protected final E createdFrom;
-    protected double pitch;
-    protected double yaw;
-    protected double roll;
-    protected SyncExactPosition position;
-    protected boolean gravity;
-    protected Vector3<Double> velocity;
-    protected Component customName;
-    protected boolean customNameVisible;
-    protected boolean isOnGround;
+    private final Map<Key<?>, Object> values = new ConcurrentHashMap<>();
     protected boolean isRemoved;
+
+    protected SyncExactPosition position;
+    protected double roll;
+    protected double yaw;
+    protected double pitch;
 
     public SEntitySnapshot(EntitySnapshot<E> snapshot) {
         this.init(snapshot);
@@ -45,30 +49,74 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     }
 
     private void init(Entity<?> entity) {
-        this.customName = entity.getCustomNameComponent().orElse(null);
-        this.customNameVisible = entity.isCustomNameVisible();
-        this.gravity = entity.hasGravity();
-        this.pitch = entity.getPitch();
-        this.roll = entity.getRoll();
-        this.yaw = entity.getYaw();
         this.position = entity.getPosition();
-        this.velocity = entity.getVelocity();
-        this.isOnGround = entity.isOnGround();
+        this.isRemoved = entity.isRemoved();
+        this.roll = entity.getRoll();
+        this.pitch = entity.getPitch();
+        this.yaw = entity.getYaw();
+        if (entity instanceof SEntitySnapshot) {
+            this.init((SEntitySnapshot<?>) entity);
+            return;
+        }
+        if (entity instanceof SLiveEntity) {
+            this.init((SLiveEntity) entity);
+        }
+    }
+
+    private void init(SEntitySnapshot<?> snapshot) {
+        this.values.putAll(snapshot.values);
+    }
+
+    private void init(SLiveEntity entity) {
+        org.spongepowered.api.entity.Entity spongeEntity = entity.entity;
+        var keys = spongeEntity
+                .getKeys()
+                .stream()
+                .map(key -> Map.entry(key, this.getValue(spongeEntity, key)))
+                .filter(entry -> entry.getValue().isPresent())
+                .map(entry -> Map.entry(entry.getKey(), entry.getValue().get()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        this.values.putAll(keys);
+    }
+
+    private <E> Optional<E> getValue(org.spongepowered.api.entity.Entity entity, Key<?> key) {
+        Key<? extends Value<E>> castedKey = (Key<? extends Value<E>>) key;
+        return entity.get(castedKey);
     }
 
     protected LiveEntity applyDefault(LiveEntity entity) {
         entity.setPosition(this.position);
-        entity.setVelocity(this.velocity);
-        entity.setCustomName(this.customName);
-        entity.setCustomNameVisible(this.customNameVisible);
-        entity.setGravity(this.gravity);
         entity.setPitch(this.pitch);
         entity.setRoll(this.roll);
         entity.setYaw(this.yaw);
+        if (entity instanceof SLiveEntity) {
+            this.values.forEach((key, value) -> apply((SLiveEntity) entity, key, value));
+        }
         if (this.isRemoved) {
             entity.remove();
         }
         return entity;
+    }
+
+    private <T> void apply(SLiveEntity entity, Key<?> key, T value) {
+        Key<? extends Value<T>> castedKey = (Key<? extends Value<T>>) key;
+        entity.entity.offer(castedKey, value);
+    }
+
+    private <T> void offer(Key<? extends Value<T>> key, T value) {
+        if (value == null) {
+            this.values.remove(key);
+            return;
+        }
+        if (this.values.containsKey(key)) {
+            this.values.replace(key, value);
+            return;
+        }
+        this.values.put(key, value);
+    }
+
+    private <T> Optional<T> get(Key<? extends Value<T>> key) {
+        return Optional.ofNullable((T) this.values.get(key));
     }
 
     @Override
@@ -80,28 +128,26 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     @Override
     @Deprecated
     public Optional<AText> getCustomName() {
-        return Optional.ofNullable(this.customName).map(AdventureText::new);
+        return this.getCustomNameComponent().map(AdventureText::new);
     }
 
     @Override
     public org.core.entity.Entity<EntitySnapshot<? extends LiveEntity>> setCustomName(@Nullable AText text) {
         if (text == null) {
-            this.customName = null;
-            return this;
+            return this.setCustomName((Component) null);
         }
-        this.customName = ((AdventureText) text).getComponent();
-        return this;
+        return this.setCustomName(text.asComponent());
     }
 
     @Override
     public Entity<EntitySnapshot<? extends LiveEntity>> setCustomName(@Nullable Component component) {
-        this.customName = component;
+        this.offer(Keys.CUSTOM_NAME, component);
         return this;
     }
 
     @Override
     public Optional<Component> getCustomNameComponent() {
-        return Optional.ofNullable(this.customName);
+        return this.get(Keys.CUSTOM_NAME);
     }
 
     @Override
@@ -138,12 +184,19 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
 
     @Override
     public Vector3<Double> getVelocity() {
-        return this.velocity;
+        return this
+                .get(Keys.VELOCITY)
+                .map(vector -> Vector3.valueOf(vector.x(), vector.y(), vector.z()))
+                .orElse(Vector3.valueOf(0.0, 0, 0));
     }
 
     @Override
     public EntitySnapshot<? extends LiveEntity> setVelocity(Vector3<Double> velocity) {
-        this.velocity = velocity;
+        if (velocity == null) {
+            this.offer(Keys.VELOCITY, null);
+            return this;
+        }
+        this.offer(Keys.VELOCITY, new Vector3d(velocity.getX(), velocity.getY(), velocity.getZ()));
         return this;
     }
 
@@ -160,23 +213,23 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
 
     @Override
     public boolean hasGravity() {
-        return this.gravity;
+        return this.get(Keys.IS_GRAVITY_AFFECTED).orElse(false);
     }
 
     @Override
     public boolean isCustomNameVisible() {
-        return this.customNameVisible;
+        return this.get(Keys.IS_CUSTOM_NAME_VISIBLE).orElse(false);
     }
 
     @Override
     public EntitySnapshot<? extends LiveEntity> setCustomNameVisible(boolean visible) {
-        this.customNameVisible = visible;
+        this.offer(Keys.IS_CUSTOM_NAME_VISIBLE, visible);
         return this;
     }
 
     @Override
     public boolean isOnGround() {
-        return this.isOnGround;
+        return this.get(Keys.IS_GRAVITY_AFFECTED).orElse(true);
     }
 
     @Override
@@ -192,7 +245,7 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
 
     @Override
     public EntitySnapshot<? extends LiveEntity> setGravity(boolean check) {
-        this.gravity = check;
+        this.offer(Keys.IS_GRAVITY_AFFECTED, check);
         return this;
     }
 
