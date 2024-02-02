@@ -4,19 +4,19 @@ import org.core.entity.living.human.player.LivePlayer;
 import org.core.entity.living.human.player.PlayerSnapshot;
 import org.core.implementation.sponge.entity.SEntitySnapshot;
 import org.core.implementation.sponge.entity.SEntityType;
+import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
 import org.core.inventory.inventories.general.entity.PlayerInventory;
 import org.core.inventory.inventories.snapshots.entity.PlayerInventorySnapshot;
+import org.spongepowered.api.data.Key;
+import org.spongepowered.api.data.Keys;
+import org.spongepowered.api.data.value.Value;
 
 import java.util.UUID;
 
 public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements PlayerSnapshot {
 
     protected final PlayerInventorySnapshot inventorySnapshot;
-    protected int foodLevel;
-    protected double exhaustionLevel;
-    protected double saturationLevel;
     protected String name;
-    protected boolean isSneaking;
 
 
     public SPlayerSnapshot(PlayerSnapshot snapshot) {
@@ -46,33 +46,33 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
 
     @Override
     public boolean isOnGround() {
-        return false;
+        return this.get(Keys.ON_GROUND).orElse(false);
     }
 
     @Override
     public int getFoodLevel() {
-        return this.foodLevel;
+        return this.get(Keys.FOOD_LEVEL).orElse(20);
     }
 
     @Override
     public double getExhaustionLevel() {
-        return this.exhaustionLevel;
+        return this.get(Keys.EXHAUSTION).orElse(0.0);
     }
 
     @Override
     public PlayerSnapshot setExhaustionLevel(double value) throws IndexOutOfBoundsException {
-        this.exhaustionLevel = value;
+        this.offer(Keys.EXHAUSTION, value);
         return this;
     }
 
     @Override
     public double getSaturationLevel() {
-        return this.saturationLevel;
+        return this.get(Keys.SATURATION).orElse(0.0);
     }
 
     @Override
     public PlayerSnapshot setSaturationLevel(double value) throws IndexOutOfBoundsException {
-        this.saturationLevel = value;
+        this.offer(Keys.SATURATION, value);
         return this;
     }
 
@@ -83,18 +83,18 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
 
     @Override
     public boolean isSneaking() {
-        return this.isSneaking;
+        return this.get(Keys.IS_SNEAKING).orElse(false);
     }
 
     @Override
     public PlayerSnapshot setSneaking(boolean sneaking) {
-        this.isSneaking = sneaking;
+        this.offer(Keys.IS_SNEAKING, sneaking);
         return this;
     }
 
     @Override
     public PlayerSnapshot setFood(int value) throws IndexOutOfBoundsException {
-        this.foodLevel = value;
+        this.offer(Keys.FOOD_LEVEL, value);
         return this;
     }
 
@@ -106,10 +106,7 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
     @Override
     public LivePlayer spawnEntity() {
         this.applyDefault(this.createdFrom);
-        this.createdFrom.setExhaustionLevel(this.exhaustionLevel);
-        this.createdFrom.setFood(this.foodLevel);
-        this.createdFrom.setSaturationLevel(this.saturationLevel);
-        this.createdFrom.setSneaking(this.isSneaking);
+        this.values.forEach((key, value) -> set(this.createdFrom, key, value));
         return this.createdFrom;
     }
 
@@ -118,13 +115,14 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
         return new SPlayerSnapshot(this);
     }
 
+    private <T> void set(LivePlayer player, Key<? extends Value<?>> key, T value) {
+        ((SLivePlayer) player).getSpongeEntity().offer((Key<? extends Value<T>>) key, value);
+    }
+
     @Override
     public LivePlayer teleportEntity(boolean keepInventory) {
         this.applyDefault(this.createdFrom);
-        this.createdFrom.setSneaking(this.isSneaking);
-        this.createdFrom.setExhaustionLevel(this.exhaustionLevel);
-        this.createdFrom.setFood(this.foodLevel);
-        this.createdFrom.setSaturationLevel(this.saturationLevel);
+        this.values.forEach((key, value) -> set(this.createdFrom, key, value));
         if (!keepInventory) {
             this.inventorySnapshot.apply(this.createdFrom);
         }

@@ -28,7 +28,7 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
 
     protected final Collection<EntitySnapshot<? extends LiveEntity>> passengers = new HashSet<>();
     protected final E createdFrom;
-    private final Map<Key<?>, Object> values = new ConcurrentHashMap<>();
+    protected final Map<Key<?>, Object> values = new ConcurrentHashMap<>();
     protected boolean isRemoved;
 
     protected SyncExactPosition position;
@@ -79,7 +79,7 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
         this.values.putAll(keys);
     }
 
-    private <E> Optional<E> getValue(org.spongepowered.api.entity.Entity entity, Key<?> key) {
+    private  <E> Optional<E> getValue(org.spongepowered.api.entity.Entity entity, Key<?> key) {
         Key<? extends Value<E>> castedKey = (Key<? extends Value<E>>) key;
         return entity.get(castedKey);
     }
@@ -103,7 +103,7 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
         entity.entity.offer(castedKey, value);
     }
 
-    private <T> void offer(Key<? extends Value<T>> key, T value) {
+    protected <T> void offer(Key<? extends Value<T>> key, T value) {
         if (value == null) {
             this.values.remove(key);
             return;
@@ -115,7 +115,7 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
         this.values.put(key, value);
     }
 
-    private <T> Optional<T> get(Key<? extends Value<T>> key) {
+    protected  <T> Optional<T> get(Key<? extends Value<T>> key) {
         return Optional.ofNullable((T) this.values.get(key));
     }
 
