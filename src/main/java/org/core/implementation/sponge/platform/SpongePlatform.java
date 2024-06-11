@@ -137,6 +137,18 @@ public class SpongePlatform implements Platform {
         return Optional.empty();
     }
 
+    private boolean developerCommandsEnabled;
+
+    @Override
+    public boolean areDeveloperCommandsEnabled() {
+        return this.developerCommandsEnabled;
+    }
+
+    @Override
+    public void setDeveloperCommandsEnabled(boolean enabled) {
+        this.developerCommandsEnabled = enabled;
+    }
+
     @Override
     public @NotNull PlatformDetails getImplementationDetails() {
         return new SpongeImplPlatformDetails();
