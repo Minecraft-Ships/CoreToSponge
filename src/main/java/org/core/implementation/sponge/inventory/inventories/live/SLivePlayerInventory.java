@@ -13,7 +13,9 @@ import org.spongepowered.api.registry.DefaultedRegistryReference;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SLivePlayerInventory implements LivePlayerInventory {
 
@@ -43,15 +45,14 @@ public class SLivePlayerInventory implements LivePlayerInventory {
     public class PlayerMainInventory implements MainPlayerInventory {
 
         @Override
-        public Set<Slot> getSlots() {
+        public Stream<Slot> getItemSlots() {
             return SLivePlayerInventory.this.player
                     .getSpongeEntity()
                     .inventory()
                     .primary()
                     .slots()
                     .stream()
-                    .map(LiveSlot::new)
-                    .collect(Collectors.toSet());
+                    .map(LiveSlot::new);
         }
     }
 
@@ -68,7 +69,7 @@ public class SLivePlayerInventory implements LivePlayerInventory {
         }
 
         @Override
-        public Set<Slot> getSlots() {
+        public Stream<Slot> getItemSlots() {
             return SLivePlayerInventory.this.player
                     .getSpongeEntity()
                     .inventory()
@@ -76,17 +77,21 @@ public class SLivePlayerInventory implements LivePlayerInventory {
                     .hotbar()
                     .slots()
                     .stream()
-                    .map(LiveSlot::new)
-                    .collect(Collectors.toSet());
+                    .map(LiveSlot::new);
         }
     }
 
-    public static class PlayerGrid implements Grid2x2 {
+    public class PlayerGrid implements Grid2x2 {
 
         @Override
-        public Set<Slot> getSlots() {
-            //TODO
-            return new HashSet<>();
+        public Stream<Slot> getItemSlots() {
+            return SLivePlayerInventory.this.player
+                    .getSpongeEntity()
+                    .inventory()
+                    .storage()
+                    .slots()
+                    .stream()
+                    .map(LiveSlot::new);
         }
     }
 
@@ -128,7 +133,7 @@ public class SLivePlayerInventory implements LivePlayerInventory {
 
     @Override
     public Slot getOffHoldingItem() {
-        return new LiveSlot(player.getSpongeEntity().inventory().offhand());
+        return new LiveSlot(this.player.getSpongeEntity().inventory().offhand());
     }
 
     @Override
@@ -137,11 +142,12 @@ public class SLivePlayerInventory implements LivePlayerInventory {
     }
 
     private Slot getSlot(DefaultedRegistryReference<EquipmentType> type) {
-        return getOptionalSlot(type).orElseThrow(
-                () -> new RuntimeException("Cannot find " + type.location() + " on player inv"));
+        return this
+                .getOptionalSlot(type)
+                .orElseThrow(() -> new RuntimeException("Cannot find " + type.location() + " on player inv"));
     }
 
-    private Optional<Slot> getOptionalSlot(DefaultedRegistryReference<EquipmentType> type) {
-        return player.getSpongeEntity().inventory().armor().slot(type).map(LiveSlot::new);
+    private Optional<Slot> getOptionalSlot(Supplier<EquipmentType> type) {
+        return this.player.getSpongeEntity().inventory().armor().slot(type).map(LiveSlot::new);
     }
 }

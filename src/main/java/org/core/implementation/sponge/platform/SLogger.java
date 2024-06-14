@@ -1,6 +1,5 @@
 package org.core.implementation.sponge.platform;
 
-import org.core.adventureText.AText;
 import org.core.logger.Logger;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,11 +14,6 @@ public class SLogger implements Logger {
     @Override
     public void log(@NotNull String log) {
         this.logger.info(log);
-    }
-
-    @Override
-    public void log(@NotNull AText log) {
-        this.logger.info(log.toPlain());
     }
 
     @Override

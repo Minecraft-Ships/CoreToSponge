@@ -1,8 +1,6 @@
 package org.core.implementation.sponge.world.position.block.entity.sign;
 
 import net.kyori.adventure.text.Component;
-import org.core.adventureText.AText;
-import org.core.adventureText.adventure.AdventureText;
 import org.core.utils.ComponentUtils;
 import org.core.world.position.block.BlockType;
 import org.core.world.position.block.BlockTypes;
@@ -14,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SSignTileEntitySnapshot implements SignTileEntitySnapshot {
 
@@ -67,8 +66,8 @@ public class SSignTileEntitySnapshot implements SignTileEntitySnapshot {
     }
 
     @Override
-    public Collection<BlockType> getSupportedBlocks() {
-        return BlockTypes.OAK_SIGN.getLike();
+    public Stream<BlockType> getApplicableBlocks() {
+        return BlockTypes.OAK_SIGN.getAlike();
     }
 
     @Override
@@ -87,21 +86,5 @@ public class SSignTileEntitySnapshot implements SignTileEntitySnapshot {
     @Override
     public boolean isMultiSideSupported() {
         return false;
-    }
-
-    @Override
-    public List<AText> getText() {
-        return this.getFront().getLines().stream().map(AdventureText::new).collect(Collectors.toList());
-    }
-
-    @Override
-    public SignTileEntity setText(Collection<? extends AText> text) {
-        this.getFront().setLines(text.stream().map(t -> {
-            if (t instanceof AdventureText) {
-                return ((AdventureText)t).getComponent();
-            }
-            return ComponentUtils.fromLegacy(t.toLegacy());
-        }).collect(Collectors.toList()));
-        return this;
     }
 }

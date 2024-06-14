@@ -14,4 +14,6 @@ public class SPermission implements Permission {
     public String getPermissionValue() {
         return this.permission;
     }
+
+
 }

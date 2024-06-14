@@ -1,7 +1,5 @@
 package org.core.implementation.sponge.world.position.block.entity.sign;
 
-import org.core.adventureText.AText;
-import org.core.adventureText.adventure.AdventureText;
 import org.core.implementation.sponge.world.position.block.entity.AbstractLiveTileEntity;
 import org.core.utils.ComponentUtils;
 import org.core.world.position.block.entity.sign.LiveSignTileEntity;
@@ -10,8 +8,6 @@ import org.core.world.position.block.entity.sign.SignTileEntity;
 import org.core.world.position.block.entity.sign.SignTileEntitySnapshot;
 import org.spongepowered.api.block.entity.Sign;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class SLiveSignEntity extends AbstractLiveTileEntity<Sign> implements LiveSignTileEntity {
@@ -43,19 +39,4 @@ public class SLiveSignEntity extends AbstractLiveTileEntity<Sign> implements Liv
         return false;
     }
 
-    @Override
-    public List<AText> getText() {
-        return getFront().getLines().stream().map(AdventureText::new).collect(Collectors.toList());
-    }
-
-    @Override
-    public SignTileEntity setText(Collection<? extends AText> text) {
-        this.getFront().setLines(text.stream().map(text2 -> {
-            if (text2 instanceof AdventureText) {
-                return ((AdventureText) text2).getComponent();
-            }
-            return ComponentUtils.fromLegacy(text2.toLegacy());
-        }).collect(Collectors.toList()));
-        return this;
-    }
 }

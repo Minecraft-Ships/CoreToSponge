@@ -2,8 +2,6 @@ package org.core.implementation.sponge.entity;
 
 import net.kyori.adventure.text.Component;
 import org.core.TranslateCore;
-import org.core.adventureText.AText;
-import org.core.adventureText.adventure.AdventureText;
 import org.core.entity.Entity;
 import org.core.entity.LiveEntity;
 import org.core.implementation.sponge.platform.SpongePlatform;
@@ -39,22 +37,6 @@ public abstract class SLiveEntity implements LiveEntity {
     @Override
     public LiveEntity addPassengers(Collection<? extends LiveEntity> entities) {
         entities.forEach(e -> this.entity.passengers().add(((SLiveEntity) e).getSpongeEntity()));
-        return this;
-    }
-
-    @Override
-    public Optional<AText> getCustomName() {
-        Optional<Component> opValue = this.entity.get(Keys.CUSTOM_NAME);
-        return opValue.map(AdventureText::new);
-    }
-
-    @Override
-    public Entity<LiveEntity> setCustomName(@Nullable AText text) {
-        if (text == null) {
-            this.entity.remove(Keys.CUSTOM_NAME);
-            return this;
-        }
-        this.entity.offer(Keys.CUSTOM_NAME, ((AdventureText) text).getComponent());
         return this;
     }
 

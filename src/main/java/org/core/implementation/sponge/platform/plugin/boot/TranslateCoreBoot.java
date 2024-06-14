@@ -34,11 +34,16 @@ public class TranslateCoreBoot {
     private final CoreToSponge core;
     private final SLogger logger;
     private final List<LaunchWrapper> plugins = new ArrayList<>();
+    private static TranslateCoreBoot boot;
 
     @Inject
     public TranslateCoreBoot(PluginContainer container, Logger logger) {
         this.core = new CoreToSponge(container);
         this.logger = new SLogger(logger);
+    }
+
+    public static TranslateCoreBoot getBoot(){
+        return boot;
     }
 
     public CoreToSponge getCore() {

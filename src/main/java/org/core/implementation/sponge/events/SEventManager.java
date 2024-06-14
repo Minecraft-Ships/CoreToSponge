@@ -1,8 +1,8 @@
 package org.core.implementation.sponge.events;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.core.TranslateCore;
-import org.core.adventureText.AText;
-import org.core.adventureText.format.NamedTextColours;
 import org.core.event.Event;
 import org.core.event.EventListener;
 import org.core.event.EventManager;
@@ -77,11 +77,11 @@ public class SEventManager implements EventManager {
                 if (parameters.length == 0) {
                     TranslateCore
                             .getConsole()
-                            .sendMessage(AText
-                                                 .ofPlain("Failed to know what to do: HEvent found on "
-                                                                  + "method, but no event on " + el.getClass().getName()
-                                                                  + "." + method.getName() + "()")
-                                                 .withColour(NamedTextColours.RED));
+                            .sendMessage(Component
+                                                 .text("Failed to know what to do: HEvent found on "
+                                                               + "method, but no event on " + el.getClass().getName()
+                                                               + "." + method.getName() + "()")
+                                                 .color(NamedTextColor.RED));
                     continue;
                 }
                 if (!Modifier.isPublic(method.getModifiers())) {
@@ -91,16 +91,14 @@ public class SEventManager implements EventManager {
                 if (!Event.class.isAssignableFrom(classEvent)) {
                     TranslateCore
                             .getConsole()
-                            .sendMessage(AText
-                                                 .ofPlain(
-                                                         "Failed to know what to do: HEvent found on method, but no known "
-                                                                 + "event on " + el.getClass().getName() + "."
-                                                                 + method.getName() + "(" + Arrays
-                                                                 .stream(parameters)
-                                                                 .map(p -> p.getType().getSimpleName() + " "
-                                                                         + p.getName())
-                                                                 .collect(Collectors.joining(", ")))
-                                                 .withColour(NamedTextColours.RED));
+                            .sendMessage(Component
+                                                 .text("Failed to know what to do: HEvent found on method, but no known "
+                                                               + "event on " + el.getClass().getName() + "."
+                                                               + method.getName() + "(" + Arrays
+                                                         .stream(parameters)
+                                                         .map(p -> p.getType().getSimpleName() + " " + p.getName())
+                                                         .collect(Collectors.joining(", ")))
+                                                 .color(NamedTextColor.RED));
                 }
                 if (class1.isAssignableFrom(classEvent)) {
                     methods.add(new SEventLaunch(key, el, method));

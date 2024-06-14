@@ -2,8 +2,6 @@ package org.core.implementation.sponge.inventory.inventories.item;
 
 import net.kyori.adventure.text.Component;
 import org.core.TranslateCore;
-import org.core.adventureText.AText;
-import org.core.adventureText.adventure.AdventureText;
 import org.core.implementation.sponge.platform.SpongePlatform;
 import org.core.inventory.item.ItemType;
 import org.core.inventory.item.stack.ItemStack;
@@ -44,18 +42,8 @@ public class SItemStackSnapshot implements org.core.inventory.item.stack.ItemSta
     }
 
     @Override
-    public List<AText> getLoreText() {
-        return this.item.get(Keys.LORE).get().stream().map(AdventureText::new).collect(Collectors.toList());
-    }
-
-    @Override
     public List<Component> getLore() {
         return this.item.get(Keys.LORE).orElse(Collections.emptyList());
-    }
-
-    @Override
-    public ItemStack setLoreText(Collection<? extends AText> lore) {
-        throw new RuntimeException("Not implemented yet");
     }
 
     @Override

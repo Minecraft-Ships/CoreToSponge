@@ -11,6 +11,7 @@ import org.core.world.position.block.entity.container.furnace.LiveFurnaceTileEnt
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.Stream;
 
 public class SFurnaceEntitySnapshot implements FurnaceTileEntitySnapshot {
 
@@ -31,8 +32,8 @@ public class SFurnaceEntitySnapshot implements FurnaceTileEntitySnapshot {
     }
 
     @Override
-    public Collection<BlockType> getSupportedBlocks() {
-        return Collections.singletonList(BlockTypes.FURNACE);
+    public Stream<BlockType> getApplicableBlocks() {
+        return Stream.of(BlockTypes.FURNACE);
     }
 
     @Override

@@ -2,8 +2,6 @@ package org.core.implementation.sponge.world.position.block.details.blocks.snaps
 
 import net.kyori.adventure.text.Component;
 import org.core.TranslateCore;
-import org.core.adventureText.AText;
-import org.core.adventureText.adventure.AdventureText;
 import org.core.implementation.sponge.platform.SpongePlatform;
 import org.core.implementation.sponge.world.position.SPosition;
 import org.core.implementation.sponge.world.position.block.SBlockType;
@@ -235,11 +233,7 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
                     .build();
         }
         if (this.tileEntitySnapshot != null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot) {
-            List<Component> lines = new ArrayList<>();
-            for (AText text : ((SignTileEntity) this.tileEntitySnapshot).getText()) {
-                AdventureText aText = (AdventureText) text;
-                lines.add(aText.getComponent());
-            }
+            List<Component> lines = new ArrayList<>(((SignTileEntity) this.tileEntitySnapshot).getFront().getLines());
             snapshot = snapshot
                     .with(Keys.SIGN_LINES, lines)
                     .orElseThrow(() -> new IllegalStateException("Cannot get " + "blocksnapshot with sign lines"));
@@ -266,10 +260,7 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
                     .build();
         }
         if (this.tileEntitySnapshot != null && this.tileEntitySnapshot instanceof SignTileEntitySnapshot) {
-            List<Component> lines = new ArrayList<>();
-            for (AText text : ((SignTileEntity) this.tileEntitySnapshot).getText()) {
-                lines.add(((AdventureText) text).getComponent());
-            }
+            List<Component> lines = new ArrayList<>(((SignTileEntity) this.tileEntitySnapshot).getFront().getLines());
             snapshot = snapshot
                     .with(Keys.SIGN_LINES, lines)
                     .orElseThrow(() -> new IllegalStateException("Cannot get " + "blocksnapshot with sign lines"));

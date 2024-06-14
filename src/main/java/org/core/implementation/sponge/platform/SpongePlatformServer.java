@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SpongePlatformServer implements PlatformServer {
 
@@ -37,8 +38,13 @@ public class SpongePlatformServer implements PlatformServer {
     }
 
     @Override
-    public @NotNull Set<WorldExtent> getWorlds() {
-        return this.platform.worldManager().worlds().stream().map(SWorldExtent::new).collect(Collectors.toSet());
+    public Stream<WorldExtent> getWorldExtent() {
+        return this.platform.worldManager().worlds().stream().map(SWorldExtent::new);
+    }
+
+    @Override
+    public Stream<LivePlayer> getLivePlayers() {
+        return this.platform.onlinePlayers().stream().map(SLivePlayer::new);
     }
 
     @Override
@@ -46,11 +52,6 @@ public class SpongePlatformServer implements PlatformServer {
     public @NotNull Optional<WorldExtent> getWorldByPlatformSpecific(String name) {
         Optional<ServerWorld> opWorld = this.platform.worldManager().world(ResourceKey.resolve(name));
         return opWorld.map(SWorldExtent::new);
-    }
-
-    @Override
-    public @NotNull Collection<LivePlayer> getOnlinePlayers() {
-        return this.platform.onlinePlayers().stream().map(SLivePlayer::new).collect(Collectors.toSet());
     }
 
     @Override

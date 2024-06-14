@@ -15,10 +15,12 @@ import org.core.world.position.impl.async.ASyncBlockPosition;
 import org.core.world.position.impl.async.ASyncExactPosition;
 import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.core.world.position.impl.sync.SyncExactPosition;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.registry.RegistryTypes;
 import org.spongepowered.api.util.Identifiable;
 import org.spongepowered.api.world.WorldType;
 import org.spongepowered.api.world.WorldTypes;
+import org.spongepowered.api.world.chunk.WorldChunk;
 import org.spongepowered.api.world.server.ServerWorld;
 
 import java.util.Optional;
@@ -26,6 +28,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class SWorldExtent implements WorldExtent {
 
@@ -77,17 +81,21 @@ public class SWorldExtent implements WorldExtent {
     }
 
     @Override
-    public Set<ChunkExtent> getChunks() {
-        throw new RuntimeException("Not implemented");
+    public Stream<ChunkExtent> getChunkExtents() {
+        return StreamSupport.stream(this.world.loadedChunks().spliterator(), false).map(SLoadedChunkExtent::new);
     }
 
     @Override
-    public Optional<ChunkExtent> getChunk(Vector3<Integer> vector) {
-        throw new RuntimeException("Not implemented");
+    public @NotNull Optional<ChunkExtent> getChunk(Vector3<Integer> vector) {
+        WorldChunk chunk = this.world.chunk(vector.getX(), vector.getY(), vector.getZ());
+        if (chunk.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(chunk).map(SLoadedChunkExtent::new);
     }
 
     @Override
-    public CompletableFuture<ChunkExtent> loadChunkAsynced(Vector3<Integer> vector) {
+    public @NotNull CompletableFuture<ChunkExtent> loadChunkAsynced(@NotNull Vector3<Integer> vector) {
         CompletableFuture<ChunkExtent> future = new CompletableFuture<>();
         future.complete(this.loadChunk(vector));
         return future;
@@ -95,7 +103,7 @@ public class SWorldExtent implements WorldExtent {
     }
 
     @Override
-    public ChunkExtent loadChunk(Vector3<Integer> vector) {
+    public @NotNull ChunkExtent loadChunk(Vector3<Integer> vector) {
         return new SLoadedChunkExtent(this.world
                                               .loadChunk(vector.getX(), vector.getY(), vector.getZ(), true)
                                               .orElseThrow(
@@ -133,20 +141,19 @@ public class SWorldExtent implements WorldExtent {
     }
 
     @Override
-    public Set<LiveEntity> getEntities() {
+    public Stream<LiveEntity> getLiveEntities() {
         SpongePlatform platform = ((SpongePlatform) TranslateCore.getPlatform());
-        return this.world.entities().stream().map(platform::createEntityInstance).collect(Collectors.toSet());
+        return this.world.entities().stream().map(platform::createEntityInstance);
     }
 
     @Override
-    public Set<LiveTileEntity> getTileEntities() {
+    public Stream<LiveTileEntity> getLiveTileEntities() {
         return this.world
                 .blockEntities()
                 .stream()
                 .map(te -> ((SpongePlatform) TranslateCore.getPlatform()).createTileEntityInstance(te))
                 .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet());
+                .map(Optional::get);
     }
 
     @Override
@@ -154,6 +161,6 @@ public class SWorldExtent implements WorldExtent {
         if (!(object instanceof WorldExtent)) {
             return false;
         }
-        return ((WorldExtent)object).getPlatformUniqueId().equals(this.getPlatformUniqueId());
+        return ((WorldExtent) object).getPlatformUniqueId().equals(this.getPlatformUniqueId());
     }
 }

@@ -6,8 +6,6 @@ import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.text.Component;
 import org.core.TranslateCore;
-import org.core.adventureText.AText;
-import org.core.adventureText.adventure.AdventureText;
 import org.core.entity.EntityType;
 import org.core.entity.LiveEntity;
 import org.core.entity.living.human.player.LivePlayer;
@@ -19,7 +17,6 @@ import org.core.implementation.sponge.inventory.inventories.live.SLivePlayerInve
 import org.core.implementation.sponge.platform.SpongePlatformServer;
 import org.core.inventory.inventories.general.entity.PlayerInventory;
 import org.core.permission.Permission;
-import org.core.source.viewer.CommandViewer;
 import org.core.world.position.impl.BlockPosition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -170,25 +167,11 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer, ForwardingAu
 
     @Override
     public void hideBossBar(@NotNull BossBar bar) {
-        if(BARS.containsKey(getUniqueId())){
+        if (BARS.containsKey(getUniqueId())) {
             Collection<BossBar> bars = BARS.get(getUniqueId());
             bars.remove(bar);
         }
         ForwardingAudience.super.hideBossBar(bar);
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public CommandViewer sendMessage(AText message, UUID uuid) {
-        this.getSpongeEntity().sendMessage(Identity.identity(uuid), ((AdventureText) message).getComponent());
-        return this;
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public CommandViewer sendMessage(AText message) {
-        this.getSpongeEntity().sendMessage(((AdventureText) message).getComponent());
-        return this;
     }
 
     @Override

@@ -19,6 +19,7 @@ import org.spongepowered.api.world.chunk.WorldChunk;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SLoadedChunkExtent implements ChunkExtent {
 
@@ -59,24 +60,22 @@ public class SLoadedChunkExtent implements ChunkExtent {
     }
 
     @Override
-    public Set<LiveEntity> getEntities() {
+    public Stream<LiveEntity> getLiveEntities() {
         SpongePlatform platform = ((SpongePlatform) TranslateCore.getPlatform());
         return this.chunk
                 .entities(AABB.of(this.chunk.min(), this.chunk.max()))
                 .stream()
-                .map(platform::createEntityInstance)
-                .collect(Collectors.toSet());
+                .map(platform::createEntityInstance);
     }
 
     @Override
-    public Set<LiveTileEntity> getTileEntities() {
+    public Stream<LiveTileEntity> getLiveTileEntities() {
         SpongePlatform platform = ((SpongePlatform) TranslateCore.getPlatform());
         return this.chunk
                 .blockEntities()
                 .stream()
                 .map(platform::createTileEntityInstance)
                 .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toSet());
+                .map(Optional::get);
     }
 }

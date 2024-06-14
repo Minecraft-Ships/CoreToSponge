@@ -1,8 +1,6 @@
 package org.core.implementation.sponge.entity;
 
 import net.kyori.adventure.text.Component;
-import org.core.adventureText.AText;
-import org.core.adventureText.adventure.AdventureText;
 import org.core.entity.Entity;
 import org.core.entity.EntitySnapshot;
 import org.core.entity.LiveEntity;
@@ -79,7 +77,7 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
         this.values.putAll(keys);
     }
 
-    private  <E> Optional<E> getValue(org.spongepowered.api.entity.Entity entity, Key<?> key) {
+    private <E> Optional<E> getValue(org.spongepowered.api.entity.Entity entity, Key<?> key) {
         Key<? extends Value<E>> castedKey = (Key<? extends Value<E>>) key;
         return entity.get(castedKey);
     }
@@ -115,7 +113,7 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
         this.values.put(key, value);
     }
 
-    protected  <T> Optional<T> get(Key<? extends Value<T>> key) {
+    protected <T> Optional<T> get(Key<? extends Value<T>> key) {
         return Optional.ofNullable((T) this.values.get(key));
     }
 
@@ -123,20 +121,6 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
     public EntitySnapshot<? extends LiveEntity> addPassengers(Collection<? extends EntitySnapshot<? extends LiveEntity>> entities) {
         this.passengers.addAll(entities);
         return this;
-    }
-
-    @Override
-    @Deprecated
-    public Optional<AText> getCustomName() {
-        return this.getCustomNameComponent().map(AdventureText::new);
-    }
-
-    @Override
-    public org.core.entity.Entity<EntitySnapshot<? extends LiveEntity>> setCustomName(@Nullable AText text) {
-        if (text == null) {
-            return this.setCustomName((Component) null);
-        }
-        return this.setCustomName(text.asComponent());
     }
 
     @Override

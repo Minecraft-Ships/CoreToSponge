@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SBlockType implements BlockType {
 
@@ -26,15 +27,12 @@ public class SBlockType implements BlockType {
         return new SSyncedBlockDetails(this.type.defaultState());
     }
 
-    //THIS IS FOR 1.13
     @Override
-    public Set<BlockGroup> getGroups() {
+    public Stream<BlockGroup> getBlockGroups() {
         return TranslateCore
                 .getPlatform()
-                .getBlockGroups()
-                .stream()
-                .filter(c -> Arrays.asList(c.getGrouped()).contains(this))
-                .collect(Collectors.toSet());
+                .getAllBlockGroups()
+                .filter(c -> c.getBlocks().anyMatch(block -> block.equals(this)));
     }
 
     @Override

@@ -6,7 +6,6 @@ import org.core.TranslateCore;
 import org.core.config.ConfigManager;
 import org.core.eco.CurrencyManager;
 import org.core.event.EventManager;
-import org.core.implementation.sponge.boss.SServerBossBar;
 import org.core.implementation.sponge.configuration.SConfigManager;
 import org.core.implementation.sponge.currency.SCurrencyManager;
 import org.core.implementation.sponge.events.SEventManager;
@@ -19,7 +18,6 @@ import org.core.platform.PlatformServer;
 import org.core.schedule.ScheduleManager;
 import org.core.source.command.ConsoleSource;
 import org.core.utils.Singleton;
-import org.core.world.boss.ServerBossBar;
 import org.spongepowered.plugin.PluginContainer;
 
 public class CoreToSponge extends TranslateCore.CoreImplementation {
@@ -75,16 +73,6 @@ public class CoreToSponge extends TranslateCore.CoreImplementation {
     @Override
     public PlatformServer getRawServer() {
         return this.server.get();
-    }
-
-    @Override
-    public ServerBossBar bossBuilder() {
-        return bossBuilder(BossBar.bossBar(Component.empty(), 0, BossBar.Color.PURPLE, BossBar.Overlay.PROGRESS));
-    }
-
-    @Override
-    public ServerBossBar bossBuilder(BossBar bar) {
-        return new SServerBossBar(bar);
     }
 
     @Override

@@ -17,6 +17,8 @@ import org.core.implementation.sponge.entity.living.human.player.live.SLivePlaye
 import org.core.implementation.sponge.inventory.SItemType;
 import org.core.implementation.sponge.platform.details.SpongeImplPlatformDetails;
 import org.core.implementation.sponge.platform.details.SpongeToCorePlatformDetails;
+import org.core.implementation.sponge.platform.plugin.SPlugin;
+import org.core.implementation.sponge.platform.plugin.boot.TranslateCoreBoot;
 import org.core.implementation.sponge.world.position.block.SBlockType;
 import org.core.implementation.sponge.world.position.block.entity.furnace.SLiveFurnaceEntity;
 import org.core.implementation.sponge.world.position.block.entity.sign.SLiveSignEntity;
@@ -34,8 +36,6 @@ import org.core.platform.plugin.Plugin;
 import org.core.platform.plugin.details.CorePluginVersion;
 import org.core.platform.update.PlatformUpdate;
 import org.core.utils.Singleton;
-import org.core.world.boss.colour.BossColour;
-import org.core.world.boss.colour.BossColours;
 import org.core.world.position.block.BlockType;
 import org.core.world.position.block.entity.LiveTileEntity;
 import org.core.world.position.block.entity.TileEntity;
@@ -43,7 +43,6 @@ import org.core.world.position.block.entity.TileEntitySnapshot;
 import org.core.world.position.block.entity.banner.pattern.PatternLayerType;
 import org.core.world.position.block.entity.banner.pattern.PatternLayerTypes;
 import org.core.world.position.block.grouptype.BlockGroup;
-import org.core.world.position.block.grouptype.BlockGroups;
 import org.core.world.position.flags.physics.ApplyPhysicsFlag;
 import org.core.world.position.flags.physics.ApplyPhysicsFlags;
 import org.core.world.position.impl.sync.SyncExactPosition;
@@ -52,8 +51,16 @@ import org.core.world.structure.StructureBuilder;
 import org.core.world.structure.StructureFileBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.api.ResourceKey;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockTypes;
 import org.spongepowered.api.registry.RegistryEntry;
 import org.spongepowered.api.registry.RegistryTypes;
+import org.spongepowered.api.service.permission.PermissionDescription;
+import org.spongepowered.api.service.permission.PermissionService;
+import org.spongepowered.api.tag.BlockTypeTags;
+import org.spongepowered.api.tag.Tag;
+import org.spongepowered.api.tag.TagTypes;
+import org.spongepowered.api.util.Tristate;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,6 +69,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SpongePlatform implements Platform {
 
@@ -70,7 +78,6 @@ public class SpongePlatform implements Platform {
     protected final Map<Class<? extends org.spongepowered.api.block.entity.BlockEntity>, Class<? extends LiveTileEntity>> blockStateToTileEntity = new HashMap<>();
     protected final Collection<TileEntitySnapshot<? extends TileEntity>> defaultTileEntities = new HashSet<>();
     protected final Collection<UnspecificParser<?>> unspecificParsers = new HashSet<>();
-    protected final Set<Permission> permissions = new HashSet<>();
     private final Collection<SApplyPhysicsFlag> physicsFlags = new HashSet<>();
     private final Map<UUID, SLivePlayer> players = new HashMap<>();
 
@@ -157,13 +164,6 @@ public class SpongePlatform implements Platform {
     @Override
     public @NotNull Collection<PlatformUpdate<?>> getUpdateCheckers() {
         return Collections.emptyList();
-    }
-
-    @Override
-    public @NotNull Singleton<BossColour> get(BossColours colours) {
-        return new Singleton<>(() -> {
-            throw new RuntimeException("Not implemented");
-        });
     }
 
     @Override
@@ -271,11 +271,6 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
-    public @NotNull Optional<BossColour> getBossColour(@NotNull String id) {
-        return Optional.empty();
-    }
-
-    @Override
     public @NotNull Optional<ParrotType> getParrotType(@NotNull String id) {
         return Optional.empty();
     }
@@ -293,24 +288,43 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
-    public @NotNull Collection<EntityType<? extends LiveEntity, ? extends EntitySnapshot<? extends LiveEntity>>> getEntityTypes() {
+    public Stream<EntityType<? extends LiveEntity, ? extends EntitySnapshot<? extends LiveEntity>>> getAllEntityTypes() {
         return RegistryTypes.ENTITY_TYPE
                 .get()
                 .stream()
                 .map(e -> this.getEntityType(e.key(RegistryTypes.ENTITY_TYPE).asString()))
                 .filter(Optional::isPresent)
-                .map(Optional::orElseThrow)
-                .collect(Collectors.toSet());
+                .map(Optional::orElseThrow);
     }
 
     @Override
-    public @NotNull Collection<BlockType> getBlockTypes() {
-        return RegistryTypes.BLOCK_TYPE.get().stream().map(SBlockType::new).collect(Collectors.toSet());
+    public Stream<BlockType> getAllBlockTypes() {
+        return RegistryTypes.BLOCK_TYPE.get().stream().map(SBlockType::new);
     }
 
     @Override
-    public @NotNull Collection<ItemType> getItemTypes() {
-        throw new RuntimeException("Not implemented");
+    public Stream<ItemType> getAllItemTypes() {
+        return RegistryTypes.ITEM_TYPE.get().stream().map(SItemType::new);
+    }
+
+    @Override
+    public Stream<BlockGroup> getAllBlockGroups() {
+        return RegistryTypes.BLOCK_TYPE_TAGS
+                .get()
+                .stream()
+                .map(type -> new BlockGroup(type.key().asString(), type.key().value(),
+                                            type.values().stream().map(SBlockType::new).collect(Collectors.toSet())));
+    }
+
+    @Override
+    public Stream<Permission> getAllPermissions() {
+        PermissionService permissionsService = Sponge.server().serviceProvider().permissionService();
+        return permissionsService.descriptions().stream().map(description -> new SPermission(description.id()));
+    }
+
+    @Override
+    public Stream<Plugin> getAllPlugins() {
+        return Sponge.pluginManager().plugins().stream().map(SPlugin::new);
     }
 
     @Override
@@ -324,16 +338,6 @@ public class SpongePlatform implements Platform {
     }
 
     @Override
-    public @NotNull Collection<BlockGroup> getBlockGroups() {
-        return BlockGroups.values();
-    }
-
-    @Override
-    public @NotNull Collection<BossColour> getBossColours() {
-        throw new RuntimeException("Not implemented");
-    }
-
-    @Override
     public @NotNull Collection<ParrotType> getParrotType() {
         throw new RuntimeException("Not implemented");
     }
@@ -341,11 +345,6 @@ public class SpongePlatform implements Platform {
     @Override
     public @NotNull Collection<ApplyPhysicsFlag> getApplyPhysics() {
         throw new RuntimeException("Not implemented");
-    }
-
-    @Override
-    public @NotNull Collection<Permission> getPermissions() {
-        return this.permissions;
     }
 
     @Override
@@ -370,7 +369,12 @@ public class SpongePlatform implements Platform {
 
     @Override
     public @NotNull CorePermission register(CorePermission permissionNode) {
-        this.permissions.add(permissionNode);
+        PermissionService permissions = Sponge.server().serviceProvider().permissionService();
+        permissions
+                .newDescriptionBuilder(TranslateCoreBoot.getBoot().getCore().container())
+                .id(permissionNode.getPermissionValue())
+                .defaultValue(Tristate.fromBoolean(permissionNode.shouldDefaultHave()))
+                .register();
         return permissionNode;
     }
 
@@ -398,11 +402,6 @@ public class SpongePlatform implements Platform {
     @Override
     public @NotNull ConfigurationFormat getConfigFormat() {
         return ConfigurationFormat.FORMAT_YAML;
-    }
-
-    @Override
-    public @NotNull Set<Plugin> getPlugins() {
-        throw new RuntimeException("Not implemented yet");
     }
 
     @Override
