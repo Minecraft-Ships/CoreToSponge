@@ -1,7 +1,6 @@
 package org.core.implementation.sponge.world.position.block.entity.sign;
 
 import net.kyori.adventure.text.Component;
-import org.core.utils.ComponentUtils;
 import org.core.world.position.block.BlockType;
 import org.core.world.position.block.BlockTypes;
 import org.core.world.position.block.entity.sign.LiveSignTileEntity;
@@ -10,8 +9,10 @@ import org.core.world.position.block.entity.sign.SignTileEntitySnapshot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.Stream;
 
 public class SSignTileEntitySnapshot implements SignTileEntitySnapshot {
@@ -78,7 +79,7 @@ public class SSignTileEntitySnapshot implements SignTileEntitySnapshot {
     @Override
     public SSignSideSnapshot getSide(boolean frontSide) {
         if (frontSide) {
-            return front;
+            return this.front;
         }
         throw new IllegalStateException("Multi sided signs are not supported ");
     }

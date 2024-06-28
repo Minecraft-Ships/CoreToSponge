@@ -2,6 +2,7 @@ package org.core.implementation.sponge.events;
 
 import org.core.event.Event;
 import org.core.event.EventListener;
+import org.core.implementation.sponge.platform.plugin.boot.TranslateCoreBoot;
 import org.core.platform.plugin.Plugin;
 
 import java.lang.reflect.InvocationTargetException;
@@ -25,7 +26,7 @@ public class SEventLaunch {
         try {
             this.method.invoke(this.listener, event);
         } catch (IllegalAccessException e) {
-            System.err.println("Failed to know what to do: HEvent found on method, but method is not public on " +
+            TranslateCoreBoot.getBoot().logger().error("Failed to know what to do: HEvent found on method, but method is not public on " +
                     this.listener.getClass().getName() + "." + this.method.getName() + "(" + Arrays
                     .stream(this.method.getParameters())
                     .map(p -> p.getType().getSimpleName())
@@ -36,7 +37,7 @@ public class SEventLaunch {
                     .stream(this.method.getParameters())
                     .map(p -> p.getType().getSimpleName() + " " + p.getName())
                     .collect(Collectors.joining(", "));
-            System.err.println("Failed to know what to do: EventListener caused exception from " +
+            TranslateCoreBoot.getBoot().logger().error("Failed to know what to do: EventListener caused exception from " +
                     this.listener.getClass().getName() + "." + this.method.getName() + "(" +
                     parameterNames + ")");
             if (e instanceof ExceptionInInitializerError) {
@@ -50,7 +51,7 @@ public class SEventLaunch {
                     .map(p -> p.getType().getSimpleName() + " " + p.getName())
                     .collect(Collectors.joining(", "));
 
-            System.err.println("Failed to know what to do: HEvent found on method, but exception found when running " +
+            TranslateCoreBoot.getBoot().logger().error("Failed to know what to do: HEvent found on method, but exception found when running " +
                     this.listener.getClass().getName() + "." + this.method.getName() + "(" +
                     parameterNames + ") found in plugin: " + this.plugin.getPluginName());
             e.printStackTrace();

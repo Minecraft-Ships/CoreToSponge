@@ -1,5 +1,6 @@
 package org.core.implementation.sponge.platform.plugin;
 
+import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.core.platform.plugin.Plugin;
 import org.core.platform.plugin.details.CorePluginVersion;
 import org.core.platform.plugin.details.PluginVersion;
@@ -21,17 +22,17 @@ public class SPlugin implements Plugin {
 
     @Override
     public @NotNull String getPluginName() {
-        return metadata().name().orElseGet(() -> metadata().id());
+        return this.metadata().name().orElseGet(() -> this.metadata().id());
     }
 
     @Override
     public @NotNull String getPluginId() {
-        return metadata().id();
+        return this.metadata().id();
     }
 
     @Override
     public @NotNull PluginVersion getPluginVersion() {
-        var version = metadata().version();
+        ArtifactVersion version = this.metadata().version();
         return new CorePluginVersion(version.getMajorVersion(), version.getMinorVersion(),
                                      version.getIncrementalVersion());
     }

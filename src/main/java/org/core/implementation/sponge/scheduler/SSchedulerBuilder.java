@@ -1,5 +1,6 @@
 package org.core.implementation.sponge.scheduler;
 
+import org.core.implementation.sponge.platform.plugin.boot.TranslateCoreBoot;
 import org.core.platform.plugin.Plugin;
 import org.core.schedule.Scheduler;
 import org.core.schedule.SchedulerBuilder;
@@ -111,7 +112,10 @@ public class SSchedulerBuilder implements SchedulerBuilder {
     @Override
     public Scheduler buildDelayed(@NotNull Plugin plugin) {
         if (this.executor == null) {
-            System.err.println("SchedulerBuilder was attempted to be built but no executor was set");
+            TranslateCoreBoot
+                    .getBoot()
+                    .logger()
+                    .error("SchedulerBuilder was attempted to be built but no executor was set");
             throw new RuntimeException("No runner in schedule");
         }
         return new SScheduler(this, plugin, true);
@@ -120,7 +124,10 @@ public class SSchedulerBuilder implements SchedulerBuilder {
     @Override
     public Scheduler buildRepeating(@NotNull Plugin plugin) {
         if (this.executor == null) {
-            System.err.println("SchedulerBuilder was attempted to be built but no executor was set");
+            TranslateCoreBoot
+                    .getBoot()
+                    .logger()
+                    .error("SchedulerBuilder was attempted to be built but no executor was set");
             throw new RuntimeException("No runner in schedule");
         }
         return new SScheduler(this, plugin, false);

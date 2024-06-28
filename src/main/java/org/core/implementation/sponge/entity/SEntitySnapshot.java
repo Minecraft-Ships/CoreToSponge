@@ -5,7 +5,6 @@ import org.core.entity.Entity;
 import org.core.entity.EntitySnapshot;
 import org.core.entity.LiveEntity;
 import org.core.vector.type.Vector3;
-import org.core.world.position.impl.ExactPosition;
 import org.core.world.position.impl.Position;
 import org.core.world.position.impl.sync.SyncExactPosition;
 import org.jetbrains.annotations.NotNull;
@@ -88,7 +87,7 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
         entity.setRoll(this.roll);
         entity.setYaw(this.yaw);
         if (entity instanceof SLiveEntity) {
-            this.values.forEach((key, value) -> apply((SLiveEntity) entity, key, value));
+            this.values.forEach((key, value) -> this.apply((SLiveEntity) entity, key, value));
         }
         if (this.isRemoved) {
             entity.remove();
@@ -235,11 +234,7 @@ public abstract class SEntitySnapshot<E extends LiveEntity> implements EntitySna
 
     @Override
     public boolean setPosition(@NotNull Position<? extends Number> position) {
-        if (position instanceof ExactPosition) {
-            this.position = Position.toSync((ExactPosition) position);
-        } else {
-            this.position = Position.toSync(position.toExactPosition());
-        }
+        this.position = position.toExactPosition().toSyncPosition();
         return true;
     }
 

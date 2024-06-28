@@ -20,7 +20,6 @@ import org.core.world.position.block.entity.sign.LiveSignTileEntity;
 import org.core.world.position.block.entity.sign.SignTileEntity;
 import org.core.world.position.block.entity.sign.SignTileEntitySnapshot;
 import org.core.world.position.impl.BlockPosition;
-import org.core.world.position.impl.Position;
 import org.core.world.position.impl.async.ASyncBlockPosition;
 import org.core.world.position.impl.sync.SyncBlockPosition;
 import org.jetbrains.annotations.NotNull;
@@ -138,7 +137,7 @@ public abstract class SBlockSnapshot<P extends BlockPosition> implements BlockSn
 
         @Override
         public AsyncBlockSnapshot asAsynced() {
-            return this.createSnapshot(Position.toASync(this.getPosition()));
+            return this.createSnapshot(this.getPosition().toAsyncPosition());
         }
 
         @Override

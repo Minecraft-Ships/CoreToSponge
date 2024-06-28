@@ -27,12 +27,12 @@ public class SCurrencyManager implements CurrencyManager {
 
     @Override
     public boolean isEconomyEnabled() {
-        return getService().isPresent();
+        return this.getService().isPresent();
     }
 
     @Override
     public @NotNull Currency getDefaultCurrency() {
-        org.spongepowered.api.service.economy.Currency currency = getService()
+        org.spongepowered.api.service.economy.Currency currency = this.getService()
                 .orElseThrow(() -> new IllegalStateException("Economy not enabled"))
                 .defaultCurrency();
         return new SCurrency(currency);

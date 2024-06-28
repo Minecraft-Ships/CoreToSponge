@@ -4,7 +4,7 @@ import org.core.entity.living.human.player.LivePlayer;
 import org.core.entity.living.human.player.PlayerSnapshot;
 import org.core.implementation.sponge.entity.SEntitySnapshot;
 import org.core.implementation.sponge.entity.SEntityType;
-import org.core.implementation.sponge.entity.living.human.player.live.SLivePlayer;
+import org.core.implementation.sponge.entity.SLiveEntity;
 import org.core.inventory.inventories.general.entity.PlayerInventory;
 import org.core.inventory.inventories.snapshots.entity.PlayerInventorySnapshot;
 import org.spongepowered.api.data.Key;
@@ -106,7 +106,7 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
     @Override
     public LivePlayer spawnEntity() {
         this.applyDefault(this.createdFrom);
-        this.values.forEach((key, value) -> set(this.createdFrom, key, value));
+        this.values.forEach((key, value) -> this.set(this.createdFrom, key, value));
         return this.createdFrom;
     }
 
@@ -116,13 +116,13 @@ public class SPlayerSnapshot extends SEntitySnapshot<LivePlayer> implements Play
     }
 
     private <T> void set(LivePlayer player, Key<? extends Value<?>> key, T value) {
-        ((SLivePlayer) player).getSpongeEntity().offer((Key<? extends Value<T>>) key, value);
+        ((SLiveEntity) player).getSpongeEntity().offer((Key<? extends Value<T>>) key, value);
     }
 
     @Override
     public LivePlayer teleportEntity(boolean keepInventory) {
         this.applyDefault(this.createdFrom);
-        this.values.forEach((key, value) -> set(this.createdFrom, key, value));
+        this.values.forEach((key, value) -> this.set(this.createdFrom, key, value));
         if (!keepInventory) {
             this.inventorySnapshot.apply(this.createdFrom);
         }

@@ -38,7 +38,7 @@ public class SpongePlatformServer implements PlatformServer {
     }
 
     @Override
-    public Stream<WorldExtent> getWorldExtent() {
+    public Stream<WorldExtent> getWorldExtents() {
         return this.platform.worldManager().worlds().stream().map(SWorldExtent::new);
     }
 

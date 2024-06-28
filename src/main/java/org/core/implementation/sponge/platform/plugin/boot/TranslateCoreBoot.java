@@ -11,11 +11,9 @@ import org.core.implementation.sponge.platform.plugin.boot.inject.PluginContaine
 import org.core.implementation.sponge.platform.plugin.boot.inject.SpongeInjector;
 import org.core.platform.plugin.CorePlugin;
 import org.core.platform.plugin.loader.CommonLoad;
-import org.spongepowered.api.Server;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.lifecycle.ConstructPluginEvent;
-import org.spongepowered.api.event.lifecycle.StartedEngineEvent;
 import org.spongepowered.plugin.PluginContainer;
 import org.spongepowered.plugin.builtin.jvm.Plugin;
 
@@ -31,10 +29,10 @@ import java.util.stream.Collectors;
 @Plugin("ships")
 public class TranslateCoreBoot {
 
+    private static TranslateCoreBoot boot;
     private final CoreToSponge core;
     private final SLogger logger;
     private final List<LaunchWrapper> plugins = new ArrayList<>();
-    private static TranslateCoreBoot boot;
 
     @Inject
     public TranslateCoreBoot(PluginContainer container, Logger logger) {
@@ -42,8 +40,8 @@ public class TranslateCoreBoot {
         this.logger = new SLogger(logger);
     }
 
-    public static TranslateCoreBoot getBoot(){
-        return boot;
+    public SLogger logger() {
+        return this.logger;
     }
 
     public CoreToSponge getCore() {
@@ -87,6 +85,10 @@ public class TranslateCoreBoot {
             return Collections.emptyList();
         }
         return CommonLoad.loadPlugin(this.getClass().getClassLoader(), files);
+    }
+
+    public static TranslateCoreBoot getBoot() {
+        return boot;
     }
 
 }

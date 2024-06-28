@@ -167,8 +167,8 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer, ForwardingAu
 
     @Override
     public void hideBossBar(@NotNull BossBar bar) {
-        if (BARS.containsKey(getUniqueId())) {
-            Collection<BossBar> bars = BARS.get(getUniqueId());
+        if (BARS.containsKey(this.getUniqueId())) {
+            Collection<BossBar> bars = BARS.get(this.getUniqueId());
             bars.remove(bar);
         }
         ForwardingAudience.super.hideBossBar(bar);

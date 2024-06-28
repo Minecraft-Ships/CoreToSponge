@@ -39,8 +39,8 @@ public class CoreToSponge extends TranslateCore.CoreImplementation {
         org.spongepowered.api.Sponge
                 .eventManager()
                 .registerListeners(plugin, this.eventManager.getRawEntityInteractionListener());
-        container = plugin;
-        server = new Singleton<>(() -> new SpongePlatformServer(org.spongepowered.api.Sponge.server()));
+        this.container = plugin;
+        this.server = new Singleton<>(() -> new SpongePlatformServer(org.spongepowered.api.Sponge.server()));
 
         //TODO CHECK IF CORRECT
         //Task.builder().delayTicks(1).intervalTicks(1).name("tps").execute(getRawServer().getTPSExecutor()).build();

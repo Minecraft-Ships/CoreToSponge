@@ -170,7 +170,7 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
     @Override
     public Optional<Object> get(org.core.config.ConfigurationNode node) {
         ConfigurationNode target = this.root.node(node.getObjectPath());
-        return get(target);
+        return this.get(target);
     }
 
     @Override
@@ -192,7 +192,7 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
                 .childrenMap()
                 .entrySet()
                 .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> get(entry.getValue())));
+                .collect(Collectors.toMap(Map.Entry::getKey, entry -> this.get(entry.getValue())));
     }
 
     @Override
@@ -202,7 +202,7 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
             String[] fullArgs = ArrayUtils.join(String.class, node.getPath(), args);
             org.core.config.ConfigurationNode settingNode = new org.core.config.ConfigurationNode(fullArgs);
             if (value1 instanceof Map) {
-                set(settingNode, (Map<String, ?>) value1);
+                this.set(settingNode, (Map<String, ?>) value1);
                 return;
             }
             try {
@@ -233,7 +233,7 @@ public abstract class AbstractConfigurationFile<N extends ConfigurationNode, L e
                     .childrenMap()
                     .entrySet()
                     .stream()
-                    .collect(Collectors.toMap(entry -> entry.getKey().toString(), entry -> get(entry.getValue())));
+                    .collect(Collectors.toMap(entry -> entry.getKey().toString(), entry -> this.get(entry.getValue())));
             return Optional.of(map);
         }
         String value = target.getString();

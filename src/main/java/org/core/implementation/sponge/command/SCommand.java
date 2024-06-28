@@ -14,6 +14,7 @@ import org.spongepowered.api.command.CommandCompletion;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.command.parameter.ArgumentReader;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.living.player.server.ServerPlayer;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class SCommand implements Command.Raw {
     private CommandSource toCommandSource(Object sender) {
         SpongePlatform platform = (SpongePlatform) (TranslateCore.getPlatform());
         if (sender instanceof ServerPlayer) {
-            return (CommandSource) platform.createEntityInstance((ServerPlayer) sender);
+            return (CommandSource) platform.createEntityInstance((Entity) sender);
         }
         if (sender.equals(Sponge.systemSubject())) {
             return new PlatformConsole();
@@ -41,8 +42,8 @@ public class SCommand implements Command.Raw {
 
     @Override
     public CommandResult process(CommandCause cause, ArgumentReader.Mutable arguments) throws CommandException {
-        CommandSource sender = toCommandSource(cause.root());
-        String[] args = split(arguments);
+        CommandSource sender = this.toCommandSource(cause.root());
+        String[] args = this.split(arguments);
         try {
             boolean result = this.launcher.run(sender, args);
             return result ? CommandResult.success() : CommandResult.error(
@@ -55,15 +56,15 @@ public class SCommand implements Command.Raw {
     @Override
     public List<CommandCompletion> complete(CommandCause cause, ArgumentReader.Mutable arguments)
             throws CommandException {
-        CommandSource sender = toCommandSource(cause.root());
-        String[] args = split(arguments);
+        CommandSource sender = this.toCommandSource(cause.root());
+        String[] args = this.split(arguments);
         List<String> result = this.launcher.tab(sender, args);
         return result.stream().map(CommandCompletion::of).collect(Collectors.toList());
     }
 
     @Override
     public boolean canExecute(CommandCause cause) {
-        CommandSource sender = toCommandSource(cause.root());
+        CommandSource sender = this.toCommandSource(cause.root());
         return this.launcher.hasPermission(sender);
     }
 
@@ -79,7 +80,7 @@ public class SCommand implements Command.Raw {
 
     @Override
     public Component usage(CommandCause cause) {
-        CommandSource sender = toCommandSource(cause.root());
+        CommandSource sender = this.toCommandSource(cause.root());
         return Component.text(this.launcher.getUsage(sender));
     }
 

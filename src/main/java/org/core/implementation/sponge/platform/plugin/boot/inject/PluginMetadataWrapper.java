@@ -17,7 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class PluginMetadataWrapper implements PluginMetadata {
+public final class PluginMetadataWrapper implements PluginMetadata {
 
     private final ArtifactVersion version;
     private final CorePlugin plugin;
@@ -55,7 +55,7 @@ public class PluginMetadataWrapper implements PluginMetadata {
 
     @Override
     public ArtifactVersion version() {
-        return version;
+        return this.version;
     }
 
     @Override
@@ -100,7 +100,7 @@ public class PluginMetadataWrapper implements PluginMetadata {
 
     @Override
     public Optional<PluginDependency> dependency(String id) {
-        return dependencies().stream().filter(pd -> pd.id().equals(id)).findFirst();
+        return this.dependencies().stream().filter(pd -> pd.id().equals(id)).findFirst();
 
     }
 

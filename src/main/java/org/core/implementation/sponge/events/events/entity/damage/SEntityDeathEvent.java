@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class SEntityDeathEvent<E extends LiveEntity> implements EntityDeathEvent<E> {
 
-    private E entity;
+    private final E entity;
     private boolean isCancelled;
 
     public SEntityDeathEvent(@NotNull E entity) {
