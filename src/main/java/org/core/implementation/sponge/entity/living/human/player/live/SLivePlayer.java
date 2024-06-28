@@ -15,12 +15,16 @@ import org.core.implementation.sponge.entity.SLiveEntity;
 import org.core.implementation.sponge.entity.living.human.player.snapshot.SPlayerSnapshot;
 import org.core.implementation.sponge.inventory.inventories.live.SLivePlayerInventory;
 import org.core.implementation.sponge.platform.SpongePlatformServer;
+import org.core.implementation.sponge.world.position.block.details.blocks.details.SBlockDetails;
 import org.core.inventory.inventories.general.entity.PlayerInventory;
 import org.core.permission.Permission;
+import org.core.vector.type.Vector3;
+import org.core.world.position.block.details.BlockDetails;
 import org.core.world.position.impl.BlockPosition;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.api.Server;
+import org.spongepowered.api.block.BlockState;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.exception.CommandException;
 import org.spongepowered.api.data.Keys;
@@ -137,6 +141,12 @@ public class SLivePlayer extends SLiveEntity implements LivePlayer, ForwardingAu
     @Override
     public Optional<BlockPosition> getBlockLookingAt(int scanLength) {
         return Optional.empty();
+    }
+
+    @Override
+    public void setBlock(@NotNull BlockDetails details, @NotNull Vector3<Integer> position) {
+        BlockState state = ((SBlockDetails) details).getState();
+        this.getSpongeEntity().sendBlockChange(position.getX(), position.getY(), position.getZ(), state);
     }
 
     @Override
