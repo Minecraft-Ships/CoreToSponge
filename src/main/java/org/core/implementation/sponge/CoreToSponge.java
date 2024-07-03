@@ -18,6 +18,8 @@ import org.core.platform.PlatformServer;
 import org.core.schedule.ScheduleManager;
 import org.core.source.command.ConsoleSource;
 import org.core.utils.Singleton;
+import org.spongepowered.api.Server;
+import org.spongepowered.api.Sponge;
 import org.spongepowered.plugin.PluginContainer;
 
 public class CoreToSponge extends TranslateCore.CoreImplementation {
@@ -83,5 +85,10 @@ public class CoreToSponge extends TranslateCore.CoreImplementation {
     @Override
     public CurrencyManager getRawCurrencyManager() {
         return this.currencyManager;
+    }
+
+    @Override
+    public boolean isOnServerThreadRaw() {
+        return Sponge.server().onMainThread();
     }
 }

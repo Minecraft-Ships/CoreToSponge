@@ -20,6 +20,7 @@ public class SSchedulerBuilder implements SchedulerBuilder {
     protected String displayName;
     protected Scheduler runAfter;
     protected boolean async;
+    protected boolean keepAsync;
 
     @Override
     public Optional<Integer> getDelay() {
@@ -82,9 +83,15 @@ public class SSchedulerBuilder implements SchedulerBuilder {
     }
 
     @Override
-    public SchedulerBuilder setToRunAfter(Scheduler scheduler) {
+    public SchedulerBuilder setToRunAfter(Scheduler scheduler, boolean maintainIfAsync) {
         this.runAfter = scheduler;
+        this.keepAsync = maintainIfAsync;
         return this;
+    }
+
+    @Override
+    public boolean willMaintainScheduleIfAsync() {
+        return this.keepAsync;
     }
 
     @Override
